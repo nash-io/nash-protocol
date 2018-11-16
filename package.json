@@ -52,9 +52,16 @@
   "engines": {
     "node": ">=8.9"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bip39": "^2.5.0",
+    "browserify-aes": "^1.2.0",
+    "futoin-hkdf": "^1.0.2",
+    "randombytes": "^2.0.6",
+    "scrypt-js": "^2.0.4"
+  },
   "devDependencies": {
     "@types/jest": "^23.3.5",
+    "@types/node": "^10.12.0",
     "codecov": "^3.1.0",
     "cz-conventional-changelog": "^2.1.0",
     "gh-pages": "^2.0.0",

@@ -28,12 +28,12 @@
       true,
       { "ignore-prefix": ["console.", "process.exit", "it", "expect", "test", "describe"] }
     ],
-    "no-if-statement": true,
+    "no-if-statement": false,
     /* end tslint-immutable rules */
 
     // Self-added rules
-    "no-console": { 
+    "no-console": {
       "severity": "warning"
     }
-  } 
+  }
 }

@@ -12,68 +12,71 @@ This document is very WIP and should be checked for accuracy by someone with mor
   * publicKey is used to verify signatures.
   * secretKey is the "master key" used to sign stuff and to generate mnemonic.
 
+  Uses crypto-browserify/randombytes which polyfills node crypto.
+
   Spec: SIGGEN()
-  Implemented in: bitcoinjs/bip39
  */
-getEntropy = () => { publicKey: string, secretKey: string }
+getEntropy = () => { publicKey: Buffer, secretKey: Buffer }
 
 /*
   Converts entropy to wordlist. We can supply our own wordlist for i18n.
   This is not an encryption, it's a simple mapping.
 
-  Implemented in: bitcoinjs/bip39
+  Uses bitcoinjs/bip39 implementation.
  */
-secretKeyToMnemonic = (secretKey: string, wordlist: object = ENGLISH) => Array<string>
+secretKeyToMnemonic = (secretKey: Buffer) => Array<string>
 
 /*
   Creates the master seed which is the foundation of all wallet secret keys.
-  Use PBKDF2. Takes an optional passphrase as a salt.
+  Use PBKDF2.
 
-  Implemented in: bitcoinjs/bip39
+  Uses bitcoinjs/bip39 implementation.
  */
-mnemonicToMasterSeed = (mnemonic: Array<string>, passphrase?: string) => string
+mnemonicToMasterSeed = (mnemonic: Array<string>) => Buffer
 
 /*
   Hashes user password using scrypt with parameters N = 16384, r = 8, p = 1.
 
   Spec: SCRYPT()
+
+  Uses scrypt-js implementation.
  */
-hashPassword = (password: string) => string
+hashPassword = (password: string) => Promise<Buffer>
 
 /*
-  Derives two symmetric secret keys from password via HKDF. Uses NEXAuth||U as salt.
-  For now, NEXAuth will be the email.
-  Either receives hashed password as argument, or calls hashPassword() internally.
-  * authKey is stored server side as the login password.
-  * encryptionKey is used as the encryption key?
+  Derives two symmetric secret keys from password via HKDF. Uses user ID as salt.
+  * authKey is stored server side for use in authentication
+  * encryptionKey is used to encrypt the secret key
+
+  Uses futoin-hkdf implementation.
 
   Spec: HKDF()
-  TODO: what's NEXAuth||U?
  */
-getSKeysFromPassword = (password: string, salt: string) => { authKey: string, encryptionKey: string }
+getHKDFKeysFromPassword = (password: string, salt: string) => Promise<{ authKey: Buffer, encryptionKey: Buffer }>
 
 /*
-  Encrypts master key using Uek as encryption key. Uses AEAD. Reversible.
+  Encrypts master key using encryptionKey. Uses AEAD. Reversible.
 
   aead is stored server-side.
 
+  Uses crypto-browserify/browserify-aes implementation, which polyfills Node `crypto`.
+
   Spec: ENC(), DEC()
-  TODO: some stuff about nonce, tag, etc. needs fleshing out.
  */
-type aead = {
-  encryptedSecretKey: string
-  nonce: unknown
-  tag: unknown
+interface AEAD = {
+  encryptedSecretKey: Buffer
+  nonce: Buffer
+  tag: Buffer
 }
-encryptSecretKey = (encryptionKey: string, secretKey: string) => aead
-decryptSecretKey = (encryptionKey: string, aead: aead) => string | Error
+encryptSecretKey = (encryptionKey: Buffer, secretKey: Buffer) => AEAD
+decryptSecretKey = (encryptionKey: Buffer, aead: AEAD) => Promise<Buffer>
 
 /*
-  TODO: very unclear on this! What is verifySig used for?
+  TODO: very unclear on this! Not yet implemented
  */
 type sig = unknown
-sign = (secretKey: string, x: aead) => sig
-verifySig = (publicKey: string, x: aead, signature: sig) => boolean
+sign = (secretKey: Buffer, x: AEAD) => sig
+verifySig = (publicKey: Buffer, x: AEAD, signature: sig) => boolean
 
 /*
   Regenerates mnemonic. Because the only information the user has is their
@@ -81,22 +84,13 @@ verifySig = (publicKey: string, x: aead, signature: sig) => boolean
 
   aead can come from the server as it is secure.
  */
-regenerateMnemonic = (aead: aead, password: string): Array<String> => {
-  const hashedPassword = hashPassword(password)
-  const { encryptionKey } = getSKeysFromPassword(hashedPassword, salt) // TODO where does salt come from?
-  try {
-    const secretKey = decryptSecretKey(encryptionKey, aead)
-    return entropyToMnemonic(secretKey)
-  } catch (e) {
-    // validation error
-  }
-}
+regenerateMnemonic = (aead: AEAD, password: string): Array<String>
 
 /*
   Generates addresses for a given currency.
   See: BIP-44
  */
-generateWallet = (masterSeed: string, chainID: string): { externalAddress: string, internalAddress: string }
+generateWallet = (masterSeed: Buffer, chainID: Buffer): { externalAddress: Buffer, internalAddress: Buffer }
 ```
 
 ## Usage Summary
@@ -106,7 +100,7 @@ generateWallet = (masterSeed: string, chainID: string): { externalAddress: strin
 1. User signs up for an account with a password (and other stuff). `getEntropy()` generates their keys.
 2. Secret key is used to generate mnemonic with `secretKeyToMnemonic()`. Asynchronously, the master seed is used to generate the master seed with `mnemonicToMasterSeed()`.
 3. User confirms they recorded the mnemonic.
-4. Auth / encryption keys are derived from password with `hashPassword()` and `getSKeysFromPassword()`. Auth key is sent to server.
+4. Auth / encryption keys are derived from password with `hashPassword()` and `getHKDFKeysFromPassword()`. Auth key is sent to server.
 5. Encryption key is used to encrypt the secret key with `encryptSecretKey()`. Output is sent to server.
 6. Wallets are created with the master seed.
 
@@ -138,12 +132,6 @@ We will NOT support the user supplying their own wallet keys. While users will c
 
 ## Questions
 
-* What is `NEXAuth||U` (used as salt)?
-* Some stuff about encryption and signature is unclear, but nonblocking for now.
-  * What is a nonce? What is an authentication tag?
-    * Nonce: random data, just makes things a bit stronger?
-    * Tag: ????
-    * For siganture just choose any curve for prototype
 * BIP-44 chain IDs or our own? One consideration is making our own allows us to invalidate keys on a per-chain basis rather than having to invalidate ALL keys if ANY are breached.
 
 ## Development
@@ -162,7 +150,7 @@ npm publish
 ## TODO
 
 * [x] Switch from Ava to Jest. Scaffold tests for TDD.
-* [ ] Start building!
+* [x] Start building!
 * [ ] Standardize `.tsconfig`
 * [ ] Precommit hooks, CI, etc.
 * [ ] Upgrade to `bip39@3.x.x` when released. Currently `bip39` is not packaged as a module, and ~90% of the bundle is composed of foreign language wordlists and an optional string normalization library. With proper treeshaking this will reduce the size of the bundled `nex-auth-protocol` by _literally 98%_ as seen from webpack-analyzer (100kb gzipped to 14.5kb gzipped).

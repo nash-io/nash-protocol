@@ -1,1 +1,8 @@
-export * from './lib/number';
+export { default as decryptSecretKey } from './decryptSecretKey'
+export { default as encryptSecretKey } from './encryptSecretKey'
+export { default as getEntropy } from './getEntropy'
+export { default as getHKDFKeysFromPassword } from './getHKDFKeysFromPassword'
+export { default as hashPassword } from './hashPassword'
+export { default as mnemonicToMasterSeed } from './mnemonicToMasterSeed'
+export { default as regenerateMnemonic } from './regenerateMnemonic'
+export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
