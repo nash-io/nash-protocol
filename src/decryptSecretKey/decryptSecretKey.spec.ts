@@ -1,6 +1,5 @@
-import randomBytes from 'randombytes'
-
 import decryptSecretKey from '../decryptSecretKey'
+import randomBytes from '../randomBytes'
 
 import encryptSecretKey from '../encryptSecretKey'
 import getHKDFKeysFromPassword from '../getHKDFKeysFromPassword'

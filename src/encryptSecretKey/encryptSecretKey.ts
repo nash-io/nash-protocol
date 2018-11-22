@@ -1,6 +1,6 @@
 import { createCipheriv } from 'browserify-aes'
-import randomBytes from 'randombytes'
 
+import randomBytes from '../randomBytes'
 import AEAD from '../types/AEAD'
 
 const NONCE_SIZE = 12
@@ -13,7 +13,6 @@ export default function encryptSecretKey(
 ): AEAD {
   const nonce = randomBytes(NONCE_SIZE)
 
-  // TODO: chose these based on recommended parameters, needs an audit!
   const cipher = createCipheriv('aes-256-gcm', encryptionKey, nonce, {
     authTagLength: 16
   })

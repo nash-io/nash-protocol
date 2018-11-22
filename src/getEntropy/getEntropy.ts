@@ -1,4 +1,4 @@
-import randomBytes from 'randombytes'
+import randomBytes from '../randomBytes'
 
 interface EntropyKeys {
   readonly publicKey: Buffer

@@ -26,7 +26,16 @@
     "no-mixed-interface": true,
     "no-expression-statement": [
       true,
-      { "ignore-prefix": ["console.", "process.exit", "it", "expect", "test", "describe"] }
+      {
+        "ignore-prefix": [
+          "console.",
+          "process.exit",
+          "it",
+          "expect",
+          "test",
+          "describe"
+        ]
+      }
     ],
     "no-if-statement": false,
     /* end tslint-immutable rules */
@@ -34,6 +43,7 @@
     // Self-added rules
     "no-console": {
       "severity": "warning"
-    }
+    },
+    "no-submodule-imports": false
   }
 }
