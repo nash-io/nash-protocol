@@ -7,9 +7,9 @@ import AEAD from '../types/AEAD'
 export default async function regenerateMnemonic(
   aead: AEAD,
   password: string,
-  userID: string
+  salt: string
 ): Promise<ReadonlyArray<string>> {
-  const { encryptionKey } = await getHKDFKeysFromPassword(password, userID)
+  const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
   const decryptedSecretKey = await decryptSecretKey(encryptionKey, aead)
   return secretKeyToMnemonic(decryptedSecretKey)
 }

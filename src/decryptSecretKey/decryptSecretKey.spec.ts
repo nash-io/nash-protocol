@@ -6,11 +6,11 @@ import encryptSecretKey from '../encryptSecretKey'
 import getHKDFKeysFromPassword from '../getHKDFKeysFromPassword'
 
 const password = 'hunter2'
-const userID = '123'
+const salt = '123'
 const secretKey = Buffer.from('secretKey')
 
 test('returns secret key when given correct encryption key', async () => {
-  const { encryptionKey } = await getHKDFKeysFromPassword(password, userID)
+  const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
   const aead = encryptSecretKey(encryptionKey, secretKey)
 
   const output = await decryptSecretKey(encryptionKey, aead)
@@ -26,12 +26,12 @@ describe('when given incorrect values', () => {
   const AUTH_ERROR_MSG = 'Unsupported state or unable to authenticate data'
 
   it('fails when given incorrect encryption key', async () => {
-    const { encryptionKey } = await getHKDFKeysFromPassword(password, userID)
+    const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
     const aead = encryptSecretKey(encryptionKey, secretKey)
 
     const {
       encryptionKey: incorrectEncryptionKey
-    } = await getHKDFKeysFromPassword('wrong password', userID)
+    } = await getHKDFKeysFromPassword('wrong password', salt)
 
     try {
       const output = await decryptSecretKey(incorrectEncryptionKey, aead)
@@ -43,12 +43,12 @@ describe('when given incorrect values', () => {
   })
 
   it('fails when given incorrect tag key', async () => {
-    const { encryptionKey } = await getHKDFKeysFromPassword(password, userID)
+    const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
     const aead = encryptSecretKey(encryptionKey, secretKey)
 
     const {
       encryptionKey: incorrectEncryptionKey
-    } = await getHKDFKeysFromPassword('wrong password', userID)
+    } = await getHKDFKeysFromPassword('wrong password', salt)
     const { tag: incorrectTag } = encryptSecretKey(
       incorrectEncryptionKey,
       secretKey
@@ -67,7 +67,7 @@ describe('when given incorrect values', () => {
   })
 
   it('fails when given incorrect nonce', async () => {
-    const { encryptionKey } = await getHKDFKeysFromPassword(password, userID)
+    const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
     const aead = encryptSecretKey(encryptionKey, secretKey)
 
     try {

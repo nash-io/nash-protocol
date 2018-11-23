@@ -6,6 +6,8 @@ import normalizeString from '../utils/normalizeString'
   scrypt parameters recommended by spec document.
 
   N given by Cure53; 2^20 === 1048576
+
+  The salt should be the user email.
  */
 const N = 1048576
 const r = 8
@@ -14,12 +16,12 @@ const dkLen = 32
 
 export default function hashPassword(
   password: string,
-  userID: string
+  salt: string
 ): Promise<Buffer> {
   return new Promise(res =>
     scrypt(
       normalizeString(password),
-      normalizeString(userID),
+      normalizeString(salt),
       N,
       r,
       p,
