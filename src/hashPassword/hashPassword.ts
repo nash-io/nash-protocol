@@ -5,11 +5,12 @@ import normalizeString from '../utils/normalizeString'
 /*
   scrypt parameters recommended by spec document.
 
-  N given by Cure53; 2^20 === 1048576
+  N given by Cure53; 2^20 === 1048576. However this takes unacceptably long; using
+  2^14 === 16384 for now.
 
   The salt should be the user email.
  */
-const N = 1048576
+const N = 16384
 const r = 8
 const p = 1
 const dkLen = 32
