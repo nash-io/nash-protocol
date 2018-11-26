@@ -1,9 +1,9 @@
 import getRSAKeysFromSecretKey from './getRSAKeysFromSecretKey'
 
-import getEntropy from '../getEntropy'
+import getSecretKey from '../getSecretKey'
 
 test('deterministically generates RSA keys', async () => {
-  const { secretKey } = getEntropy()
+  const secretKey = getSecretKey()
 
   const k1 = await getRSAKeysFromSecretKey(secretKey)
   const k2 = await getRSAKeysFromSecretKey(secretKey)

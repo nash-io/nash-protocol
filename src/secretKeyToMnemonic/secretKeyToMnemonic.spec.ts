@@ -1,9 +1,9 @@
 import secretKeyToMnemonic from './secretKeyToMnemonic'
 
-import getEntropy from '../getEntropy'
+import getSecretKey from '../getSecretKey'
 
 test('should be a 12-word phrase', () => {
-  const { secretKey } = getEntropy()
+  const secretKey = getSecretKey()
   const output = secretKeyToMnemonic(secretKey)
 
   expect(output).toHaveLength(12)

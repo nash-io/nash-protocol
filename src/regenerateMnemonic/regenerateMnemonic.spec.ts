@@ -1,14 +1,14 @@
 import regenerateMnemonic from './regenerateMnemonic'
 
 import encryptSecretKey from '../encryptSecretKey'
-import getEntropy from '../getEntropy'
 import getHKDFKeysFromPassword from '../getHKDFKeysFromPassword'
+import getSecretKey from '../getSecretKey'
 import secretKeyToMnemonic from '../secretKeyToMnemonic'
 
 test('regenerates mnemonic from an AEAD object', async () => {
   const password = 'hunter2'
   const salt = '123'
-  const { secretKey } = getEntropy()
+  const secretKey = getSecretKey()
   const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
   const aead = encryptSecretKey(encryptionKey, secretKey)
 
