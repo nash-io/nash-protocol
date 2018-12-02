@@ -6,7 +6,7 @@ import hkdf from 'futoin-hkdf'
  */
 import hashPassword from '../hashPassword'
 
-interface HKDFKeys {
+export interface HKDFKeys {
   readonly authKey: Buffer
   readonly encryptionKey: Buffer
 }
