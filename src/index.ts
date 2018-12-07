@@ -1,3 +1,4 @@
+export { default as bufferize } from './bufferize'
 export { default as decryptSecretKey } from './decryptSecretKey'
 export { default as encryptSecretKey } from './encryptSecretKey'
 export { default as getHKDFKeysFromPassword } from './getHKDFKeysFromPassword'
