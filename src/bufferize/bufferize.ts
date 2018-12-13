@@ -1,3 +1,3 @@
 export default function bufferize(str: string): Buffer {
-  return Buffer.from(str, 'base64')
+  return Buffer.from(str, 'hex')
 }
