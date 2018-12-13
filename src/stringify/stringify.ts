@@ -1,3 +1,3 @@
 export default function stringify(buffer: Buffer): string {
-  return buffer.toString('base64')
+  return buffer.toString('hex')
 }
