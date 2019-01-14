@@ -8,9 +8,9 @@ const salt = 'b0cd9948365b'
 test('generates two keys', async () => {
   const output = await getHKDFKeysFromPassword(password, salt)
   const expectation = {
-    authKey: '93250344b99a3ae0d61573bf453045ece6fb480d72932eefb888b6b712639ffb',
+    authKey: 'af0782580bb2ec65b72cb184cf729dd16dfd5669ae247c64aa8d6d01b6ed8a34',
     encryptionKey:
-      '9f4da51b3547a9720ed9570a2bbb2e5909ac076f02962a9a69e1850a2c9ba9c0'
+      'f0dfbf6f8d2229bbed18778a44832a93364fb133e01057e673d11327528042ed'
   }
 
   expect(stringify(output.authKey)).toBe(expectation.authKey)

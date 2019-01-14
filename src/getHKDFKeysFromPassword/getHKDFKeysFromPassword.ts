@@ -27,7 +27,7 @@ export default async function getHKDFKeysFromPassword(
   // TODO: do we need to salt here again? If the original input is already hashed we shouldn't need to salt again right?
   // Does it matter?
   return {
-    authKey: hkdf(hashed, length, { hash, info: 'auth' }),
-    encryptionKey: hkdf(hashed, length, { hash, info: 'encryption' })
+    authKey: hkdf(hashed, length, { hash, info: 'auth', salt }),
+    encryptionKey: hkdf(hashed, length, { hash, info: 'encryption', salt })
   }
 }
