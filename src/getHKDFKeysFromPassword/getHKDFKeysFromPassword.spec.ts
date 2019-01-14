@@ -3,14 +3,14 @@ import getHKDFKeysFromPassword from './getHKDFKeysFromPassword'
 import stringify from '../stringify'
 
 const password = 'hunter2'
-const salt = '123'
+const salt = 'b0cd9948365b'
 
 test('generates two keys', async () => {
   const output = await getHKDFKeysFromPassword(password, salt)
   const expectation = {
-    authKey: 'd20102886717a39dbc49aeb65b98bacb741e25d578a475f532bbf8162f4739e0',
+    authKey: '93250344b99a3ae0d61573bf453045ece6fb480d72932eefb888b6b712639ffb',
     encryptionKey:
-      '6a6c9090c37dbbe9d3c47bd190a9ef919be7733d0186db1bb00a5298c6d4fe4e'
+      '9f4da51b3547a9720ed9570a2bbb2e5909ac076f02962a9a69e1850a2c9ba9c0'
   }
 
   expect(stringify(output.authKey)).toBe(expectation.authKey)

@@ -5,7 +5,7 @@ import encryptSecretKey from '../encryptSecretKey'
 import getHKDFKeysFromPassword from '../getHKDFKeysFromPassword'
 
 const password = 'hunter2'
-const salt = '123'
+const salt = 'b0cd9948365b'
 const secretKey = Buffer.from('secretKey')
 
 test('returns secret key when given correct encryption key', async () => {
