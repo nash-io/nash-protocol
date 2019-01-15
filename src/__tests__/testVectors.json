@@ -1,0 +1,77 @@
+[
+  {
+    "password": "hunter2",
+    "salt": "b0cd9948365b",
+    "authKey": "af0782580bb2ec65b72cb184cf729dd16dfd5669ae247c64aa8d6d01b6ed8a34",
+    "encryptionKey": "f0dfbf6f8d2229bbed18778a44832a93364fb133e01057e673d11327528042ed",
+    "secretKey": "672aaa69df4a2f99c1df0947e91f527e",
+    "mnemonic": [
+      "grunt",
+      "fetch",
+      "omit",
+      "salon",
+      "pepper",
+      "smooth",
+      "alter",
+      "thrive",
+      "elevator",
+      "employ",
+      "stand",
+      "wire"
+    ],
+    "masterSeed": "81e2ce3456affaed1512f7607171218ed5c978e03b531b9f798b91c8799f8c771366844b19d2daea371ae54420c3ee16205109ab1118d762124cfc8ad4fb5098",
+    "encryptedSecretKey": "eb13bb0e89102d64700906c7082f9472",
+    "nonce": "f6783fe349320f71acc2ca79",
+    "tag": "7c8dc1020de77cd42dbbbb850f4335e8"
+  },
+  {
+    "password": "thisisapassword123",
+    "salt": "24154d7515f7",
+    "authKey": "82bb6afd0fca99557150e2bc9d0559cd1f56a639066cf8994a62e173f1d2064a",
+    "encryptionKey": "d01c70c88f3b889f29ea7c06c37fa483da8a520f75178250de8495bf86a20d50",
+    "secretKey": "3db8caa92d38585af81f888d046f032e",
+    "mnemonic": [
+      "diet",
+      "shock",
+      "prevent",
+      "foil",
+      "machine",
+      "coin",
+      "there",
+      "valve",
+      "minimum",
+      "casino",
+      "school",
+      "fringe"
+    ],
+    "masterSeed": "50ba2f7f740102886f23df67c2d625967e4371e3fa9994148ec76a39c4a88f84b7eb51b535d806c3a4bc640b26bef4b620760dd8f4eabd4dccc2e99d0e2328f2",
+    "encryptedSecretKey": "de46bf53dc0317f8cedb598c158edcc3",
+    "nonce": "f6e27afb6a1368541abbcc72",
+    "tag": "6d6e88da0539ed54bdb384df2511b12a"
+  },
+  {
+    "password": "Kq9qGMlyCkwz",
+    "salt": "05ea7e76fc53",
+    "authKey": "8f3b9064abca14753a93af8f54f6adcba2175c6d4a10bf92480d7f3834fbb16d",
+    "encryptionKey": "5acaef88379e363160a2609e445d07e54e47b8547a39d72c2029459906115ae8",
+    "secretKey": "e05933cc42508dbe6aa65c2383e8cdeb",
+    "mnemonic": [
+      "theory",
+      "sister",
+      "vessel",
+      "lucky",
+      "angle",
+      "tennis",
+      "pride",
+      "slide",
+      "castle",
+      "butter",
+      "cricket",
+      "stone"
+    ],
+    "masterSeed": "1f4ae90fa9bb4f2fa69f08538e9c476b45d2db2df52dca2f0353849cc94b5d310fbdde6f8ddda5fcd4bf8b9a8e075f03eb5e7f4267b65046385b73288c17bebb",
+    "encryptedSecretKey": "dfe99580c64f95ea9c8fab4df8820f6f",
+    "nonce": "6fef444ff19f9408bb14205f",
+    "tag": "a1318e76fe102ae750dd9ac63815dc75"
+  }
+]

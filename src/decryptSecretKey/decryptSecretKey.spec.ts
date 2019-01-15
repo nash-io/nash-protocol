@@ -1,8 +1,12 @@
 import decryptSecretKey from '../decryptSecretKey'
 import randomBytes from '../randomBytes'
 
+import bufferize from '../bufferize'
 import encryptSecretKey from '../encryptSecretKey'
 import getHKDFKeysFromPassword from '../getHKDFKeysFromPassword'
+import stringify from '../stringify'
+
+import testVectors from '../__tests__/testVectors.json'
 
 const password = 'hunter2'
 const salt = 'b0cd9948365b'
@@ -81,3 +85,15 @@ describe('when given incorrect values', () => {
     }
   })
 })
+
+testVectors.forEach((vector, idx) =>
+  test(`passes test vector ${idx + 1}`, async () => {
+    const output = await decryptSecretKey(bufferize(vector.encryptionKey), {
+      encryptedSecretKey: bufferize(vector.encryptedSecretKey),
+      nonce: bufferize(vector.nonce),
+      tag: bufferize(vector.tag)
+    })
+
+    expect(stringify(output)).toEqual(vector.secretKey)
+  })
+)

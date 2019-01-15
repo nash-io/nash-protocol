@@ -1,5 +1,8 @@
 {
   "extends": ["tslint:latest", "tslint-config-prettier", "tslint-immutable"],
+  "linterOptions": {
+    "exclude": ["**/*.json"]
+  },
   "rules": {
     "interface-name": [true, "never-prefix"],
     // TODO: allow devDependencies only in **/*.spec.ts files:

@@ -2,20 +2,19 @@ import getHKDFKeysFromPassword from './getHKDFKeysFromPassword'
 
 import stringify from '../stringify'
 
+import testVectors from '../__tests__/testVectors.json'
+
 const password = 'hunter2'
 const salt = 'b0cd9948365b'
 
-test('generates two keys', async () => {
-  const output = await getHKDFKeysFromPassword(password, salt)
-  const expectation = {
-    authKey: 'af0782580bb2ec65b72cb184cf729dd16dfd5669ae247c64aa8d6d01b6ed8a34',
-    encryptionKey:
-      'f0dfbf6f8d2229bbed18778a44832a93364fb133e01057e673d11327528042ed'
-  }
+testVectors.forEach((vector, idx) =>
+  test(`passes test vector ${idx + 1}`, async () => {
+    const output = await getHKDFKeysFromPassword(vector.password, vector.salt)
 
-  expect(stringify(output.authKey)).toBe(expectation.authKey)
-  expect(stringify(output.encryptionKey)).toBe(expectation.encryptionKey)
-})
+    expect(stringify(output.authKey)).toBe(vector.authKey)
+    expect(stringify(output.encryptionKey)).toBe(vector.encryptionKey)
+  })
+)
 
 test('generates symmetrical keys', async () => {
   const output = await getHKDFKeysFromPassword(password, salt)
