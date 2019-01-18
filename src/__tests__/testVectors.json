@@ -22,7 +22,43 @@
     "masterSeed": "81e2ce3456affaed1512f7607171218ed5c978e03b531b9f798b91c8799f8c771366844b19d2daea371ae54420c3ee16205109ab1118d762124cfc8ad4fb5098",
     "encryptedSecretKey": "eb13bb0e89102d64700906c7082f9472",
     "nonce": "f6783fe349320f71acc2ca79",
-    "tag": "7c8dc1020de77cd42dbbbb850f4335e8"
+    "tag": "7c8dc1020de77cd42dbbbb850f4335e8",
+    "wallets": {
+      "eth": [
+        {
+          "address": "0xcA7E5135e04371D048A78C4592BA3b61A984B563",
+          "publicKey": "0x0375f8a0f4eda35b7194d265df33720cf80164f196765980fae29795f713b340d9",
+          "privateKey": "0xe537b63096749e62e509ef4e849f739bff129baeeb100d131a681682422392cf"
+        },
+        {
+          "address": "0xE468fdbfA5ea8073F2AfD2216F325817c5Fb6b55",
+          "publicKey": "0x0203159f7c11f248335c0509fc9a4aab9cee85cfcac11993b346fe6094cdb98d09",
+          "privateKey": "0x1bd2688c2754db3c03e08d9a99f666e1f08f41a113b0afa13191d069bde3058c"
+        },
+        {
+          "address": "0xe565Fa02BC840c5eDC38E5042815C8F1e7501294",
+          "publicKey": "0x03cb4897bc2c66ad3aadc53a17a7a12f1cde06298edf4571bada3f377b93684fd0",
+          "privateKey": "0xbc772317771e37bfabebad934b07a6bfc9bb1fbfb9f2dc3180d59236279495a2"
+        }
+      ],
+      "neo": [
+        {
+          "address": "0x64F5c9c2aad5a313636387e1206e057aB2aFE7b7",
+          "publicKey": "0x034ee65771f6f39f25282e59a12f6fe2c4595fc334ad5e644ea4624e47ccb60722",
+          "privateKey": "0xb478febf68d16aa3fa696d684589b9a706f04065407897319a4a4a33aa2cd1e5"
+        },
+        {
+          "address": "0x1523fe4c945388d4B29682D8370e65053E9B2667",
+          "publicKey": "0x023cb1088fd3944005fd1395c391b7215088919027e0293c991c0706fcf62020bd",
+          "privateKey": "0x9d02e41d4b585cb77cd1f13587560e7e6845928c85a92e21e55ad233a01fbe54"
+        },
+        {
+          "address": "0x6Ea9Bfa9C11D44A4E5859e9ed69c91f07e079eAf",
+          "publicKey": "0x02baf5476f7167a161ba6f3e931c98aaf87345129e86791182a9b322fc33438e94",
+          "privateKey": "0x3d12cbc31082d29355135e8542551cb44c8abca29fe60b6086a51a57cb48457b"
+        }
+      ]
+    }
   },
   {
     "password": "thisisapassword123",
@@ -47,7 +83,43 @@
     "masterSeed": "50ba2f7f740102886f23df67c2d625967e4371e3fa9994148ec76a39c4a88f84b7eb51b535d806c3a4bc640b26bef4b620760dd8f4eabd4dccc2e99d0e2328f2",
     "encryptedSecretKey": "de46bf53dc0317f8cedb598c158edcc3",
     "nonce": "f6e27afb6a1368541abbcc72",
-    "tag": "6d6e88da0539ed54bdb384df2511b12a"
+    "tag": "6d6e88da0539ed54bdb384df2511b12a",
+    "wallets": {
+      "eth": [
+        {
+          "address": "0x3656F736a211469c83df498fF044d7630C94d177",
+          "publicKey": "0x03481a41c13b737a7d359cef1bbdf8454be3b8a06e9e2e5c8854b43c68f895be01",
+          "privateKey": "0x729cd9c8ca0febb416627918ef9297cdd7d8b8274ccbe03a89261bde0fd0e80c"
+        },
+        {
+          "address": "0x337AcB2c8bfc3ee8CE5dfeB7093Fef0Aaa79CA88",
+          "publicKey": "0x022ffeba2d616f5f35ecb5ca3ad7ffde08adf647b8709e7cade31efebb6429b4d0",
+          "privateKey": "0x317aee4f38d36aab29421f631634fddbf507e5653a35d08d9cf030b6fee92cc5"
+        },
+        {
+          "address": "0x2061fAB141Bd958CF3d8D5065057C00946CF90a3",
+          "publicKey": "0x02411c69cdda4c27780d1485e7fe68e4f6ae5dc603bde02672d7bead2938c1b2ec",
+          "privateKey": "0x8791bcb811a8c96c4f361e6f874d917b2ad843b4cd508d3422df01ea68d9ca72"
+        }
+      ],
+      "neo": [
+        {
+          "address": "0xc6e77874576C21CDFC3b87ebCc7B7BCc16a96c37",
+          "publicKey": "0x03aab743492eafccbc928fadc28dd6a11e2a80a7b62c4bf9038b3fe5c5a88f0de1",
+          "privateKey": "0xc92d4e9b5f54c712f2a67b57258da9c0e9f24643b01810f08f9aaa54cd2cbb4f"
+        },
+        {
+          "address": "0x8A64d44E035249fc891b21D795B7644465E47155",
+          "publicKey": "0x027bafbef4a9a28b7b033fa334fdd2d36c9173dab053d9339768daed6f5ba9b28e",
+          "privateKey": "0x88f80cde442234053f5ba63420ad44c8f0ba64bf75a0ea964ba7335dc2283fd5"
+        },
+        {
+          "address": "0x0FF90dE1C9Afa346ed1141CC45Dd2eE9D9DEc5e2",
+          "publicKey": "0x039e8b9bc6e5f744d3d0b94472e8ae782870b8567485695adc3279ed6ec99c6869",
+          "privateKey": "0xf55055b91eb2a308148ccc36732c7e3e4469d118fadee17fe3e00c93c15a5ec4"
+        }
+      ]
+    }
   },
   {
     "password": "Kq9qGMlyCkwz",
@@ -72,6 +144,42 @@
     "masterSeed": "1f4ae90fa9bb4f2fa69f08538e9c476b45d2db2df52dca2f0353849cc94b5d310fbdde6f8ddda5fcd4bf8b9a8e075f03eb5e7f4267b65046385b73288c17bebb",
     "encryptedSecretKey": "dfe99580c64f95ea9c8fab4df8820f6f",
     "nonce": "6fef444ff19f9408bb14205f",
-    "tag": "a1318e76fe102ae750dd9ac63815dc75"
+    "tag": "a1318e76fe102ae750dd9ac63815dc75",
+    "wallets": {
+      "eth": [
+        {
+          "address": "0x7756812EF20da8747B1B1aE9af43f005B3F68535",
+          "publicKey": "0x0230d16d1132b8d756219ed04accdc60ac0936868aafdf763a77fdfb0692017276",
+          "privateKey": "0x05128cf2add5c0a04562101e1dc399bfa7e854d993b8e54fcab9e988fb563c84"
+        },
+        {
+          "address": "0xF6CA8B7963313E619079448E618e0f1074143673",
+          "publicKey": "0x03569aaf6f55f08ec41a22ea1e0fb2de7d20e25604df928b8ad66ecb8c3eca78a4",
+          "privateKey": "0x70513665870b5c919e598592b8f4fec02a93f531ce6b284343bc12a14a7ea4d2"
+        },
+        {
+          "address": "0xF31AB521E960BA5845eDD77247c349050dCa4506",
+          "publicKey": "0x025ce9caec8d88e01e2d5c1121e58a0cccf72b35f9bc1e3af6518fe4b4374c12a5",
+          "privateKey": "0x91aa6de584ed620a71aeb9fb37f94521c761a0e9897efad59dbd6b2154a64175"
+        }
+      ],
+      "neo": [
+        {
+          "address": "0xABa32afAFD38Cf927567a5E4e6b8ECe162651364",
+          "publicKey": "0x038cdd528f8b8ec847475d3acaf67ec645c7c272f64345cd9b37e95f1318347d4f",
+          "privateKey": "0x7d96a2938c0f14c9ffb675560ce1ca738f353aa1135126065185462bfb85f620"
+        },
+        {
+          "address": "0x6BCe2b262B0e6D8EfE2e047a6922C87e6E53f08E",
+          "publicKey": "0x022d5b89dd5471f97e96f5cd20930d3ccc7fbfbd4f409b3cda4ffd6763c496873a",
+          "privateKey": "0x2d5e4f3715aed471c90c7bbc63763c9e4cdf1d6998e80684fe7932b9466329f8"
+        },
+        {
+          "address": "0x0181A0FFA05994A5840c73921f47eD1E9d188D72",
+          "publicKey": "0x0324879188784ba11a3e2452d268449f188d8a60b4619fc90b6495b5b3c2b0735a",
+          "privateKey": "0xa4ad0d277ee686cf6746b4550aecc1f8fdea3a4c3053b668b644aba8d63c477f"
+        }
+      ]
+    }
   }
 ]
