@@ -11,11 +11,6 @@ export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
 export { default as hashPassword } from './hashPassword'
 export { default as randomBytes } from './randomBytes'
 
-// Deprecated / WIP
-export { default as getRSAKeysFromSecretKey } from './getRSAKeysFromSecretKey'
-export { default as sign } from './sign'
-export { default as sigVerify } from './sigVerify'
-
 // Utilities
 export { default as bufferize } from './bufferize'
 export { default as stringify } from './stringify'
