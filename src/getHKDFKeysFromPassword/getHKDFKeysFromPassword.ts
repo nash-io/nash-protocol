@@ -5,11 +5,7 @@ import hkdf from 'futoin-hkdf'
   https://en.wikipedia.org/wiki/HKDF#Example:_Python_implementation
  */
 import hashPassword from '../hashPassword'
-
-export interface HKDFKeys {
-  readonly authKey: Buffer
-  readonly encryptionKey: Buffer
-}
+import HKDFKeys from '../types/HKDFKeys'
 
 /*
   HKDF parameters
