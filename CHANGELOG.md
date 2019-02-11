@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/neonexchange/nex-auth-protocol/compare/v1.2.2...v1.3.0) (2019-02-11)
+
+
+### Features
+
+* **getHKDFKeysFromPassword:** Add salt to HKDF ([66fddba](https://github.com/neonexchange/nex-auth-protocol/commit/66fddba))
+
+
+
 <a name="1.2.2"></a>
 ## [1.2.2](https://github.com/neonexchange/nex-auth-protocol/compare/v1.2.1...v1.2.2) (2018-12-13)
 
