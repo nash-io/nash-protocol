@@ -7,6 +7,7 @@ export { default as mnemonicToMasterSeed } from './mnemonicToMasterSeed'
 export { default as mnemonicToSecretKey } from './mnemonicToSecretKey'
 export { default as regenerateMnemonic } from './regenerateMnemonic'
 export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
+export { default as validateMnemonic } from './validateMnemonic'
 
 // Internal API
 export { default as hashPassword } from './hashPassword'
