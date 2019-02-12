@@ -4,6 +4,7 @@ export { default as encryptSecretKey } from './encryptSecretKey'
 export { default as getHKDFKeysFromPassword } from './getHKDFKeysFromPassword'
 export { default as getSecretKey } from './getSecretKey'
 export { default as mnemonicToMasterSeed } from './mnemonicToMasterSeed'
+export { default as mnemonicToSecretKey } from './mnemonicToSecretKey'
 export { default as regenerateMnemonic } from './regenerateMnemonic'
 export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
 
