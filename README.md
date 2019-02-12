@@ -27,6 +27,11 @@ getEntropy = () => { publicKey: Buffer, secretKey: Buffer }
 secretKeyToMnemonic = (secretKey: Buffer) => Array<string>
 
 /*
+  Converts wordlist back to entropy.
+ */
+mnemonictoSecretKey = (Array<string>) => Buffer
+
+/*
   Creates the master seed which is the foundation of all wallet secret keys.
   Use PBKDF2.
 
