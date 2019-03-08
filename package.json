@@ -38,12 +38,18 @@
   "dependencies": {
     "bip39": "2.5.0",
     "browserify-aes": "1.2.0",
+    "crypto-js": "3.1.9-1",
+    "elliptic": "6.4.1",
     "futoin-hkdf": "1.0.2",
+    "lodash": "4.17.11",
     "node-forge": "0.7.6",
     "scrypt-js": "2.0.4"
   },
   "devDependencies": {
+    "@types/crypto-js": "3.1.43",
+    "@types/elliptic": "6.4.5",
     "@types/jest": "23.3.9",
+    "@types/lodash": "4.14.122",
     "@types/node": "10.12.10",
     "jest": "23.6.0",
     "nyc": "13.1.0",
