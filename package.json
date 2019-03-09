@@ -42,7 +42,7 @@
     "elliptic": "6.4.1",
     "futoin-hkdf": "1.0.2",
     "lodash": "4.17.11",
-    "node-forge": "0.7.6",
+    "randombytes": "2.1.0",
     "scrypt-js": "2.0.4"
   },
   "devDependencies": {
@@ -51,6 +51,7 @@
     "@types/jest": "23.3.9",
     "@types/lodash": "4.14.122",
     "@types/node": "10.12.10",
+    "@types/randombytes": "2.0.0",
     "jest": "23.6.0",
     "nyc": "13.1.0",
     "prettier": "1.15.2",
