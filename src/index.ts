@@ -11,7 +11,8 @@ export { default as validateMnemonic } from './validateMnemonic'
 export {
   canSignKind,
   SigningPayloadID,
-  default as signPayload
+  default as signPayload,
+  getRawPayload
 } from './signPayload'
 
 // Internal API

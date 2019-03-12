@@ -2,7 +2,7 @@ import { ec as EC } from 'elliptic'
 
 import bufferize from '../bufferize'
 import stringify from '../stringify'
-import { SigningPayloadID } from './SigningPayloadID'
+import { SigningPayloadID } from './signingPayloadID'
 import signPayload, { getRawPayload } from './signPayload'
 
 const privateKeyHex =
@@ -27,9 +27,13 @@ describe('getRawPayload()', () => {
     expect(output).toBe(expectation)
   })
 
-  it('snake cases keys', () => {
-    const output = getRawPayload({ willBeSnakeCased: 'willNotBeSnakeCased' })
-    const expectation = '{"will_be_snake_cased":"willnotbesnakecased"}'
+  it('deeply snake cases keys', () => {
+    const output = getRawPayload({
+      deep: { willBeSnakeCased: 'willNotBeSnakeCased' },
+      willBeSnakeCased: 'willNotBeSnakeCased'
+    })
+    const expectation =
+      '{"deep":{"will_be_snake_cased":"willnotbesnakecased"},"will_be_snake_cased":"willnotbesnakecased"}'
 
     expect(output).toBe(expectation)
   })

@@ -8,6 +8,7 @@ import toLower from 'lodash/fp/toLower'
 
 import bufferize from '../bufferize'
 import stringify from '../stringify'
+import deep from '../utils/deep'
 import { canSignKind, kindToName, SigningPayloadID } from './signingPayloadID'
 
 const curve = new EC('secp256k1')
@@ -19,7 +20,7 @@ export const getRawPayload = compose(
     Object.keys(o)
       .sort()
       .reduce((acc, el) => ({ ...acc, [el]: o[el] }), {}),
-  mapKeys(snakeCase)
+  deep(mapKeys(snakeCase))
 )
 
 export default function signPayload(
