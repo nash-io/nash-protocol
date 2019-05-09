@@ -12,7 +12,7 @@ export {
   canSignKind,
   SigningPayloadID,
   default as signPayload,
-  getRawPayload
+  canonicalString
 } from './signPayload'
 
 // Internal API

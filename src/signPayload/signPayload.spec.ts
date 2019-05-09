@@ -3,7 +3,7 @@ import { ec as EC } from 'elliptic'
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import { SigningPayloadID } from './signingPayloadID'
-import signPayload, { getRawPayload } from './signPayload'
+import signPayload, { canonicalString } from './signPayload'
 
 const privateKeyHex =
   '2304cae8deb223fbc6774964af6bc4fcda6ba6cff8276cb2c0f49fb0c8a51d57'
@@ -19,16 +19,16 @@ test('get private key import behaves correctly', () => {
   )
 })
 
-describe('getRawPayload()', () => {
+describe('canonical string()', () => {
   it('lowercases and stringifies', () => {
-    const output = getRawPayload({ FOO: 'FOO' })
+    const output = canonicalString({ FOO: 'FOO' })
     const expectation = '{"foo":"foo"}'
 
     expect(output).toBe(expectation)
   })
 
   it('deeply snake cases keys', () => {
-    const output = getRawPayload({
+    const output = canonicalString({
       deep: { willBeSnakeCased: 'willNotBeSnakeCased' },
       willBeSnakeCased: 'willNotBeSnakeCased'
     })
@@ -39,7 +39,7 @@ describe('getRawPayload()', () => {
   })
 
   it('alphabetizes keys', () => {
-    const output = getRawPayload({ foo: true, bar: true })
+    const output = canonicalString({ foo: true, bar: true })
     const expectation = '{"bar":true,"foo":true}'
 
     expect(output).toBe(expectation)

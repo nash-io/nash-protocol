@@ -13,7 +13,7 @@ import { canSignKind, kindToName, SigningPayloadID } from './signingPayloadID'
 
 const curve = new EC('secp256k1')
 
-export const getRawPayload = compose(
+export const canonicalString = compose(
   toLower,
   JSON.stringify,
   o =>
@@ -34,7 +34,7 @@ export default function signPayload(
     )
   }
   const payloadName = kindToName(kind)
-  const message = `${payloadName},${getRawPayload(payload)}`
+  const message = `${payloadName},${canonicalString(payload)}`
   const keypair = curve.keyFromPrivate(privateKey)
 
   const sig = keypair.sign(SHA256(message).toString(hexEncoding), {
