@@ -1,5 +1,5 @@
 {
-  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-immutable"],
+  "extends": ["tslint:latest", "tslint-config-prettier"],
   "linterOptions": {
     "exclude": ["**/*.json"]
   },
@@ -14,6 +14,7 @@
     "no-var-keyword": true,
     "no-parameter-reassignment": true,
     "typedef": [true, "call-signature"],
+    "no-bitwise": false,
 
     // Immutability rules
     "readonly-keyword": true,
@@ -30,23 +31,14 @@
     "no-expression-statement": [
       true,
       {
-        "ignore-prefix": [
-          "console.",
-          "process.exit",
-          "it",
-          "expect",
-          "test",
-          "describe"
-        ]
+        "ignore-prefix": ["console.", "process.exit", "it", "expect", "test", "describe"]
       }
     ],
     "no-if-statement": false,
     /* end tslint-immutable rules */
 
     // Self-added rules
-    "no-console": {
-      "severity": "warning"
-    },
+    "no-console": false,
     "no-submodule-imports": false
   }
 }

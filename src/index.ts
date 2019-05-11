@@ -9,7 +9,6 @@ export { default as regenerateMnemonic } from './regenerateMnemonic'
 export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
 export { default as validateMnemonic } from './validateMnemonic'
 export {
-  canSignKind,
   SigningPayloadID,
   default as signPayload,
   canonicalString

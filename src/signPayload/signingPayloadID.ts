@@ -13,7 +13,7 @@ export enum SigningPayloadID {
   // and not currently implemented
   placeLimitOrderPayload = 9,
   placeStopLimitOrderPayload = 10,
-  placeStopMarkerOrderPayload = 11,
+  placeStopMarketOrderPayload = 11,
   placeMarketOrderPayload = 12,
   signMovementPayload = 13,
   syncStatePayload = 14,
@@ -30,21 +30,35 @@ export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.getAccountBalancePayload]: 'get_account_balance',
   [SigningPayloadID.getDepositAddressPayload]: 'get_deposit_address',
   [SigningPayloadID.getMovementPayload]: 'get_movement',
-  [SigningPayloadID.getOrderPayload]: 'get_account_order'
-}
-
-export function canSignKind(kind: SigningPayloadID): boolean {
-  return kind < SigningPayloadID.getOrderPayload
+  [SigningPayloadID.getOrderPayload]: 'get_account_order',
+  [SigningPayloadID.placeLimitOrderPayload]: 'place_limit_order',
+  [SigningPayloadID.placeStopLimitOrderPayload]: 'place_stop_limit_order',
+  [SigningPayloadID.placeStopMarketOrderPayload]: 'place_stop_market_order',
+  [SigningPayloadID.placeMarketOrderPayload]: 'place_market_order',
+  [SigningPayloadID.signMovementPayload]: 'sign_movement',
+  [SigningPayloadID.syncStatePayload]: 'sync_state',
+  [SigningPayloadID.depositRequestPayload]: 'deposit_request',
+  [SigningPayloadID.withdrawRequestPayload]: 'whithdraw_request'
 }
 
 export function kindToName(kind: SigningPayloadID): string {
   const name = PayloadIDToName[kind]
 
   if (name == null) {
-    throw new Error(
-      `Cannot use nex-auth-protocol to get name with kind ${kind}`
-    )
+    throw new Error(`Cannot use nex-auth-protocol to get name with kind ${kind}`)
   }
 
   return PayloadIDToName[kind] as string
+}
+
+export function needBlockchainSignature(kind: SigningPayloadID): boolean {
+  return kind > SigningPayloadID.getOrderPayload
+}
+
+export function isOrderPayload(kind: SigningPayloadID): boolean {
+  return kind > SigningPayloadID.getOrderPayload && kind < SigningPayloadID.signMovementPayload
+}
+
+export function isLimitOrderPayload(kind: SigningPayloadID): boolean {
+  return kind === SigningPayloadID.placeLimitOrderPayload || kind === SigningPayloadID.placeStopLimitOrderPayload
 }
