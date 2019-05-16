@@ -13,6 +13,7 @@ import Neon from '@cityofzion/neon-js'
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
+import { Market } from '../types'
 
 import {
   isLimitOrderPayload,
@@ -142,7 +143,7 @@ function getUnitPairs(market: string): any {
 
 interface Config {
   readonly assetData: { readonly [key: string]: Asset }
-  readonly marketData: any
+  readonly marketData: { readonly [key: string]: Market }
   readonly wallets: { readonly [key: string]: Wallet }
 }
 
@@ -202,7 +203,7 @@ function signNEOBlockchainData(privateKey: string, data: string): string {
 }
 
 const minOrderRate = 0
-const maxOrderRate = 18446744073709551615
+const maxOrderRate = 'ffffffffffffffff' // 18446744073709551615
 // const maxOrderRateEth = 4294967295
 const maxFeeRate = 250000
 
@@ -241,8 +242,7 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
     buffer.writeString(toLittleEndian(blockchainData.nonceFrom))
   }
 
-  // buffer.write(toLittleEndian(blockchainData.amount))
-  buffer.writeString('0xffff')
+  buffer.writeString(toLittleEndian(Number(blockchainData.amount)))
 
   // only write the fee's when the it's an order.
   if (isOrderPayload(kind)) {
@@ -250,13 +250,13 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
     if (isLimitOrderPayload(kind)) {
       // TODO: normalization on the price of the limit order.
       buffer.writeString(toLittleEndian(minOrderRate))
-      buffer.writeString(toLittleEndian(maxOrderRate))
+      buffer.writeString(maxOrderRate)
       buffer.writeString(toLittleEndian(maxFeeRate))
     }
 
     // TODO: need normalization whith precicions
     buffer.writeString(toLittleEndian(minOrderRate))
-    buffer.writeString(toLittleEndian(maxOrderRate))
+    buffer.writeString(maxOrderRate)
     buffer.writeString(toLittleEndian(maxFeeRate))
   }
 

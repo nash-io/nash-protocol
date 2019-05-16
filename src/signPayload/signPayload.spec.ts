@@ -126,12 +126,12 @@ const config = {
 
 test('NEO blockchain data market_order_payload', () => {
   const payload = {
-    amount: { amount: '10.00', currency: 'neo' },
+    amount: { amount: '10.123456', currency: 'neo' },
     buyOrSell: 'BUY',
     market: 'gas_neo',
-    nonceFrom: 1,
-    nonceOrder: 2,
-    nonceTo: 3,
+    nonceFrom: 0,
+    nonceOrder: 0,
+    nonceTo: 0,
     timestamp: 1551452048302
   }
 
@@ -140,6 +140,7 @@ test('NEO blockchain data market_order_payload', () => {
     '01fd783cc6b77e38f6ad89af019cfdd1a6fc95e4d3e72d286979ee6cb1b7e65dfddfb2e384100b8d148e7758de42e4168b71792c609b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc500000000000000000000000000000000c0789a00000000000000000000000000ffffffffffffffff90d00300000000000000000000000000039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23'
 
   console.log('====================================')
+  console.log(Number(payload.amount.amount))
   console.log(data.length)
   console.log(data)
   console.log(want.length)
@@ -150,7 +151,7 @@ test('NEO blockchain data market_order_payload', () => {
 
 import { toLittleEndian } from './signPayload'
 test('to little endian', async () => {
-  const amount = 10901
+  const amount = 18446744073709551615
   console.log(toLittleEndian(amount))
 })
 
