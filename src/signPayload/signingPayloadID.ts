@@ -62,3 +62,21 @@ export function isOrderPayload(kind: SigningPayloadID): boolean {
 export function isLimitOrderPayload(kind: SigningPayloadID): boolean {
   return kind === SigningPayloadID.placeLimitOrderPayload || kind === SigningPayloadID.placeStopLimitOrderPayload
 }
+
+// Returns the prefix for the blockchain data based on the id of the payload.
+export function kindToOrderPrefix(kind: SigningPayloadID): string {
+  if (kind === SigningPayloadID.syncStatePayload) {
+    return '00'
+  }
+  if (isOrderPayload(kind)) {
+    return '01'
+  }
+  if (kind == SigningPayloadID.depositRequestPayload) {
+    return '02'
+  }
+  if (kind == SigningPayloadID.withdrawRequestPayload) {
+    return '03'
+  }
+
+  throw new Error(`invalid kind given ${kindToName(kind)}`)
+}

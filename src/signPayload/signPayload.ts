@@ -19,7 +19,8 @@ import {
   isOrderPayload,
   kindToName,
   needBlockchainSignature,
-  SigningPayloadID
+  SigningPayloadID,
+  kindToOrderPrefix
 } from './signingPayloadID'
 
 import { Wallet } from '../wallet'
@@ -229,13 +230,13 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
 
   const buffer = new SmartBuffer()
-  buffer.writeString('0x00') // prefix
-  buffer.writeString(getNEOScriptHash(config))
-  buffer.writeString(config.assetData[unitA].hash)
+  buffer.writeString(kindToOrderPrefix(kind)) // prefix
+  buffer.writeString(reverseHexString(getNEOScriptHash(config)))
+  buffer.writeString(reverseHexString(config.assetData[unitA].hash))
 
   // only orders have a destination market.
   if (isOrderPayload(kind)) {
-    buffer.writeString(config.assetData[unitB].hash)
+    buffer.writeString(reverseHexString(config.assetData[unitB].hash))
     buffer.writeString(toLittleEndian(blockchainData.nonceTo))
     buffer.writeString(toLittleEndian(blockchainData.nonceFrom))
   }
@@ -291,12 +292,37 @@ function getNEOScriptHash(config: Config): string {
 }
 
 // Returns the given number as little endian in hex format.
-function toLittleEndian(n: number): string {
+export function toLittleEndian(n: number): string {
   const buf = new Buffer(8)
 
   buf.fill(0)
-  buf.writeUInt32BE(n & 0x00ff, 4) // write the low order bits
-  buf.writeUInt32LE(n >> 8, 0) // write the high order bits (shifted over)
+  buf.writeUInt32LE(n & 0x00ff, 0) // write the low order bits
+  buf.writeUInt32LE(n >> 8, 1) // write the low order bits (shifted over)
 
   return buf.toString('hex')
+}
+
+// function getETHAssetID(asset: string): string {
+//   switch (asset) {
+//     case 'eth':
+//       return '0000'
+//     case 'bat':
+//       return '0001'
+//     case 'omg':
+//       return '0002'
+//     case 'usdc':
+//       return '0003'
+//     case 'bnb':
+//       return '0004'
+//     default:
+//       return 'ffff'
+//   }
+// }
+
+function reverseHexString(hex: string): string {
+  const rev = hex.match(/[a-fA-F0-9]{2}/g)
+  if (!rev) {
+    throw new Error('invalid hex string given')
+  }
+  return rev.reverse().join('')
 }
