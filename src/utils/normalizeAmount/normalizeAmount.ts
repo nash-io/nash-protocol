@@ -5,8 +5,9 @@ export default function normalizeAmount(amount: string, market: Market): string 
   return normalizeAmountForMarketPrecision(amount, precision)
 }
 
-function normalizeAmountForMarketPrecision(amount: string, tradeSize: number): string {
+export function normalizeAmountForMarketPrecision(amount: string, tradeSize: number): string {
   const amountSplit = amount.split('.')
+  let _amount: string = amount
 
   if (tradeSize === 0) {
     if (amountSplit.length === 1) {
@@ -19,20 +20,20 @@ function normalizeAmountForMarketPrecision(amount: string, tradeSize: number): s
   if (amountSplit.length === 1) {
     const head = amountSplit[0]
     const tail = ''.padStart(tradeSize, '0')
-    return head + '.' + tail
+    _amount = head + '.' + tail
   }
 
   if (amountSplit[1].length < tradeSize) {
     const head = amountSplit[0]
     const tail = ''.padStart(tradeSize - amountSplit[1].length, '0')
-    return head + '.' + amountSplit[1] + tail
+    _amount = head + '.' + amountSplit[1] + tail
   }
 
   if (amountSplit[1].length > tradeSize) {
-    return amountSplit[0] + '.' + amountSplit[1].substring(0, tradeSize)
+    _amount = amountSplit[0] + '.' + amountSplit[1].substring(0, tradeSize)
   }
 
-  return amount
+  return _amount.replace('.', '')
 }
 
 const getPrecision = (exp: string): number => (+exp === 0 ? 0 : Math.abs(Math.log10(+exp)))

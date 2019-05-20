@@ -13,6 +13,7 @@ import Neon from '@cityofzion/neon-js'
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
+import normalizeAmount from '../utils/normalizeAmount'
 import { Market } from '../types'
 
 import {
@@ -242,7 +243,8 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
     buffer.writeString(toLittleEndian(blockchainData.nonceFrom))
   }
 
-  buffer.writeString(toLittleEndian(Number(blockchainData.amount)))
+  const amount = normalizeAmount(blockchainData.amount, config.marketData[blockchainData.marketName])
+  buffer.writeString(toLittleEndian(Number(amount)))
 
   // only write the fee's when the it's an order.
   if (isOrderPayload(kind)) {

@@ -99,8 +99,6 @@ test('serialize, hash, and sign list account orders payload', () => {
   )
 })
 
-// 01fd783cc6b77e38f6ad89af019cfdd1a6fc95e4d3e72d286979ee6cb1b7e65dfddfb2e384100b8d148e7758de42e4168b71792c609b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc50300000000000000010000000000000080969800000000000000000000000000ffffffffffffffff90d00300000000000200000000000000039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23
-
 const config = {
   assetData: {
     gas: {
@@ -114,7 +112,18 @@ const config = {
       precision: 8
     }
   },
-  marketData: {},
+  marketData: {
+    gas_neo: {
+      aUnit: '',
+      aUnitPrecision: 8,
+      bUnit: '',
+      bUnitPrecision: 8,
+      minTickSize: '0.000001',
+      minTradeSize: '0.000001',
+      name: 'neo',
+      status: ''
+    }
+  },
   wallets: {
     neo: {
       address: 'Aet6eGnQMvZ2xozG3A3SvWrMFdWMvZj1cU',
@@ -124,7 +133,7 @@ const config = {
   }
 }
 
-test('NEO blockchain data market_order_payload', () => {
+test('NEO blockchain data market_order_payload', async () => {
   const payload = {
     amount: { amount: '10.123456', currency: 'neo' },
     buyOrSell: 'BUY',
@@ -139,35 +148,5 @@ test('NEO blockchain data market_order_payload', () => {
   const want =
     '01fd783cc6b77e38f6ad89af019cfdd1a6fc95e4d3e72d286979ee6cb1b7e65dfddfb2e384100b8d148e7758de42e4168b71792c609b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc500000000000000000000000000000000c0789a00000000000000000000000000ffffffffffffffff90d00300000000000000000000000000039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23'
 
-  console.log('====================================')
-  console.log(Number(payload.amount.amount))
-  console.log(data.length)
-  console.log(data)
-  console.log(want.length)
-  console.log('====================================')
-
-  expect(data).toBe(want)
+  expect(data.toLowerCase()).toBe(want)
 })
-
-import { toLittleEndian } from './signPayload'
-test('to little endian', async () => {
-  const amount = 18446744073709551615
-  console.log(toLittleEndian(amount))
-})
-
-// test('serialize, hash and sign place_market_order payload', () => {
-//   const payload = {
-//     amount: { amount: '10.00', currency: 'neo' },
-//     buyOrSell: 'SELL',
-//     market: 'neo_gas',
-//     nonce: 1,
-//     nonceFrom: 3,
-//     nonceOrder: 4,
-//     nonceTo: 2,
-//     timestamp: 1552027307101
-//   }
-
-//   const payloadSignature = signPayload(privateKey, SigningPayloadID.placeMarketOrderPayload, payload)
-
-//   expect(payloadSignature).toBeFalsy()
-// })
