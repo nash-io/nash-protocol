@@ -8,12 +8,11 @@ import snakeCase from 'lodash/fp/snakeCase'
 import toLower from 'lodash/fp/toLower'
 import { SmartBuffer } from 'smart-buffer'
 
-import Neon from '@cityofzion/neon-js'
-
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
 import normalizeAmount from '../utils/normalizeAmount'
+import { toBigEndianHex } from '../utils/currency'
 import { Market } from '../types'
 
 import {
@@ -26,6 +25,7 @@ import {
 } from './signingPayloadID'
 
 import { Wallet } from '../wallet'
+import getNEOScriptHash from '../utils/getNEOScriptHash'
 
 const curve = new EC('secp256k1')
 
@@ -233,7 +233,7 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
 
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind)) // prefix
-  buffer.writeString(reverseHexString(getNEOScriptHash(config)))
+  buffer.writeString(reverseHexString(getNEOScriptHash(config.wallets.neo.address)))
   buffer.writeString(reverseHexString(config.assetData[unitA].hash))
 
   // only orders have a destination market.
@@ -275,6 +275,61 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
   return buffer.toString('utf8')
 }
 
+export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+  // make sure we have a NEO wallet in our config object.
+  if (!('eth' in config.wallets)) {
+    throw new Error('NEO wallet not found in config.wallets')
+  }
+  const { kind } = payloadAndKind
+  const blockchainData = inferBlockchainData(payloadAndKind)
+  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
+  const address = config.wallets.eth.address
+
+  const buffer = new SmartBuffer()
+  buffer.writeString(kindToOrderPrefix(kind))
+  buffer.writeString(address)
+  buffer.writeString(reverseHexString(getETHAssetID(unitA)))
+
+  if (isOrderPayload(kind)) {
+    buffer.writeString(getETHAssetID(unitB))
+
+    // TOOD: Write nonces in the 4 byte ETH format.
+    buffer.writeString('00000000')
+    buffer.writeString('00000000')
+  }
+
+  const amount = normalizeAmount(blockchainData.amount, config.marketData[blockchainData.marketName])
+  buffer.writeString(toBigEndianHex(Number(amount)))
+
+  if (isOrderPayload(kind)) {
+    if (isLimitOrderPayload(kind)) {
+      buffer.writeString(toBigEndianHex(minOrderRate))
+      buffer.writeString(maxOrderRate)
+      buffer.writeString(toBigEndianHex(maxFeeRate))
+    }
+    buffer.writeString(toBigEndianHex(minOrderRate))
+    buffer.writeString(maxOrderRate)
+    buffer.writeString(toBigEndianHex(maxFeeRate))
+  }
+
+  if (isOrderPayload(kind)) {
+    // also, the nonce needs to be the order nonce
+    // convertEthNonce
+    // buffer.writeString(toLittleEndian(blockchainData.nonceOrder))
+    buffer.writeString('00000000')
+  } else {
+    // covertEthNonce
+    // buffer.writeString(toLittleEndian(blockchainData.nonce))
+    buffer.writeString('00000000')
+  }
+
+  if (!isOrderPayload(kind)) {
+    buffer.writeString(address)
+  }
+
+  return buffer.toString('utf8').toUpperCase()
+}
+
 function signETHBlockchainData(config: Config, payload: any): BlockchainSignature {
   console.log(payload)
   console.log(config)
@@ -282,15 +337,6 @@ function signETHBlockchainData(config: Config, payload: any): BlockchainSignatur
     blockchain: '',
     signature: ''
   }
-}
-
-// Retrieves the NEO script hash from the given Config object.
-function getNEOScriptHash(config: Config): string {
-  if (!('neo' in config.wallets)) {
-    throw new Error('wallet data for NEO not found in config.wallets')
-  }
-
-  return Neon.create.account(config.wallets.neo.address).scriptHash
 }
 
 // Returns the given number as little endian in hex format.
@@ -304,22 +350,22 @@ export function toLittleEndian(n: number): string {
   return buf.toString('hex')
 }
 
-// function getETHAssetID(asset: string): string {
-//   switch (asset) {
-//     case 'eth':
-//       return '0000'
-//     case 'bat':
-//       return '0001'
-//     case 'omg':
-//       return '0002'
-//     case 'usdc':
-//       return '0003'
-//     case 'bnb':
-//       return '0004'
-//     default:
-//       return 'ffff'
-//   }
-// }
+function getETHAssetID(asset: string): string {
+  switch (asset) {
+    case 'eth':
+      return '0000'
+    case 'bat':
+      return '0001'
+    case 'omg':
+      return '0002'
+    case 'usdc':
+      return '0003'
+    case 'bnb':
+      return '0004'
+    default:
+      return 'ffff'
+  }
+}
 
 function reverseHexString(hex: string): string {
   const rev = hex.match(/[a-fA-F0-9]{2}/g)
