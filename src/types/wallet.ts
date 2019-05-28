@@ -1,5 +1,4 @@
-// Wallet holds information about a blockchain private key.
-export interface Wallet {
+export default interface Wallet {
   readonly address: string
   readonly privateKey: string
   readonly publicKey: string

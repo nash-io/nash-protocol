@@ -51,6 +51,10 @@ export function toLittleEndian(n: number): Buffer {
   return big.toBuffer()
 }
 
+export function toLittleEndianHex(n: number): string {
+  return toLittleEndian(n).toString('hex')
+}
+
 // Returns the given number as big endian buffer.
 export function toBigEndian(n: number): Buffer {
   const big = new Int64Buffer.Int64BE(n)

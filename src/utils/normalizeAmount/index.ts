@@ -1,3 +1,1 @@
-import normalizeAmount from './normalizeAmount'
-
-export default normalizeAmount
+export { default as normalizeAmount } from './normalizeAmount'
