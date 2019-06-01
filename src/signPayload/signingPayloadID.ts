@@ -10,15 +10,22 @@ export enum SigningPayloadID {
   getMovementPayload = 7,
   getOrderPayload = 8,
   // the below are operations which require blockchain information
-  // and not currently implemented
+  // and not currently implemented excluding 14, 20 for syncingStates
   placeLimitOrderPayload = 9,
   placeStopLimitOrderPayload = 10,
   placeStopMarkerOrderPayload = 11,
   placeMarketOrderPayload = 12,
   signMovementPayload = 13,
-  syncStatePayload = 14,
+  // excluded
+  syncStatesPayload = 14,
   depositRequestPayload = 15,
-  withdrawRequestPayload = 16
+  withdrawRequestPayload = 16,
+  cancelAllOrdersPayload = 17,
+  listAccountTransactionsPayload = 18,
+  getAccountPortfolioPayload = 19,
+  // excluded
+  getStatesPayload = 20,
+  signStatesPayload = 21
 }
 
 export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
@@ -30,11 +37,17 @@ export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.getAccountBalancePayload]: 'get_account_balance',
   [SigningPayloadID.getDepositAddressPayload]: 'get_deposit_address',
   [SigningPayloadID.getMovementPayload]: 'get_movement',
-  [SigningPayloadID.getOrderPayload]: 'get_account_order'
+  [SigningPayloadID.getOrderPayload]: 'get_account_order',
+  [SigningPayloadID.getStatesPayload]: 'get_states',
+  [SigningPayloadID.syncStatesPayload]: 'sync_states'
 }
 
 export function canSignKind(kind: SigningPayloadID): boolean {
-  return kind < SigningPayloadID.getOrderPayload
+  return (
+    kind <= SigningPayloadID.getOrderPayload ||
+    kind === SigningPayloadID.syncStatesPayload ||
+    kind === SigningPayloadID.getStatesPayload
+  )
 }
 
 export function kindToName(kind: SigningPayloadID): string {
