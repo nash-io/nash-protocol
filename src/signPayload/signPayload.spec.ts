@@ -222,6 +222,11 @@ test('sign market order payload NEO_ETH', async () => {
 
 const config = {
   assetData: {
+    eth: {
+      blockchain: 'eth',
+      hash: '0000000000000000000000000000000000000000',
+      precision: 8
+    },
     gas: {
       blockchain: 'neo',
       hash: '602C79718B16E442DE58778E148D0B1084E3B2DFFD5DE6B7B16CEE7969282DE7',
@@ -231,21 +236,16 @@ const config = {
       blockchain: 'neo',
       hash: 'C56F33FC6ECFCD0C225C4AB356FEE59390AF8560BE0E930FAEBE74A6DAFF7C9B',
       precision: 8
-    },
-    eth: {
-      blockchain: 'eth',
-      hash: '0000000000000000000000000000000000000000',
-      precision: 8
     }
   },
   marketData: {
-    neo_eth: {
-      minTickSize: 6,
-      minTradeSize: 2
-    },
     gas_neo: {
       minTickSize: 2,
       minTradeSize: 6
+    },
+    neo_eth: {
+      minTickSize: 6,
+      minTradeSize: 2
     }
   },
   wallets: {

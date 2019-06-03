@@ -71,10 +71,10 @@ export function kindToOrderPrefix(kind: SigningPayloadID): string {
   if (isOrderPayload(kind)) {
     return '01'
   }
-  if (kind == SigningPayloadID.depositRequestPayload) {
+  if (kind === SigningPayloadID.depositRequestPayload) {
     return '02'
   }
-  if (kind == SigningPayloadID.withdrawRequestPayload) {
+  if (kind === SigningPayloadID.withdrawRequestPayload) {
     return '03'
   }
 

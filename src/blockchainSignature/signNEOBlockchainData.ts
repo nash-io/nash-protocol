@@ -1,13 +1,12 @@
-import { SmartBuffer } from 'smart-buffer'
 import { ec as EC } from 'elliptic'
-
-import { inferBlockchainData, getUnitPairs, reverseHexString } from './helpers'
-import { toLittleEndianHex, normalizeAmount } from '../utils/currency'
+import { normalizeAmount, toLittleEndianHex } from '../utils/currency'
+import { getUnitPairs, inferBlockchainData, reverseHexString } from './helpers'
+import { maxOrderRate, maxFeeRate, minOrderRate } from './constants'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
-import { minOrderRate, maxOrderRate, maxFeeRate } from './constants'
-import { Config, BlockchainSignature } from '../types'
 
+import { BlockchainSignature, Config } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
+import { SmartBuffer } from 'smart-buffer'
 
 const curve = new EC('secp256k1')
 

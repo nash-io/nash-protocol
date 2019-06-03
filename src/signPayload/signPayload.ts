@@ -58,7 +58,7 @@ export default function signPayload(
   // to the client.
 
   return {
-    payload: payload,
+    payload,
     signature: stringify(bufferize(sig.toDER()))
   }
 }
