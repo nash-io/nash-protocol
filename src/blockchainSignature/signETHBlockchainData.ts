@@ -1,18 +1,20 @@
 import { SmartBuffer } from 'smart-buffer'
+import { ec as EC } from 'elliptic'
 
 import { inferBlockchainData, getUnitPairs, getETHAssetID, reverseHexString } from './helpers'
-import { toBigEndianHex } from '../utils/currency'
-import { normalizeAmount } from '../utils/normalizeAmount'
+import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from './constants'
 import { Config, BlockchainSignature } from '../types'
 
-export function signETHBlockchainData(privateKey: string, payload: any): BlockchainSignature {
-  console.log(privateKey)
-  console.log(payload)
+const curve = new EC('secp256k1')
+
+export function signETHBlockchainData(privateKey: string, data: string): BlockchainSignature {
+  const keypair = curve.keyFromPrivate(privateKey)
+
   return {
     blockchain: 'eth',
-    signature: ''
+    signature: keypair.sign(data).toDER()
   }
 }
 
@@ -39,8 +41,10 @@ export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: 
     buffer.writeString('00000000')
   }
 
-  const amount = normalizeAmount(blockchainData.amount, config.marketData[blockchainData.marketName])
-  buffer.writeString(toBigEndianHex(Number(amount)))
+  // normalize + to big endian
+  const precision = config.marketData[blockchainData.marketName].minTradeSize
+  const amount = normalizeAmount(blockchainData.amount, precision)
+  buffer.writeString(toBigEndianHex(amount))
 
   if (isOrderPayload(kind)) {
     if (isLimitOrderPayload(kind)) {

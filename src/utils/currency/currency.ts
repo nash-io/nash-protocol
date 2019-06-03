@@ -1,12 +1,12 @@
 import Int64Buffer from 'int64-buffer'
 
-export function normalizeAmount(amount: string, precision: number): string {
+export function normalizeAmount(amount: string, precision: number): number {
   const amountSplit = amount.split('.')
   let _amount: string = amount
 
   if (precision === 0) {
     if (amountSplit.length === 1) {
-      return amountSplit[0]
+      return Number(amountSplit[0])
     } else {
       throw new Error(`to many decimals given expected: ${precision} got ${amountSplit[1].length}`)
     }
@@ -16,19 +16,15 @@ export function normalizeAmount(amount: string, precision: number): string {
     const head = amountSplit[0]
     const tail = ''.padStart(precision, '0')
     _amount = head + '.' + tail
-  }
-
-  if (amountSplit[1].length < precision) {
+  } else if (amountSplit[1].length < precision) {
     const head = amountSplit[0]
     const tail = ''.padStart(precision - amountSplit[1].length, '0')
     _amount = head + '.' + amountSplit[1] + tail
-  }
-
-  if (amountSplit[1].length > precision) {
+  } else if (amountSplit[1].length > precision) {
     _amount = amountSplit[0] + '.' + amountSplit[1].substring(0, precision)
   }
 
-  return _amount.replace('.', '')
+  return Number(_amount.replace('.', ''))
 }
 
 export function precisionDiff(amount: string, precision: number): number {

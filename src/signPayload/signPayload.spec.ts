@@ -5,6 +5,8 @@ import stringify from '../stringify'
 import { SigningPayloadID } from '../payload'
 import signPayload, { canonicalString } from '../signPayload'
 import { buildNEOBlockchainSignatureData, buildETHBlockchainSignatureData } from '../blockchainSignature'
+import { kindToName } from '../payload/signingPayloadID'
+import _ from 'lodash'
 
 const privateKeyHex = '2304cae8deb223fbc6774964af6bc4fcda6ba6cff8276cb2c0f49fb0c8a51d57'
 const privateKey = Buffer.from(privateKeyHex, 'hex')
@@ -100,11 +102,35 @@ test('serialize, hash, and sign list account orders payload', () => {
   )
 })
 
+test('serialize, hash, and sign market order payload', async () => {
+  const privKey = Buffer.from('66f30af13d11db34f5b77ea366126b07ed69df3491ea64f62186d47b8857d872', 'hex')
+
+  const payload = {
+    amount: { amount: '10.123456', currency: 'neo' },
+    buyOrSell: 'buy',
+    marketName: 'neo_eth',
+    nonceFrom: 0,
+    nonceOrder: 0,
+    nonceTo: 0,
+    timestamp: 1551452048302
+  }
+
+  const canString = `place_market_order,{"amount":{"amount":"10.123456","currency":"neo"},"buy_or_sell":"buy","market_name":"neo_eth","nonce_from":0,"nonce_order":0,"nonce_to":0,"timestamp":1551452048302}`
+  const payloadName = kindToName(SigningPayloadID.placeMarketOrderPayload)
+  const message = `${payloadName},${canonicalString(payload)}`
+  expect(message).toBe(canString)
+
+  const payloadSignature = signPayload(privKey, SigningPayloadID.placeMarketOrderPayload, payload, config)
+  expect(payloadSignature.signature.toUpperCase()).toBe(
+    '3045022100D041CE575C593FFF8BAC3EA6AC05665A9D6845A194055BE9F2081B88A6A07B7C022038B20A3B3A46C60299D58C511D79D204B5C4571587F3B5503BC0EA839794534D'
+  )
+})
+
 test('build NEO blockchain signature data for market_order_payload', async () => {
   const payload = {
     amount: { amount: '10.123456', currency: 'neo' },
     buyOrSell: 'BUY',
-    market: 'gas_neo',
+    marketName: 'gas_neo',
     nonceFrom: 0,
     nonceOrder: 0,
     nonceTo: 0,
@@ -115,25 +141,83 @@ test('build NEO blockchain signature data for market_order_payload', async () =>
   const want =
     '01fd783cc6b77e38f6ad89af019cfdd1a6fc95e4d3e72d286979ee6cb1b7e65dfddfb2e384100b8d148e7758de42e4168b71792c609b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc500000000000000000000000000000000c0789a00000000000000000000000000ffffffffffffffff90d00300000000000000000000000000039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23'
 
-  expect(data.toLowerCase()).toBe(want)
+  expect(data).toBe(want)
 })
 
-test('build ETH blockchain signature data for market_order_payload', async () => {
+test('build blockchain signature data, market order payload, NEO_ETH', async () => {
   const payload = {
-    amount: { amount: '10.000000', currency: 'eth' },
-    buyOrSell: 'SELL',
-    market: 'neo_eth',
+    amount: { amount: '10.123456', currency: 'neo' },
+    buyOrSell: 'buy',
+    marketName: 'neo_eth',
+    nonceFrom: 0,
+    nonceOrder: 0,
+    nonceTo: 0,
+    timestamp: 1551452048302
+  }
+  const neoSignatureData =
+    '01fd783cc6b77e38f6ad89af019cfdd1a6fc95e4d39b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc5000000000000000000000000000000000000000000000000000000000000000000000000f4030000000000000000000000000000ffffffffffffffff90d00300000000000000000000000000039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23'
+  const ethSignatureData =
+    '015F8B6D9D487C8136CC1AD87D6E176742AF625DE8FFFF000000000000000000000000000000018B500000000000000000FFFFFFFFFFFFFFFF000000000003D09000000000'
+
+  const neoSigData = buildNEOBlockchainSignatureData(config, {
+    kind: SigningPayloadID.placeMarketOrderPayload,
+    payload
+  })
+  expect(neoSigData).toBe(neoSignatureData)
+
+  const ethSigData = buildETHBlockchainSignatureData(config, {
+    kind: SigningPayloadID.placeMarketOrderPayload,
+    payload
+  })
+  expect(ethSigData).toBe(ethSignatureData)
+})
+
+test('build NEO blockchain signature data, market order payload, NEO_ETH', async () => {
+  const payload = {
+    amount: { amount: '10.123456', currency: 'neo' },
+    buyOrSell: 'buy',
+    marketName: 'neo_eth',
     nonceFrom: 0,
     nonceOrder: 0,
     nonceTo: 0,
     timestamp: 1551452048302
   }
 
-  const data = buildETHBlockchainSignatureData(config, { kind: SigningPayloadID.placeMarketOrderPayload, payload })
-  const want =
-    '015F8B6D9D487C8136CC1AD87D6E176742AF625DE8FFFF0000000000000000000000000000000186A00000000000000000FFFFFFFFFFFFFFFF000000000003D09000000000'
+  const data = buildNEOBlockchainSignatureData(config, { kind: SigningPayloadID.placeMarketOrderPayload, payload })
+  expect(data).toBe(
+    '01fd783cc6b77e38f6ad89af019cfdd1a6fc95e4d39b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc5000000000000000000000000000000000000000000000000000000000000000000000000f4030000000000000000000000000000ffffffffffffffff90d00300000000000000000000000000039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23'
+  )
+})
 
-  expect(data).toBe(want)
+test('sign market order payload NEO_ETH', async () => {
+  const payloadSignature =
+    '3045022100D041CE575C593FFF8BAC3EA6AC05665A9D6845A194055BE9F2081B88A6A07B7C022038B20A3B3A46C60299D58C511D79D204B5C4571587F3B5503BC0EA839794534D'
+  const ethSignature =
+    '319E32F00B9254D9514F9D2AC7F2A467730FD3E8CCD85D5267943D7D884393395A03F209874FA72A4755868176B1C9E336B8DA523A1864215DA15000150F75A701'
+  const neoSignature =
+    '96D60240C91C3E7A06F146FF51524626BA1D1A83976686077E7EF9CF4557953A6E275846E5924E5067BB78A96BFCE98053914645B184A71EA74DC105BE02FBD2'
+  const payload = {
+    amount: { amount: '10.123456', currency: 'neo' },
+    buyOrSell: 'buy',
+    marketName: 'neo_eth',
+    nonceFrom: 0,
+    nonceOrder: 0,
+    nonceTo: 0,
+    timestamp: 1551452048302
+  }
+
+  const privKey = Buffer.from('66f30af13d11db34f5b77ea366126b07ed69df3491ea64f62186d47b8857d872', 'hex')
+  const signedPayload = signPayload(privKey, SigningPayloadID.placeMarketOrderPayload, payload, config)
+  expect(signedPayload.signature.toUpperCase()).toBe(payloadSignature)
+
+  const { blockchainSignatures } = signedPayload.payload
+  expect(blockchainSignatures).toHaveLength(2)
+
+  const neoObj = _.find(blockchainSignatures, { blockchain: 'neo' })
+  expect(Buffer.from(_.get(neoObj, 'signature')).toString('hex')).toBe(neoSignature)
+
+  const ethObj = _.find(blockchainSignatures, { blockchain: 'eth' })
+  expect(Buffer.from(_.get(ethObj, 'signature')).toString('hex')).toBe(ethSignature)
 })
 
 const config = {
@@ -156,31 +240,20 @@ const config = {
   },
   marketData: {
     neo_eth: {
-      aUnit: '',
-      aUnitPrecision: 8,
-      bUnit: '',
-      bUnitPrecision: 8,
-      minTickSize: '0.000001',
-      minTradeSize: '0.0001',
-      name: 'neo',
-      status: ''
+      minTickSize: 6,
+      minTradeSize: 2
     },
     gas_neo: {
-      aUnit: '',
-      aUnitPrecision: 8,
-      bUnit: '',
-      bUnitPrecision: 8,
-      minTickSize: '0.000001',
-      minTradeSize: '0.000001',
-      name: 'neo',
-      status: ''
+      minTickSize: 2,
+      minTradeSize: 6
     }
   },
   wallets: {
     eth: {
       address: '5f8b6d9d487c8136cc1ad87d6e176742af625de8',
-      privateKey: '7146c0beb313d849809a263d3e112b7c14801c381ddc8b793ab751d451886716',
-      publicKey: '039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23'
+      privateKey: '99ed2f77373431e4052690dd23d72854737f2a7b12b12c6330f6a68ec071a430',
+      publicKey:
+        '04d37f1a8612353ffbf20b0a68263b7aae235bd3af8d60877ed8135c27630d895894885f220a39acab4e70b025b1aca95fab1cd9368bf3dc912ef32dc65aecfa02'
     },
     neo: {
       address: 'Aet6eGnQMvZ2xozG3A3SvWrMFdWMvZj1cU',

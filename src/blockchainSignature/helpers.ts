@@ -38,13 +38,12 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
     case SigningPayloadID.placeStopLimitOrderPayload:
       return {
         amount: payload.amount.amount,
-        marketName: payload.market,
+        marketName: payload.marketName,
         nonce: payload.nonce,
         nonceFrom: payload.nonceFrom,
         nonceOrder: payload.nonceOrder,
         nonceTo: payload.nonceTo
       }
-      break
     default:
       throw new Error('invalid kind')
   }

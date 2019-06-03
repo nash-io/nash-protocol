@@ -2,8 +2,7 @@ import { SmartBuffer } from 'smart-buffer'
 import { ec as EC } from 'elliptic'
 
 import { inferBlockchainData, getUnitPairs, reverseHexString } from './helpers'
-import { toLittleEndianHex } from '../utils/currency'
-import { normalizeAmount } from '../utils/normalizeAmount'
+import { toLittleEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from './constants'
 import { Config, BlockchainSignature } from '../types'
@@ -43,8 +42,9 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
     buffer.writeString(toLittleEndianHex(blockchainData.nonceFrom))
   }
 
-  const amount = normalizeAmount(blockchainData.amount, config.marketData[blockchainData.marketName])
-  buffer.writeString(toLittleEndianHex(Number(amount)))
+  const precision = config.marketData[blockchainData.marketName].minTradeSize
+  const amount = normalizeAmount(blockchainData.amount, precision)
+  buffer.writeString(toLittleEndianHex(amount))
 
   // only write the fee's when the it's an order.
   if (isOrderPayload(kind)) {
@@ -72,5 +72,5 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
 
   // Already written everthing in hex, so just return the utf8 string from the
   // buffer.
-  return buffer.toString('utf8')
+  return buffer.toString('utf8').toLowerCase()
 }

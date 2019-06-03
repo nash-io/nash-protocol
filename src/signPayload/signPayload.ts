@@ -15,31 +15,9 @@ import { createSignatureForBlockchain } from '../blockchainSignature'
 import { kindToName, needBlockchainSignature, SigningPayloadID } from '../payload/signingPayloadID'
 import { Config, PayloadSignature, BlockchainSignature } from '../types'
 import { PayloadAndKind } from '../payload'
+import { inferBlockchainData, getUnitPairs } from '../blockchainSignature/helpers'
 
 const curve = new EC('secp256k1')
-
-const config = {
-  assetData: {
-    gas: {
-      blockchain: 'neo',
-      hash: '602C79718B16E442DE58778E148D0B1084E3B2DFFD5DE6B7B16CEE7969282DE7',
-      precision: 8
-    },
-    neo: {
-      blockchain: 'neo',
-      hash: 'C56F33FC6ECFCD0C225C4AB356FEE59390AF8560BE0E930FAEBE74A6DAFF7C9B',
-      precision: 8
-    }
-  },
-  marketData: {},
-  wallets: {
-    neo: {
-      address: 'Aet6eGnQMvZ2xozG3A3SvWrMFdWMvZj1cU',
-      privateKey: '7146c0beb313d849809a263d3e112b7c14801c381ddc8b793ab751d451886716',
-      publicKey: '039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23'
-    }
-  }
-}
 
 // Generates the canonical string for the given arbitrary payload.
 export const canonicalString = compose(
@@ -52,10 +30,12 @@ export const canonicalString = compose(
   deep(mapKeys(snakeCase))
 )
 
+// Signs the given payload with the given private key.
 export default function signPayload(
   privateKey: Buffer,
   kind: SigningPayloadID,
-  payload: Record<string, any>
+  payload: Record<string, any>,
+  config?: Config
 ): PayloadSignature {
   const payloadName = kindToName(kind)
   const message = `${payloadName},${canonicalString(payload)}`
@@ -67,12 +47,13 @@ export default function signPayload(
   })
 
   if (needBlockchainSignature(kind)) {
-    const blockchainSignatures = signBlockchainData(config, { payload, kind })
-    console.log(blockchainSignatures)
-    console.log(payload)
+    if (config === undefined) {
+      throw new Error('blockchain signatures need a Config object')
+    }
+    payload.blockchainSignatures = signBlockchainData(config, { payload, kind })
   }
 
-  // TODO
+  // TODO(anthdm)
   // if it's a deposit or whithdrawal request we need to return a blockchain movement
   // to the client.
 
@@ -88,9 +69,9 @@ export default function signPayload(
 // neo_eth, eth_btc, etc..
 export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKind): ReadonlyArray<BlockchainSignature> {
   // Infer blockchain data for the given payload.
-  // const blockchainData = inferBlockchainData(kind, payload)
-  // const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-  const blockchains: ReadonlyArray<string> = ['neo', 'neo']
+  const blockchainData = inferBlockchainData(payloadAndKind)
+  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
+  const blockchains: ReadonlyArray<string> = [unitA, unitB]
 
   const sigs = _.map(_.uniq(blockchains), val => {
     return createSignatureForBlockchain(config, val, payloadAndKind)
