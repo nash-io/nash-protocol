@@ -10,12 +10,18 @@ import toLower from 'lodash/fp/toLower'
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
-import { createSignatureForBlockchain } from '../blockchainSignature'
 
-import { kindToName, needBlockchainSignature, SigningPayloadID } from '../payload/signingPayloadID'
+import {
+  kindToName,
+  needBlockchainMovement,
+  needBlockchainSignature,
+  SigningPayloadID
+} from '../payload/signingPayloadID'
 import { Config, PayloadSignature, BlockchainSignature } from '../types'
 import { PayloadAndKind } from '../payload'
-import { inferBlockchainData, getUnitPairs } from '../blockchainSignature/helpers'
+import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
+import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
+import { buildETHBlockchainSignatureData, signETHBlockchainData } from '../signETHBlockchainData'
 
 const curve = new EC('secp256k1')
 
@@ -48,14 +54,21 @@ export default function signPayload(
 
   if (needBlockchainSignature(kind)) {
     if (config === undefined) {
-      throw new Error('blockchain signatures need a Config object')
+      throw new Error('blockchain signatures needs a Config object')
     }
     payload.blockchainSignatures = signBlockchainData(config, { payload, kind })
   }
 
-  // TODO(anthdm)
-  // if it's a deposit or whithdrawal request we need to return a blockchain movement
-  // to the client.
+  if (needBlockchainMovement(kind)) {
+    if (config === undefined) {
+      throw new Error('blockchain movement needs a Config object')
+    }
+    return {
+      payload,
+      signature: stringify(bufferize(sig.toDER())),
+      blockchainMovement: getBlockchainMovement(config, { kind, payload })
+    }
+  }
 
   return {
     payload,
@@ -73,8 +86,17 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
   const blockchains: ReadonlyArray<string> = [unitA, unitB]
 
-  const sigs = _.map(_.uniq(blockchains), val => {
-    return createSignatureForBlockchain(config, val, payloadAndKind)
+  const sigs = _.map(_.uniq(blockchains), unit => {
+    switch (unit) {
+      case 'neo':
+        const neoData = buildNEOBlockchainSignatureData(config, payloadAndKind)
+        return signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
+      case 'eth':
+        const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
+        return signETHBlockchainData(config.wallets.eth.privateKey, ethData)
+      default:
+        throw new Error(`invalid unit ${unit}`)
+    }
   })
 
   return sigs

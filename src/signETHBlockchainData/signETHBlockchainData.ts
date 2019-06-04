@@ -1,20 +1,30 @@
 import { SmartBuffer } from 'smart-buffer'
 import { ec as EC } from 'elliptic'
 
-import { inferBlockchainData, getUnitPairs, getETHAssetID, reverseHexString } from './helpers'
+import { inferBlockchainData, getUnitPairs, getETHAssetID } from '../utils/blockchain'
+import Keccak256 from '../utils/keccak256'
+import reverseHexString from '../utils/reverseHexString'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
-import { minOrderRate, maxOrderRate, maxFeeRate } from './constants'
+import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
 import { Config, BlockchainSignature } from '../types'
 
 const curve = new EC('secp256k1')
 
+// Signing for Ethereum needs a little more work to be done.
+// 1. Compute a KEKKAC256 hash of the data.
+// 2. Prefix the resulting hash with a constant message.
+// 3. Compute a KEKKAC256 hash of the prefix result.
+// 4. Sign that hash with the private key.
 export function signETHBlockchainData(privateKey: string, data: string): BlockchainSignature {
+  const msgPrefix = '19457468657265756d205369676e6564204d6573736167653a0a3332'
   const keypair = curve.keyFromPrivate(privateKey)
+  const initialHash = Keccak256(data).toString('hex')
+  const finalHash = Keccak256(msgPrefix + initialHash).toString('hex')
 
   return {
     blockchain: 'eth',
-    signature: keypair.sign(data).toDER()
+    signature: keypair.sign(finalHash).toDER()
   }
 }
 

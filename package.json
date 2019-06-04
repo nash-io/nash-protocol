@@ -44,9 +44,11 @@
     "elliptic": "6.4.1",
     "futoin-hkdf": "1.0.2",
     "int64-buffer": "^0.99.1007",
+    "keccak": "^2.0.0",
     "lodash": "4.17.11",
     "randombytes": "2.1.0",
     "scrypt-js": "2.0.4",
+    "sha3": "^2.0.4",
     "smart-buffer": "^4.0.2"
   },
   "devDependencies": {

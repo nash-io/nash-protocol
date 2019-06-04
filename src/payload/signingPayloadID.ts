@@ -55,6 +55,10 @@ export function needBlockchainSignature(kind: SigningPayloadID): boolean {
   return kind > SigningPayloadID.getOrderPayload
 }
 
+export function needBlockchainMovement(kind: SigningPayloadID): boolean {
+  return kind > SigningPayloadID.syncStatePayload
+}
+
 export function isOrderPayload(kind: SigningPayloadID): boolean {
   return kind > SigningPayloadID.getOrderPayload && kind < SigningPayloadID.signMovementPayload
 }
