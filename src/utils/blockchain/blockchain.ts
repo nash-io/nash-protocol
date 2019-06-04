@@ -36,21 +36,21 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
     case 'neo':
       const scriptHash = getNEOScriptHash(config.wallets.neo.address)
       return {
-        prefix: kindToOrderPrefix(payloadAndKind.kind),
         address: Buffer.from(scriptHash).toString('hex'),
-        asset: reverseHexString(assets[unitA].hash),
         amount: String(normalizeAmount(blockchainData.amount, 8)),
+        asset: reverseHexString(assets[unitA].hash),
         nonce: toLittleEndianHex(blockchainData.nonce),
+        prefix: kindToOrderPrefix(payloadAndKind.kind),
         userPubKey: config.wallets.neo.publicKey
       }
     case 'eth':
       const chainPrecision = config.assetData.eth.precision
       return {
-        prefix: kindToOrderPrefix(payloadAndKind.kind),
         address: config.wallets.eth.address,
-        asset: getETHAssetID(unitA),
         amount: String(normalizeAmount(blockchainData.amount, chainPrecision)),
+        asset: getETHAssetID(unitA),
         nonce: '00000000', // TODO: convertETHNonce
+        prefix: kindToOrderPrefix(payloadAndKind.kind),
         userPubKey: config.wallets.eth.address
       }
     default:

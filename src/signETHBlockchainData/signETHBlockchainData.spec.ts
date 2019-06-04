@@ -1,6 +1,6 @@
 import { buildETHBlockchainSignatureData } from './signETHBlockchainData'
 import { SigningPayloadID } from '../payload'
-import config from '../__tests__/config'
+import config from '../__tests__/config.json'
 
 test('build ETH blockchain signature data, market order payload, NEO_ETH', async () => {
   const payload = {

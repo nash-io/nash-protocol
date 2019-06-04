@@ -5,7 +5,7 @@ import stringify from '../stringify'
 import { SigningPayloadID } from '../payload'
 import signPayload, { canonicalString } from '../signPayload'
 import { kindToName } from '../payload/signingPayloadID'
-import config from '../__tests__/config'
+import config from '../__tests__/config.json'
 
 const privateKeyHex = '2304cae8deb223fbc6774964af6bc4fcda6ba6cff8276cb2c0f49fb0c8a51d57'
 const privateKey = Buffer.from(privateKeyHex, 'hex')

@@ -64,9 +64,9 @@ export default function signPayload(
       throw new Error('blockchain movement needs a Config object')
     }
     return {
+      blockchainMovement: getBlockchainMovement(config, { kind, payload }),
       payload,
-      signature: stringify(bufferize(sig.toDER())),
-      blockchainMovement: getBlockchainMovement(config, { kind, payload })
+      signature: stringify(bufferize(sig.toDER()))
     }
   }
 
