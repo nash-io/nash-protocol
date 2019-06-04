@@ -19,43 +19,25 @@
       "stand",
       "wire"
     ],
-    "masterSeed": "81e2ce3456affaed1512f7607171218ed5c978e03b531b9f798b91c8799f8c771366844b19d2daea371ae54420c3ee16205109ab1118d762124cfc8ad4fb5098",
+    "masterSeed": "ece8b03ea42b56dcf72a3d261dd59ec943c815fe103f50000a497141c48e2dcb6498896bbe0550c786340aef44b7124617714b9635671919b9ffa87f0cb20d57",
     "encryptedSecretKey": "eb13bb0e89102d64700906c7082f9472",
     "nonce": "f6783fe349320f71acc2ca79",
     "tag": "7c8dc1020de77cd42dbbbb850f4335e8",
     "wallets": {
       "eth": [
         {
-          "address": "0xcA7E5135e04371D048A78C4592BA3b61A984B563",
-          "publicKey": "0x0375f8a0f4eda35b7194d265df33720cf80164f196765980fae29795f713b340d9",
-          "privateKey": "0xe537b63096749e62e509ef4e849f739bff129baeeb100d131a681682422392cf"
-        },
-        {
-          "address": "0xE468fdbfA5ea8073F2AfD2216F325817c5Fb6b55",
-          "publicKey": "0x0203159f7c11f248335c0509fc9a4aab9cee85cfcac11993b346fe6094cdb98d09",
-          "privateKey": "0x1bd2688c2754db3c03e08d9a99f666e1f08f41a113b0afa13191d069bde3058c"
-        },
-        {
-          "address": "0xe565Fa02BC840c5eDC38E5042815C8F1e7501294",
-          "publicKey": "0x03cb4897bc2c66ad3aadc53a17a7a12f1cde06298edf4571bada3f377b93684fd0",
-          "privateKey": "0xbc772317771e37bfabebad934b07a6bfc9bb1fbfb9f2dc3180d59236279495a2"
+          "index": 0,
+          "privateKey": "0b7561f1c775ef4715accd21aac8629bcda2e6eb4e434c0d55c917bd7c297ac6",
+          "publicKey": "02be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46",
+          "address": "5f8b6d9d487c8136cc1ad87d6e176742af625de8"
         }
       ],
       "neo": [
         {
-          "address": "0x64F5c9c2aad5a313636387e1206e057aB2aFE7b7",
-          "publicKey": "0x034ee65771f6f39f25282e59a12f6fe2c4595fc334ad5e644ea4624e47ccb60722",
-          "privateKey": "0xb478febf68d16aa3fa696d684589b9a706f04065407897319a4a4a33aa2cd1e5"
-        },
-        {
-          "address": "0x1523fe4c945388d4B29682D8370e65053E9B2667",
-          "publicKey": "0x023cb1088fd3944005fd1395c391b7215088919027e0293c991c0706fcf62020bd",
-          "privateKey": "0x9d02e41d4b585cb77cd1f13587560e7e6845928c85a92e21e55ad233a01fbe54"
-        },
-        {
-          "address": "0x6Ea9Bfa9C11D44A4E5859e9ed69c91f07e079eAf",
-          "publicKey": "0x02baf5476f7167a161ba6f3e931c98aaf87345129e86791182a9b322fc33438e94",
-          "privateKey": "0x3d12cbc31082d29355135e8542551cb44c8abca29fe60b6086a51a57cb48457b"
+          "index": 1,
+          "privateKey": "7146c0beb313d849809a263d3e112b7c14801c381ddc8b793ab751d451886716",
+          "publicKey": "039fcee26c1f54024d19c0affcf6be8187467c9ba4749106a4b897a08b9e8fed23",
+          "address": "Aet6eGnQMvZ2xozG3A3SvWrMFdWMvZj1cU"
         }
       ]
     }
