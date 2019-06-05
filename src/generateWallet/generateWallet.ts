@@ -47,6 +47,26 @@ export function deriveIndex(extendedKey: bip32.BIP32Interface, index: number): b
   return extendedKey.derive(index)
 }
 
+export const coinTypeFromString = (s: string): CoinType => {
+  const m: Record<string, CoinType> = {
+    neo: CoinType.NEO,
+    eth: CoinType.ETH,
+    btc: CoinType.BTC
+  }
+
+  if (!(s in m)) {
+    throw new Error('invalid name given to convert to a valid coin type')
+  }
+
+  return m[s]
+}
+
+function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType): string {
+  console.log(publicKey)
+  console.log(coinType)
+  return 'hello'
+}
+
 function derivePath(
   masterSeed: Buffer,
   purpose: number,
@@ -60,16 +80,4 @@ function derivePath(
     .deriveHardened(coinType)
     .deriveHardened(account)
     .derive(change)
-}
-
-function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType): string {
-  console.log(publicKey)
-  switch (coinType) {
-    case CoinType.ETH:
-      return 'hello'
-    case CoinType.NEO:
-      return 'hello'
-    default:
-      throw new Error('invalid coint type given')
-  }
 }
