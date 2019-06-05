@@ -1,4 +1,4 @@
-import { generateWallet, CoinType } from './wallet'
+import { generateWallet, CoinType } from './generateWallet'
 import _ from 'lodash'
 
 const ethWallets = [

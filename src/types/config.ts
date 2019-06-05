@@ -6,5 +6,5 @@ export default interface Config {
   readonly assetData: { readonly [key: string]: Asset }
   readonly marketData: { readonly [key: string]: Market }
   readonly wallets: { readonly [key: string]: Wallet }
-  // readonly publicSigningKey: { readonly [key: string]: Wallet }
+  readonly payloadSigningKey: Wallet
 }

@@ -1,6 +1,7 @@
-// import * as bip32 from 'bip32'
 import * as bip32 from 'bip32'
 import { Wallet } from '../types'
+import Neon from '@cityofzion/neon-js'
+import * as EthUtil from 'ethereumjs-util'
 
 const bip44Purpose = 44
 const nashPurpose = 1337
@@ -49,9 +50,9 @@ export function deriveIndex(extendedKey: bip32.BIP32Interface, index: number): b
 
 export const coinTypeFromString = (s: string): CoinType => {
   const m: Record<string, CoinType> = {
-    neo: CoinType.NEO,
+    btc: CoinType.BTC,
     eth: CoinType.ETH,
-    btc: CoinType.BTC
+    neo: CoinType.NEO
   }
 
   if (!(s in m)) {
@@ -62,9 +63,14 @@ export const coinTypeFromString = (s: string): CoinType => {
 }
 
 function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType): string {
-  console.log(publicKey)
-  console.log(coinType)
-  return 'hello'
+  switch (coinType) {
+    case CoinType.NEO:
+      return Neon.create.account(publicKey.toString('hex').slice(2)).address
+    case CoinType.ETH:
+      return EthUtil.pubToAddress(publicKey, true).toString('hex')
+    default:
+      throw new Error(`invalid coin type given ${coinType}`)
+  }
 }
 
 function derivePath(

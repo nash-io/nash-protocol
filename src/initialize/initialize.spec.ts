@@ -2,22 +2,23 @@ import { initialize } from './initialize'
 import Config from '../__tests__/config.json'
 import TestVectors from '../__tests__/testVectors.json'
 import bufferize from '../bufferize'
+import TestConfig from '../__tests__/config.json'
 
 const vector = TestVectors[0]
 
 test('initializes a config object', async () => {
   const params = {
-    encryptionKey: bufferize(vector.encryptionKey),
     aead: {
       encryptedSecretKey: bufferize(vector.encryptedSecretKey),
-      tag: bufferize(vector.tag),
-      nonce: bufferize(vector.nonce)
+      nonce: bufferize(vector.nonce),
+      tag: bufferize(vector.tag)
     },
-    marketData: Config.marketData,
     assetData: Config.assetData,
+    encryptionKey: bufferize(vector.encryptionKey),
+    marketData: Config.marketData,
     walletConfig: { neo: 1, eth: 1 }
   }
 
   const config = await initialize(params)
-  console.log(config)
+  expect(config).toEqual(TestConfig)
 })
