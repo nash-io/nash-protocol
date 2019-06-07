@@ -8,6 +8,7 @@ export interface InitParams {
   encryptionKey: Buffer
   aead: AEAD
   walletConfig: Record<string, number>
+  net?: 'MainNet' | 'TestNet' | 'LocalNet'
   assetData: { readonly [key: string]: Asset }
   marketData: { readonly [key: string]: Market }
 }
@@ -21,7 +22,7 @@ export async function initialize(params: InitParams): Promise<Config> {
   const wallets: { [key: string]: Wallet } = {}
   Object.keys(params.walletConfig).forEach((k: string) => {
     const index = params.walletConfig[k]
-    const wallet = generateWallet(masterSeed, coinTypeFromString(k), index)
+    const wallet = generateWallet(masterSeed, coinTypeFromString(k), index, params.net)
     wallets[k] = wallet
   })
 

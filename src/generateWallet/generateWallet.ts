@@ -2,6 +2,7 @@ import * as bip32 from 'bip32'
 import { Wallet } from '../types'
 import Neon from '@cityofzion/neon-js'
 import * as EthUtil from 'ethereumjs-util'
+import * as BitcoinLib from 'bitcoinjs-lib'
 
 const bip44Purpose = 44
 const nashPurpose = 1337
@@ -12,7 +13,7 @@ export enum CoinType {
   NEO = 888
 }
 
-export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number): Wallet {
+export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number, net?: string): Wallet {
   const key = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
   const derivedChainKey = deriveIndex(key, index)
 
@@ -21,7 +22,7 @@ export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: nu
   }
 
   return {
-    address: getAddressFromCoinType(derivedChainKey.publicKey, coinType),
+    address: getAddressFromCoinType(derivedChainKey.publicKey, coinType, net),
     index,
     privateKey: derivedChainKey.privateKey.toString('hex'),
     publicKey: derivedChainKey.publicKey.toString('hex')
@@ -62,12 +63,28 @@ export const coinTypeFromString = (s: string): CoinType => {
   return m[s]
 }
 
-function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType): string {
+function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType, net?: string): string {
   switch (coinType) {
     case CoinType.NEO:
       return Neon.create.account(publicKey.toString('hex').slice(2)).address
     case CoinType.ETH:
       return EthUtil.pubToAddress(publicKey, true).toString('hex')
+    case CoinType.BTC:
+      let netObj: BitcoinLib.networks.Network
+      switch (net) {
+        case 'MainNet':
+          netObj = BitcoinLib.networks.bitcoin
+          break
+        case 'TestNet':
+          netObj = BitcoinLib.networks.testnet
+          break
+        case 'LocalNet':
+          netObj = BitcoinLib.networks.testnet
+          break
+        default:
+          netObj = BitcoinLib.networks.bitcoin
+      }
+      return BitcoinLib.payments.p2pkh({ network: netObj, pubkey: publicKey }).address!
     default:
       throw new Error(`invalid coin type given ${coinType}`)
   }
