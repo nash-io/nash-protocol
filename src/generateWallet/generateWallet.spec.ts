@@ -22,7 +22,7 @@ test('generates deterministic BIP44 NEO keys', async () => {
 
     for (const wallet of vector.wallets.neo) {
       const genWallet = generateWallet(masterSeed, CoinType.NEO, wallet.index)
-      expect(genWallet.address).toBe(wallet.address.toLowerCase())
+      expect(genWallet.address).toBe(wallet.address)
       expect(genWallet.publicKey).toBe(wallet.publicKey)
       expect(genWallet.privateKey).toBe(wallet.privateKey)
       expect(genWallet.index).toBe(wallet.index)

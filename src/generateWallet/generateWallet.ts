@@ -76,11 +76,9 @@ export const coinTypeFromString = (s: string): CoinType => {
 function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType): string {
   switch (coinType) {
     case CoinType.NEO:
-      return Neon.create.account(publicKey.toString('hex').slice(2)).address.toLowerCase()
+      return Neon.create.account(publicKey.toString('hex').slice(2)).address
     case CoinType.ETH:
-      return EthUtil.pubToAddress(publicKey, true)
-        .toString('hex')
-        .toLowerCase()
+      return EthUtil.pubToAddress(publicKey, true).toString('hex')
     default:
       throw new Error(`invalid coin type given ${coinType}`)
   }
