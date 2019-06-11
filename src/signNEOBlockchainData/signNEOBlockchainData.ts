@@ -3,11 +3,9 @@ import { getUnitPairs, inferBlockchainData } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { maxOrderRate, maxFeeRate, minOrderRate } from '../constants'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
-
 import { BlockchainSignature, Config } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { SmartBuffer } from 'smart-buffer'
-
 import { ec as EC } from 'elliptic'
 
 const curve = new EC('secp256k1')

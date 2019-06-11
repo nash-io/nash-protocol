@@ -23,14 +23,25 @@ export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: nu
   return {
     address: getAddressFromCoinType(derivedChainKey.publicKey, coinType),
     index,
-    privateKey: derivedChainKey.privateKey.toString('hex'),
-    publicKey: derivedChainKey.publicKey.toString('hex')
+    privateKey: derivedChainKey.privateKey.toString('hex').toLowerCase(),
+    publicKey: derivedChainKey.publicKey.toString('hex').toLowerCase()
   }
 }
 
-export function generateNashPayloadSigningKey(masterSeed: Buffer, index: number): bip32.BIP32Interface {
+export function generateNashPayloadSigningKey(masterSeed: Buffer, index: number): Wallet {
   const extendedKey = derivePath(masterSeed, nashPurpose, 0, 0, 0)
-  return deriveIndex(extendedKey, index)
+  const key = deriveIndex(extendedKey, index)
+
+  if (key.privateKey === undefined) {
+    throw new Error('private key is not properly generated')
+  }
+
+  return {
+    address: '',
+    index,
+    privateKey: key.privateKey.toString('hex').toLowerCase(),
+    publicKey: key.publicKey.toString('hex').toLowerCase()
+  }
 }
 
 // Generates a deterministic key according to the BIP44 spec.
@@ -56,7 +67,7 @@ export const coinTypeFromString = (s: string): CoinType => {
   }
 
   if (!(s in m)) {
-    throw new Error('invalid name given to convert to a valid coin type')
+    throw new Error(`invalid name ${s} given to convert to a valid coin type`)
   }
 
   return m[s]
@@ -65,9 +76,11 @@ export const coinTypeFromString = (s: string): CoinType => {
 function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType): string {
   switch (coinType) {
     case CoinType.NEO:
-      return Neon.create.account(publicKey.toString('hex').slice(2)).address
+      return Neon.create.account(publicKey.toString('hex').slice(2)).address.toLowerCase()
     case CoinType.ETH:
-      return EthUtil.pubToAddress(publicKey, true).toString('hex')
+      return EthUtil.pubToAddress(publicKey, true)
+        .toString('hex')
+        .toLowerCase()
     default:
       throw new Error(`invalid coin type given ${coinType}`)
   }

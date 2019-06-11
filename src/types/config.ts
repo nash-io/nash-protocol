@@ -5,6 +5,6 @@ import Wallet from './wallet'
 export default interface Config {
   readonly assetData: { readonly [key: string]: Asset }
   readonly marketData: { readonly [key: string]: Market }
-  readonly wallets: { readonly [key: string]: Wallet }
+  readonly wallets: Record<string, Wallet>
   readonly payloadSigningKey: Wallet
 }
