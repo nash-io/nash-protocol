@@ -48,14 +48,14 @@
         {
           "index": 0,
           "privateKey": "491aac461bd2e0eb02ffe6cdb534a03617e8811764e4eea042f24231ba99b76f",
-          "publicKey": "033592dadd81e422d30909370f73f71028d34ddd9574bba9359986efa6d4037c8d",
-          "address": "AUD6NSpLHL2K4ckFixTmEwcoKiwkW6F7gs"
+          "publicKey": "0208035f32c5d0e59f71c55b1e060f6d504c004222c25670ff2b788d76a84af2f2",
+          "address": "AVSFwsxsedGGip1FgJdjavVBuFHHRXD2Uz"
         },
         {
           "index": 1,
           "privateKey": "b478febf68d16aa3fa696d684589b9a706f04065407897319a4a4a33aa2cd1e5",
-          "publicKey": "034ee65771f6f39f25282e59a12f6fe2c4595fc334ad5e644ea4624e47ccb60722",
-          "address": "AK94MEEbwjGRm2Dj9LSYJN6jpgizSHmqpE"
+          "publicKey": "03a41d39a4209e18eb79245ea368674edf335a4ebeb8ed344b87d3ccaf3a2c730e",
+          "address": "ANwZ2RFRKrASBvZifGgjqqJNUbfJUW6gbn"
         }
       ]
     }

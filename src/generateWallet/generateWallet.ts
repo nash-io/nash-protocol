@@ -16,16 +16,7 @@ export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: nu
   const key = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
   const derivedChainKey = deriveIndex(key, index)
 
-  if (derivedChainKey.privateKey === undefined) {
-    throw new Error('private key is not properly generated')
-  }
-
-  return {
-    address: getAddressFromCoinType(derivedChainKey.publicKey, coinType),
-    index,
-    privateKey: derivedChainKey.privateKey.toString('hex').toLowerCase(),
-    publicKey: derivedChainKey.publicKey.toString('hex').toLowerCase()
-  }
+  return generateWalletForCoinType(derivedChainKey, coinType, index)
 }
 
 export function generateNashPayloadSigningKey(masterSeed: Buffer, index: number): Wallet {
@@ -73,14 +64,30 @@ export const coinTypeFromString = (s: string): CoinType => {
   return m[s]
 }
 
-function getAddressFromCoinType(publicKey: Buffer, coinType: CoinType): string {
+// NOTE: We can split this out later when there are more wallets needs to be derived.
+function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType, index: number): Wallet {
+  if (key.privateKey === undefined) {
+    throw new Error('private key not properly derived')
+  }
+
   switch (coinType) {
     case CoinType.NEO:
-      return Neon.create.account(publicKey.toString('hex').slice(2)).address
+      const account = Neon.create.account(key.privateKey.toString('hex'))
+      return {
+        index,
+        address: account.address,
+        privateKey: key.privateKey.toString('hex'),
+        publicKey: account.publicKey
+      }
     case CoinType.ETH:
-      return EthUtil.pubToAddress(publicKey, true).toString('hex')
+      return {
+        index,
+        address: EthUtil.pubToAddress(key.publicKey, true).toString('hex'),
+        publicKey: key.publicKey.toString('hex'),
+        privateKey: key.privateKey.toString('hex')
+      }
     default:
-      throw new Error(`invalid coin type given ${coinType}`)
+      throw new Error(`invalid coin type ${coinType} for generating a wallet`)
   }
 }
 
