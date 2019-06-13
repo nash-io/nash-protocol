@@ -4,8 +4,9 @@ import bufferize from '../bufferize'
 import stringify from '../stringify'
 import { SigningPayloadID } from '../payload'
 import signPayload, { canonicalString } from '../signPayload'
-import { kindToName } from '../payload/signingPayloadID'
 import config from '../__tests__/config.json'
+import sigTestVectors from '../__tests__/signatureVectors.json'
+import _ from 'lodash'
 
 const privateKeyHex = '2304cae8deb223fbc6774964af6bc4fcda6ba6cff8276cb2c0f49fb0c8a51d57'
 const privateKey = Buffer.from(privateKeyHex, 'hex')
@@ -101,26 +102,25 @@ test('serialize, hash, and sign list account orders payload', () => {
   )
 })
 
-test('serialize, hash, and sign market order payload', async () => {
-  const privKey = Buffer.from('66f30af13d11db34f5b77ea366126b07ed69df3491ea64f62186d47b8857d872', 'hex')
-
+test('serialize, hash, and sign market order payload NEO_ETH', async () => {
+  const data = sigTestVectors.marketOrders.neo_eth
   const payload = {
-    amount: { amount: '10.123456', currency: 'neo' },
-    buyOrSell: 'buy',
-    marketName: 'neo_eth',
+    amount: { amount: data.amount.value, currency: data.amount.currency },
+    buyOrSell: data.buyOrSell,
+    marketName: data.marketName,
     nonceFrom: 0,
     nonceOrder: 0,
     nonceTo: 0,
-    timestamp: 1551452048302
+    timestamp: data.timestamp
   }
 
-  const canString = `place_market_order,{"amount":{"amount":"10.123456","currency":"neo"},"buy_or_sell":"buy","market_name":"neo_eth","nonce_from":0,"nonce_order":0,"nonce_to":0,"timestamp":1551452048302}`
-  const payloadName = kindToName(SigningPayloadID.placeMarketOrderPayload)
-  const message = `${payloadName},${canonicalString(payload)}`
-  expect(message).toBe(canString)
-
-  const payloadSignature = signPayload(privKey, SigningPayloadID.placeMarketOrderPayload, payload, config)
-  expect(payloadSignature.signature.toUpperCase()).toBe(
-    '3045022100D041CE575C593FFF8BAC3EA6AC05665A9D6845A194055BE9F2081B88A6A07B7C022038B20A3B3A46C60299D58C511D79D204B5C4571587F3B5503BC0EA839794534D'
+  const signedPayload = signPayload(
+    Buffer.from(config.payloadSigningKey.privateKey, 'hex'),
+    SigningPayloadID.placeMarketOrderPayload,
+    payload,
+    config
   )
+
+  expect(signedPayload.payload.blockchainSignatures).toHaveLength(2)
+  expect(signedPayload.signature.toUpperCase()).toBe(data.signature)
 })

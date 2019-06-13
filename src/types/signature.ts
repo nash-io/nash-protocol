@@ -5,7 +5,7 @@ export interface BlockchainSignature {
 
 export interface PayloadSignature {
   // This is the payoad being signed with optional embedded blockchain signatures.
-  readonly payload: any
+  readonly payload: Record<string, any>
   readonly signature: string
   readonly blockchainMovement?: BlockchainMovement
 }
