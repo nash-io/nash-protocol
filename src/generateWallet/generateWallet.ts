@@ -74,17 +74,17 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
     case CoinType.NEO:
       const account = Neon.create.account(key.privateKey.toString('hex'))
       return {
-        index,
         address: account.address,
+        index,
         privateKey: key.privateKey.toString('hex'),
         publicKey: account.publicKey
       }
     case CoinType.ETH:
       return {
-        index,
         address: EthUtil.pubToAddress(key.publicKey, true).toString('hex'),
-        publicKey: key.publicKey.toString('hex'),
-        privateKey: key.privateKey.toString('hex')
+        index,
+        privateKey: key.privateKey.toString('hex'),
+        publicKey: key.publicKey.toString('hex')
       }
     default:
       throw new Error(`invalid coin type ${coinType} for generating a wallet`)
