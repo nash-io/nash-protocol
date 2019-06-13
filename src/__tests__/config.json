@@ -28,16 +28,16 @@
   },
   "wallets": {
     "neo": {
-      "address": "AK94MEEbwjGRm2Dj9LSYJN6jpgizSHmqpE",
-      "index": 1,
-      "privateKey": "b478febf68d16aa3fa696d684589b9a706f04065407897319a4a4a33aa2cd1e5",
-      "publicKey": "034ee65771f6f39f25282e59a12f6fe2c4595fc334ad5e644ea4624e47ccb60722"
+      "index": 0,
+      "privateKey": "491aac461bd2e0eb02ffe6cdb534a03617e8811764e4eea042f24231ba99b76f",
+      "publicKey": "0208035f32c5d0e59f71c55b1e060f6d504c004222c25670ff2b788d76a84af2f2",
+      "address": "AVSFwsxsedGGip1FgJdjavVBuFHHRXD2Uz"
     },
     "eth": {
-      "address": "ca7e5135e04371d048a78c4592ba3b61a984b563",
-      "index": 1,
-      "privateKey": "e537b63096749e62e509ef4e849f739bff129baeeb100d131a681682422392cf",
-      "publicKey": "0375f8a0f4eda35b7194d265df33720cf80164f196765980fae29795f713b340d9"
+      "index": 0,
+      "privateKey": "0b7561f1c775ef4715accd21aac8629bcda2e6eb4e434c0d55c917bd7c297ac6",
+      "publicKey": "02be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46",
+      "address": "55D16CA38dFB219141Ab6617B2872B978aF84702"
     }
   }
 }

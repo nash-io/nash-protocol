@@ -6,16 +6,16 @@ import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind 
 import { BlockchainSignature, Config } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { SmartBuffer } from 'smart-buffer'
-import { ec as EC } from 'elliptic'
-
-const curve = new EC('secp256k1')
+import { wallet } from '@cityofzion/neon-core'
+import crypto from 'crypto'
 
 export function signNEOBlockchainData(privateKey: string, data: string): BlockchainSignature {
-  const keypair = curve.keyFromPrivate(privateKey)
+  const sha256 = crypto.createHash('sha256')
+  const msg = sha256.update(Buffer.from(data, 'hex')).digest('hex')
 
   return {
     blockchain: 'neo',
-    signature: keypair.sign(data).toDER()
+    signature: wallet.sign(msg, privateKey)
   }
 }
 

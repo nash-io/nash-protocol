@@ -37,6 +37,7 @@
     "node": ">=8.9"
   },
   "dependencies": {
+    "@cityofzion/neon-core": "^4.5.2",
     "@cityofzion/neon-js": "^4.5.2",
     "bip32": "^2.0.3",
     "bip39": "2.5.0",
