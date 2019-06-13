@@ -44,6 +44,20 @@
           "address": "cA7E5135e04371D048A78C4592BA3b61A984B563"
         }
       ],
+      "btc": [
+        {
+          "index": 0,
+          "privateKey": "3a36746814d81d30f8a5d66ca85657f5455a73e34cb085465279bc989a30b337",
+          "publicKey": "02a15776a6856857d13d7d8f2e4b1f45e0fca58dbeb132ab9b2dcbbb13102ab693",
+          "address": "13Y7cKp41q2WGa8zCa7awdPaE6NmVhNqTp"
+        },
+        {
+          "index": 1,
+          "privateKey": "5f0e49c491eb0ba66f6d2ae60f0839157f47738feafe100496b172f21c817d40",
+          "publicKey": "025168d87f8c19200516401c94c84496b8456f31fc9b9fcdae622241a06ff81ba7",
+          "address": "19BcQcm6obZeMWQRiUDsCRoLsrXTg2SA53"
+        }
+      ],
       "neo": [
         {
           "index": 0,

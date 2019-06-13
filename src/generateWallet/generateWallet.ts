@@ -2,6 +2,7 @@ import * as bip32 from 'bip32'
 import { Wallet } from '../types'
 import Neon from '@cityofzion/neon-js'
 import * as EthUtil from 'ethereumjs-util'
+import * as Bitcoin from 'bitcoinjs-lib'
 
 const bip44Purpose = 44
 const nashPurpose = 1337
@@ -12,11 +13,11 @@ export enum CoinType {
   NEO = 888
 }
 
-export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number): Wallet {
+export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number, net?: string): Wallet {
   const key = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
   const derivedChainKey = deriveIndex(key, index)
 
-  return generateWalletForCoinType(derivedChainKey, coinType, index)
+  return generateWalletForCoinType(derivedChainKey, coinType, index, net)
 }
 
 export function generateNashPayloadSigningKey(masterSeed: Buffer, index: number): Wallet {
@@ -24,7 +25,7 @@ export function generateNashPayloadSigningKey(masterSeed: Buffer, index: number)
   const key = deriveIndex(extendedKey, index)
 
   if (key.privateKey === undefined) {
-    throw new Error('private key is not properly generated')
+    throw new Error('private key is undefined')
   }
 
   return {
@@ -65,7 +66,7 @@ export const coinTypeFromString = (s: string): CoinType => {
 }
 
 // NOTE: We can split this out later when there are more wallets needs to be derived.
-function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType, index: number): Wallet {
+function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType, index: number, net?: string): Wallet {
   if (key.privateKey === undefined) {
     throw new Error('private key not properly derived')
   }
@@ -86,8 +87,32 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         privateKey: key.privateKey.toString('hex'),
         publicKey: key.publicKey.toString('hex')
       }
+    case CoinType.BTC:
+      return {
+        address: bitcoinAddressFromPublicKey(key.publicKey, net!),
+        index,
+        privateKey: key.privateKey.toString('hex'),
+        publicKey: key.publicKey.toString('hex')
+      }
     default:
       throw new Error(`invalid coin type ${coinType} for generating a wallet`)
+  }
+}
+
+const bitcoinAddressFromPublicKey = (publicKey: Buffer, net: string): string => {
+  return Bitcoin.payments.p2pkh({ network: bitcoinNetworkFromString(net), pubkey: publicKey }).address!
+}
+
+const bitcoinNetworkFromString = (net: string | undefined): Bitcoin.Network => {
+  switch (net) {
+    case 'MainNet':
+      return Bitcoin.networks.bitcoin
+    case 'TestNet':
+      return Bitcoin.networks.testnet
+    case 'LocalNet':
+      return Bitcoin.networks.testnet
+    default:
+      return Bitcoin.networks.bitcoin
   }
 }
 

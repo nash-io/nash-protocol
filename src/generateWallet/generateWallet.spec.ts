@@ -30,6 +30,20 @@ test('generates deterministic BIP44 NEO keys', async () => {
   }
 })
 
+test('generates deterministic BIP44 BTC keys', async () => {
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+
+    for (const wallet of vector.wallets.btc) {
+      const genWallet = generateWallet(masterSeed, CoinType.BTC, wallet.index)
+      expect(genWallet.address).toBe(wallet.address)
+      expect(genWallet.publicKey).toBe(wallet.publicKey)
+      expect(genWallet.privateKey).toBe(wallet.privateKey)
+      expect(genWallet.index).toBe(wallet.index)
+    }
+  }
+})
+
 test('generates deterministic payload signing key', async () => {
   for (const vector of testVectors) {
     const masterSeed = Buffer.from(vector.masterSeed, 'hex')
