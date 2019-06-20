@@ -11,12 +11,7 @@ import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
 
-import {
-  kindToName,
-  needBlockchainMovement,
-  needBlockchainSignature,
-  SigningPayloadID
-} from '../payload/signingPayloadID'
+import { kindToName, needBlockchainMovement, needBlockchainSignature } from '../payload/signingPayloadID'
 import { Config, PayloadSignature, BlockchainSignature } from '../types'
 import { PayloadAndKind } from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
@@ -39,10 +34,10 @@ export const canonicalString = compose(
 // Signs the given payload with the given private key.
 export default function signPayload(
   privateKey: Buffer,
-  kind: SigningPayloadID,
-  payload: Record<string, any>,
+  payloadAndKind: PayloadAndKind,
   config?: Config
 ): PayloadSignature {
+  const { kind, payload } = payloadAndKind
   const payloadName = kindToName(kind)
   const message = `${payloadName},${canonicalString(payload)}`
   const keypair = curve.keyFromPrivate(privateKey)
