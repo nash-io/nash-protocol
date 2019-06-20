@@ -9,8 +9,8 @@ export enum SigningPayloadID {
   getDepositAddressPayload = 6,
   getMovementPayload = 7,
   getOrderPayload = 8,
-  // the below are operations which require blockchain information
-  // and not currently implemented
+
+  // The payloads below requires blockchain information/signatures.
   placeLimitOrderPayload = 9,
   placeStopLimitOrderPayload = 10,
   placeStopMarketOrderPayload = 11,
@@ -18,7 +18,12 @@ export enum SigningPayloadID {
   signMovementPayload = 13,
   syncStatePayload = 14,
   depositRequestPayload = 15,
-  withdrawRequestPayload = 16
+  withdrawRequestPayload = 16,
+  cancelAllOrdersPayload = 17,
+  listAccountTransactionsPayload = 18,
+  getAccountPortfolioPayload = 19,
+  getStatesPayload = 20,
+  signStatesPayload = 21
 }
 
 export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {

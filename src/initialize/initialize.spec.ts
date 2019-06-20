@@ -1,4 +1,4 @@
-import { initialize } from './initialize'
+import initialize from './initialize'
 import Config from '../__tests__/config.json'
 import TestVectors from '../__tests__/testVectors.json'
 import bufferize from '../bufferize'

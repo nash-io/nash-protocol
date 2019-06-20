@@ -8,11 +8,8 @@ export { default as mnemonicToSecretKey } from './mnemonicToSecretKey'
 export { default as regenerateMnemonic } from './regenerateMnemonic'
 export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
 export { default as validateMnemonic } from './validateMnemonic'
-export {
-  SigningPayloadID,
-  default as signPayload,
-  canonicalString
-} from './signPayload'
+export { default as initialize } from './initialize'
+export { SigningPayloadID, default as signPayload, canonicalString } from './signPayload'
 
 // Internal API
 export { default as hashPassword } from './hashPassword'

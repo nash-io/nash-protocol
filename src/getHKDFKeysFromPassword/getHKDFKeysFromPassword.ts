@@ -14,10 +14,7 @@ import HKDFKeys from '../types/HKDFKeys'
 const length = 32
 const hash = 'SHA-256'
 
-export default async function getHKDFKeysFromPassword(
-  password: string,
-  salt: string
-): Promise<HKDFKeys> {
+export default async function getHKDFKeysFromPassword(password: string, salt: string): Promise<HKDFKeys> {
   const hashed = await hashPassword(password, salt)
 
   // TODO: do we need to salt here again? If the original input is already hashed we shouldn't need to salt again right?
