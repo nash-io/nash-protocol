@@ -186,10 +186,10 @@ export function createPlaceLimitOrderParams(
     cancellation_policy: cancellationPolicy,
     limit_price: snakeCase(limitPrice),
     market_name: marketName,
-    timestamp: createTimestamp(),
     nonce_from: nonceFrom || createTimestamp32(),
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo || createTimestamp32()
+    nonce_to: nonceTo || createTimestamp32(),
+    timestamp: createTimestamp()
   }
 
   return {
@@ -219,11 +219,11 @@ export function createPlaceStopLimitOrderParams(
     cancellation_policy: cancellationPolicy,
     limit_price: snakeCase(limitPrice),
     market_name: marketName,
-    stop_price: snakeCase(stopPrice),
-    timestamp: createTimestamp(),
     nonce_from: nonceFrom || createTimestamp32(),
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo || createTimestamp32()
+    nonce_to: nonceTo || createTimestamp32(),
+    stop_price: snakeCase(stopPrice),
+    timestamp: createTimestamp()
   }
 
   return {
@@ -244,10 +244,10 @@ export function createPlaceMarketOrderParams(
     amount,
     buy_or_sell: buyOrSell,
     market_name: marketName,
-    timestamp: createTimestamp(),
     nonce_from: nonceFrom || createTimestamp32(),
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo || createTimestamp32()
+    nonce_to: nonceTo || createTimestamp32(),
+    timestamp: createTimestamp()
   }
 
   return {
@@ -269,11 +269,11 @@ export function createPlaceStopMarketOrderParams(
     amount,
     buy_or_sell: buyOrSell,
     market_name: marketName,
-    stop_price: snakeCase(stopPrice),
-    timestamp: createTimestamp(),
     nonce_from: nonceFrom || createTimestamp32(),
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo || createTimestamp32()
+    nonce_to: nonceTo || createTimestamp32(),
+    stop_price: snakeCase(stopPrice),
+    timestamp: createTimestamp()
   }
 
   return {
@@ -297,8 +297,8 @@ export function createSignMovementParams(address: string, quantity: object): Pay
 
 export function createSyncStatesParams(syncStateList: SyncState[]): PayloadAndKind {
   const payload = {
-    timestamp: createTimestamp(),
-    syncStateList
+    syncStateList,
+    timestamp: createTimestamp()
   }
 
   return {
@@ -320,8 +320,8 @@ export function createGetStatesParams(): PayloadAndKind {
 
 export function createSignStatesParams(clientSignedStates: SignedState[]): PayloadAndKind {
   const payload = {
-    timestamp: createTimestamp(),
-    clientSignedStates
+    clientSignedStates,
+    timestamp: createTimestamp()
   }
 
   return {
@@ -333,9 +333,9 @@ export function createSignStatesParams(clientSignedStates: SignedState[]): Paylo
 export function createDepositRequestParams(address: string, quantity: object, nonce?: number): PayloadAndKind {
   const payload = {
     address,
+    nonce: nonce || createTimestamp32(),
     quantity,
-    timestamp: createTimestamp(),
-    nonce: nonce || createTimestamp32()
+    timestamp: createTimestamp()
   }
 
   return {
@@ -347,9 +347,9 @@ export function createDepositRequestParams(address: string, quantity: object, no
 export function createWithdrawalRequestParams(address: string, quantity: object, nonce?: number): PayloadAndKind {
   const payload = {
     address,
+    nonce: nonce || createTimestamp32(),
     quantity,
-    timestamp: createTimestamp(),
-    nonce: nonce || createTimestamp32()
+    timestamp: createTimestamp()
   }
 
   return {
