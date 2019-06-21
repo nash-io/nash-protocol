@@ -17,8 +17,8 @@
     }
   },
   "marketData": {
-    "gas_neo": { "minTickSize": 2, "minTradeSize": 6 },
-    "neo_eth": { "minTickSize": 6, "minTradeSize": 2 }
+    "gas_neo": { "minTickSize": 2, "minTradeSize": 6, "minTradeIncrement": 6 },
+    "neo_eth": { "minTickSize": 6, "minTradeSize": 2, "minTradeIncrement": 2 }
   },
   "payloadSigningKey": {
     "index": 0,

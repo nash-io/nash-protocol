@@ -61,7 +61,7 @@ export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: 
   }
 
   // normalize + to big endian
-  const precision = config.marketData[blockchainData.marketName].minTradeSize
+  const precision = config.marketData[blockchainData.marketName].minTradeIncrement
   const amount = normalizeAmount(blockchainData.amount, precision)
   buffer.writeString(toBigEndianHex(amount))
 
