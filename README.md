@@ -4,6 +4,13 @@ Implementation of NEX Auth Protocol.
 
 This document is very WIP and should be checked for accuracy by someone with more expertise!
 
+## Getting started
+
+    yarn install
+    yarn build
+    yarn test
+
+
 ## API
 
 ```typescript
@@ -124,15 +131,22 @@ We will NOT support the user supplying their own wallet keys. While users will c
 
 ## Development
 
-### Publishing
+### Publishing to NPM
+
+Decide on a new release version, eg. `v1.2.3`.
 
 ```sh
-git checkout -b [new version number]
+# Make sure you are on master and that all work for this release is committed and merged
+# Then clean git, run all the tests and set a new version number with this script:
 yarn prepare-release
-git push -u origin
-# get PR merged
-# make release on `neonexchange/nex-auth-protocol/releases`
-npm publish
+git push origin master
+
+# Do the actual npm release on https://www.npmjs.com/package/@neon-exchange/nex-auth-protocol
+# by creating and pushing a git tag:
+git tag v1.2.3
+git push origin v1.2.3
+
+# At this point, the CI will run and if successful push to npm
 ```
 
 ## TODO
