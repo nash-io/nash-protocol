@@ -1,0 +1,19 @@
+image: node:12
+
+cache:
+  paths:
+  - node_modules/
+  - .yarn/
+
+before_script:
+  - node -v
+  - npm -v
+  - yarn -v
+  - yarn --pure-lockfile --cache-folder .yarn
+
+build_and_test:
+  script:
+    - yarn build
+    - yarn test
+
+
