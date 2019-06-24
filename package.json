@@ -37,14 +37,23 @@
     "node": ">=8.9"
   },
   "dependencies": {
+    "@cityofzion/neon-core": "^4.5.2",
+    "@cityofzion/neon-js": "^4.5.2",
+    "bip32": "^2.0.3",
     "bip39": "2.5.0",
+    "bitcoinjs-lib": "^5.0.5",
     "browserify-aes": "1.2.0",
     "crypto-js": "3.1.9-1",
     "elliptic": "6.4.1",
+    "ethereumjs-util": "^6.1.0",
     "futoin-hkdf": "1.0.2",
+    "int64-buffer": "^0.99.1007",
+    "keccak": "^2.0.0",
     "lodash": "4.17.11",
     "randombytes": "2.1.0",
-    "scrypt-js": "2.0.4"
+    "scrypt-js": "2.0.4",
+    "sha3": "^2.0.4",
+    "smart-buffer": "^4.0.2"
   },
   "devDependencies": {
     "@types/crypto-js": "3.1.43",
