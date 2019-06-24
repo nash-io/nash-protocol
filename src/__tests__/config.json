@@ -1,0 +1,43 @@
+{
+  "assetData": {
+    "eth": {
+      "blockchain": "eth",
+      "hash": "0000000000000000000000000000000000000000",
+      "precision": 8
+    },
+    "gas": {
+      "blockchain": "neo",
+      "hash": "602C79718B16E442DE58778E148D0B1084E3B2DFFD5DE6B7B16CEE7969282DE7",
+      "precision": 8
+    },
+    "neo": {
+      "blockchain": "neo",
+      "hash": "C56F33FC6ECFCD0C225C4AB356FEE59390AF8560BE0E930FAEBE74A6DAFF7C9B",
+      "precision": 8
+    }
+  },
+  "marketData": {
+    "gas_neo": { "minTickSize": 2, "minTradeSize": 6, "minTradeIncrement": 6 },
+    "neo_eth": { "minTickSize": 6, "minTradeSize": 2, "minTradeIncrement": 2 }
+  },
+  "payloadSigningKey": {
+    "index": 0,
+    "publicKey": "0250f1431b1b5cd69df8fd0288c1a995a030cd370c28d267b43a730c7aa83b1f37",
+    "privateKey": "fdc7de6f07e1ec4c1d29cd7a3707cabe9c0a76da4d540dec74c939ffcd46a7b3",
+    "address": ""
+  },
+  "wallets": {
+    "neo": {
+      "index": 0,
+      "privateKey": "491aac461bd2e0eb02ffe6cdb534a03617e8811764e4eea042f24231ba99b76f",
+      "publicKey": "0208035f32c5d0e59f71c55b1e060f6d504c004222c25670ff2b788d76a84af2f2",
+      "address": "AVSFwsxsedGGip1FgJdjavVBuFHHRXD2Uz"
+    },
+    "eth": {
+      "index": 0,
+      "privateKey": "0b7561f1c775ef4715accd21aac8629bcda2e6eb4e434c0d55c917bd7c297ac6",
+      "publicKey": "02be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46",
+      "address": "55D16CA38dFB219141Ab6617B2872B978aF84702"
+    }
+  }
+}
