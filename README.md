@@ -136,15 +136,18 @@ We will NOT support the user supplying their own wallet keys. While users will c
 Decide on a new release version, eg. `v1.2.3`.
 
 ```sh
-# Make sure you are on master and that all work for this release is committed and merged
-# Then clean git, run all the tests and set a new version number with this script:
-yarn prepare-release
-git push origin master
+# Make sure you are on master and that all work for this release is committed and merged.
+# Next step is to create a branch for this release:
+git checkout -b release/v1.2.3
 
-# Do the actual npm release on https://www.npmjs.com/package/@neon-exchange/nex-auth-protocol
-# by creating and pushing a git tag:
-git tag v1.2.3
-git push origin v1.2.3
+# `yarn prepare-release` will do a hard git reset, run the tests and update the version
+# number based on the input you provide in the prompt. It also creates a git tag.
+yarn prepare-release
+git push origin release/v1.2.3
+
+# Based on that branch, create a PR, and as soon as that is in master, push the tag
+# that was created with `yarn prepare-release`:
+git push origin refs/tags/v1.2.3
 
 # At this point, the CI will run and if successful push to npm
 ```
