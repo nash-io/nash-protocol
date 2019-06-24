@@ -133,7 +133,9 @@ We will NOT support the user supplying their own wallet keys. While users will c
 
 ### Publishing to NPM
 
-Decide on a new release version, eg. `v1.2.3`.
+Gitlab CI will automatically publish a version if it receives a new Git tag (see also the [`publish_to_npm`](https://gitlab.com/nash-io/frontend/nex-auth-protocol/blob/master/.gitlab-ci.yml#L29) step in `.gitlab-ci.yml`).
+
+Here's the specific steps: Start with decide on a new release version, eg. `v1.2.3`. Then create a branch and tag and push everything to Gitlab:
 
 ```sh
 # Make sure you are on master and that all work for this release is committed and merged.
@@ -151,14 +153,6 @@ git push origin refs/tags/v1.2.3
 
 # At this point, the CI will run and if successful push to npm
 ```
-
-## TODO
-
-- [x] Switch from Ava to Jest. Scaffold tests for TDD.
-- [x] Start building!
-- [x] Standardize `.tsconfig`
-- [x] Precommit hooks, CI, etc.
-- [ ] Upgrade to `bip39@3.x.x` when released. Currently `bip39` is not packaged as a module, and ~90% of the bundle is composed of foreign language wordlists and an optional string normalization library. With proper treeshaking this will reduce the size of the bundled `nex-auth-protocol` by _literally 98%_ as seen from webpack-analyzer (100kb gzipped to 14.5kb gzipped).
 
 ## References
 
