@@ -19,6 +19,7 @@ export enum SigningPayloadID {
   syncStatePayload = 14,
   depositRequestPayload = 15,
   withdrawRequestPayload = 16,
+
   cancelAllOrdersPayload = 17,
   listAccountTransactionsPayload = 18,
   getAccountPortfolioPayload = 19,
@@ -43,7 +44,12 @@ export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.signMovementPayload]: 'sign_movement',
   [SigningPayloadID.syncStatePayload]: 'sync_state',
   [SigningPayloadID.depositRequestPayload]: 'deposit_request',
-  [SigningPayloadID.withdrawRequestPayload]: 'whithdraw_request'
+  [SigningPayloadID.withdrawRequestPayload]: 'whithdraw_request',
+  [SigningPayloadID.cancelAllOrdersPayload]: 'cancel_all_orders',
+  [SigningPayloadID.listAccountTransactionsPayload]: 'list_account_transactions',
+  [SigningPayloadID.getAccountPortfolioPayload]: 'get_account_portfolio',
+  [SigningPayloadID.getStatesPayload]: 'get_states',
+  [SigningPayloadID.signStatesPayload]: 'sign_states'
 }
 
 export function kindToName(kind: SigningPayloadID): string {
