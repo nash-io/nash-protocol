@@ -50,7 +50,7 @@ export function kindToName(kind: SigningPayloadID): string {
   const name = PayloadIDToName[kind]
 
   if (name == null) {
-    throw new Error(`Cannot use nex-auth-protocol to get name with kind ${kind}`)
+    throw new Error(`Cannot use nash-protocol to get name with kind ${kind}`)
   }
 
   return PayloadIDToName[kind] as string

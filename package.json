@@ -1,12 +1,12 @@
 {
-  "name": "@neon-exchange/nex-auth-protocol",
+  "name": "@neon-exchange/nash-protocol",
   "version": "1.7.8",
-  "description": "Implementation of NEX Auth Protocol",
+  "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
   "sideEffects": false,
-  "repository": "https://github.com/neonexchange/nex-auth-protocol",
+  "repository": "https://gitlab.com/nash-io/frontend/nash-protocol",
   "license": "MIT",
   "keywords": [],
   "scripts": {
@@ -31,7 +31,7 @@
     "clean": "rm -rf build test",
     "all": "yarn reset && yarn test && yarn cov:check",
     "prepare-release": "yarn all && yarn version",
-    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('nex-auth-protocol must be installed with Yarn: https://yarnpkg.com/')\""
+    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('nash-protocol must be installed with Yarn: https://yarnpkg.com/')\""
   },
   "engines": {
     "node": ">=8.9"
