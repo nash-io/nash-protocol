@@ -1,6 +1,6 @@
 # nash-protocol
 
-Implementation of NEX Auth Protocol.
+Implementation of Nash cryptographic routines
 
 This document is very WIP and should be checked for accuracy by someone with more expertise!
 

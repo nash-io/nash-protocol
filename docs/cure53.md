@@ -4,7 +4,7 @@
 
 Cure53 provided NEX with an authentication protocol in their document "NEX Authentication and Transaction Verification Protocol." Within this document, the procedure for account onboarding, login, private key storage, passphrase change are described.
 
-An initial implementation has been completed at [`neonexchange/nash-protocol`](https://github.com/neonexchange/nash-protocol/tree/devs/timothy/feat-siggen). We would like the current implementation to be audited for any security issues.
+An initial implementation has been completed at [`neonexchange/nash-protocol`](https://gitlab.com/nash-io/frontend/nash-protocol/tree/devs/timothy/feat-siggen). We would like the current implementation to be audited for any security issues.
 
 ## Implementation of Cryptographic Primitives
 
