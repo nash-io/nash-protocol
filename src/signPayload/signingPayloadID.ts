@@ -15,17 +15,16 @@ export enum SigningPayloadID {
   placeStopLimitOrderPayload = 10,
   placeStopMarkerOrderPayload = 11,
   placeMarketOrderPayload = 12,
-  signMovementPayload = 13,
+  addMovementPayload = 13,
   // excluded
   syncStatesPayload = 14,
-  depositRequestPayload = 15,
-  withdrawRequestPayload = 16,
   cancelAllOrdersPayload = 17,
   listAccountTransactionsPayload = 18,
   getAccountPortfolioPayload = 19,
   // excluded
   getStatesPayload = 20,
-  signStatesPayload = 21
+  signStatesPayload = 21,
+  updateMovementPayload = 22
 }
 
 export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
