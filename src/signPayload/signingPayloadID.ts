@@ -45,7 +45,8 @@ export function canSignKind(kind: SigningPayloadID): boolean {
   return (
     kind <= SigningPayloadID.getOrderPayload ||
     kind === SigningPayloadID.syncStatesPayload ||
-    kind === SigningPayloadID.getStatesPayload
+    kind === SigningPayloadID.getStatesPayload ||
+    kind === SigningPayloadID.updateMovementPayload
   )
 }
 
