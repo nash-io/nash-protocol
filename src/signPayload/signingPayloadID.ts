@@ -27,7 +27,8 @@ export enum SigningPayloadID {
   getStatesPayload = 20,
   signStatesPayload = 21,
   // excluded
-  updateMovementPayload = 22
+  updateMovementPayload = 22,
+  listAccountStakesPayload = 23
 }
 
 export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
@@ -43,7 +44,8 @@ export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.getStatesPayload]: 'get_states',
   [SigningPayloadID.syncStatesPayload]: 'sync_states',
   [SigningPayloadID.updateMovementPayload]: 'update_movement',
-  [SigningPayloadID.addMovementPayload]: 'add_movement'
+  [SigningPayloadID.addMovementPayload]: 'add_movement',
+  [SigningPayloadID.listAccountStakesPayload]: 'list_account_stakes'
 }
 
 export function canSignKind(kind: SigningPayloadID): boolean {
@@ -51,7 +53,8 @@ export function canSignKind(kind: SigningPayloadID): boolean {
     kind <= SigningPayloadID.getOrderPayload ||
     kind === SigningPayloadID.syncStatesPayload ||
     kind === SigningPayloadID.getStatesPayload ||
-    kind === SigningPayloadID.updateMovementPayload
+    kind === SigningPayloadID.updateMovementPayload ||
+    kind === SigningPayloadID.listAccountStakesPayload
   )
 }
 
