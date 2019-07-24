@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.9"></a>
+## [1.7.9](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v1.7.4...v1.7.9) (2019-07-24)
+
+
+### Bug Fixes
+
+* update cancel orders param to include marketName ([e6b60a4](https://gitlab.com/nash-io/frontend/nash-protocol/commit/e6b60a4))
+
+
+
 <a name="1.7.8"></a>
 ## [1.7.8](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v1.7.6...v1.7.8) (2019-06-24)
 
