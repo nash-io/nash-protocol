@@ -51,8 +51,9 @@ export function createListAccountOrdersParams(
   }
 }
 
-export function createCancelOrderParams(id: string): PayloadAndKind {
+export function createCancelOrderParams(id: string, marketName: string): PayloadAndKind {
   const payload = {
+    market_name: marketName,
     order_id: id,
     timestamp: createTimestamp()
   }
