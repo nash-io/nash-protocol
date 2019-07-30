@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.8.0"></a>
+# [1.8.0](https://github.com/neonexchange/nex-auth-protocol/compare/v1.7.4...v1.8.0) (2019-07-30)
+
+
+### Features
+
+* **payload+release:** list account staking statements payload + v1.7.45 ([ca19e88](https://github.com/neonexchange/nex-auth-protocol/commit/ca19e88))
+* **PayloadIDs:** add support for update movement ([f9340a7](https://github.com/neonexchange/nex-auth-protocol/commit/f9340a7))
+
+
+
 <a name="1.7.4"></a>
 ## [1.7.4](https://github.com/neonexchange/nex-auth-protocol/compare/v1.7.0...v1.7.4) (2019-06-04)
 
