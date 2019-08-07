@@ -32,9 +32,7 @@ describe('when given incorrect values', () => {
     const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
     const aead = encryptSecretKey(encryptionKey, secretKey)
 
-    const {
-      encryptionKey: incorrectEncryptionKey
-    } = await getHKDFKeysFromPassword('wrong password', salt)
+    const { encryptionKey: incorrectEncryptionKey } = await getHKDFKeysFromPassword('wrong password', salt)
 
     try {
       const output = await decryptSecretKey(incorrectEncryptionKey, aead)
@@ -49,13 +47,8 @@ describe('when given incorrect values', () => {
     const { encryptionKey } = await getHKDFKeysFromPassword(password, salt)
     const aead = encryptSecretKey(encryptionKey, secretKey)
 
-    const {
-      encryptionKey: incorrectEncryptionKey
-    } = await getHKDFKeysFromPassword('wrong password', salt)
-    const { tag: incorrectTag } = encryptSecretKey(
-      incorrectEncryptionKey,
-      secretKey
-    )
+    const { encryptionKey: incorrectEncryptionKey } = await getHKDFKeysFromPassword('wrong password', salt)
+    const { tag: incorrectTag } = encryptSecretKey(incorrectEncryptionKey, secretKey)
 
     try {
       const output = await decryptSecretKey(incorrectEncryptionKey, {

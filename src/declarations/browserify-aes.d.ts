@@ -8,21 +8,14 @@ declare module 'browserify-aes' {
   interface Cipher extends NodeJS.ReadWriteStream {
     update(data: string | Buffer | NodeJS.TypedArray | DataView): Buffer
     update(data: string, input_encoding: Utf8AsciiBinaryEncoding): Buffer
-    update(
-      data: Buffer | NodeJS.TypedArray | DataView,
-      output_encoding: HexBase64BinaryEncoding
-    ): string
+    update(data: Buffer | NodeJS.TypedArray | DataView, output_encoding: HexBase64BinaryEncoding): string
     update(
       data: Buffer | NodeJS.TypedArray | DataView,
       input_encoding: any,
       output_encoding: HexBase64BinaryEncoding
     ): string
     // second arg ignored
-    update(
-      data: string,
-      input_encoding: Utf8AsciiBinaryEncoding,
-      output_encoding: HexBase64BinaryEncoding
-    ): string
+    update(data: string, input_encoding: Utf8AsciiBinaryEncoding, output_encoding: HexBase64BinaryEncoding): string
     final(): Buffer
     final(output_encoding: string): string
     setAutoPadding(auto_padding?: boolean): this
@@ -49,11 +42,7 @@ declare module 'browserify-aes' {
       output_encoding: Utf8AsciiBinaryEncoding
     ): string
     // second arg is ignored
-    update(
-      data: string,
-      input_encoding: HexBase64BinaryEncoding,
-      output_encoding: Utf8AsciiBinaryEncoding
-    ): string
+    update(data: string, input_encoding: HexBase64BinaryEncoding, output_encoding: Utf8AsciiBinaryEncoding): string
     final(): Buffer
     final(output_encoding: string): string
     setAutoPadding(auto_padding?: boolean): this
@@ -63,17 +52,11 @@ declare module 'browserify-aes' {
 
   interface DecipherCCM extends Decipher {
     setAuthTag(buffer: Buffer | NodeJS.TypedArray | DataView): this
-    setAAD(
-      buffer: Buffer | NodeJS.TypedArray | DataView,
-      options: { plaintextLength: number }
-    ): this
+    setAAD(buffer: Buffer | NodeJS.TypedArray | DataView, options: { plaintextLength: number }): this
   }
   interface DecipherGCM extends Decipher {
     setAuthTag(buffer: Buffer | NodeJS.TypedArray | DataView): this
-    setAAD(
-      buffer: Buffer | NodeJS.TypedArray | DataView,
-      options?: { plaintextLength: number }
-    ): this
+    setAAD(buffer: Buffer | NodeJS.TypedArray | DataView, options?: { plaintextLength: number }): this
   }
 
   interface CipherCCMOptions {

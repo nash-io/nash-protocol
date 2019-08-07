@@ -10,15 +10,7 @@ test('should return true for valid mnemonic', () => {
 })
 
 test('should return false for invalid mnemonic', () => {
-  const output = validateMnemonic([
-    'some',
-    'entirely',
-    'arbitrary',
-    'words',
-    'foo',
-    'bar',
-    'baz'
-  ])
+  const output = validateMnemonic(['some', 'entirely', 'arbitrary', 'words', 'foo', 'bar', 'baz'])
 
   expect(output).toBeFalsy()
 })
