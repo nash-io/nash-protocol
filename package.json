@@ -1,6 +1,6 @@
 {
   "name": "@neon-exchange/nex-auth-protocol",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "description": "Implementation of NEX Auth Protocol",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
