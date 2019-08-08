@@ -34,7 +34,12 @@ export default function signPayload(
     )
   }
   const payloadName = kindToName(kind)
-  const message = `${payloadName},${getRawPayload(payload)}`
+  const tempPayload = { ...payload }
+  if (payloadName === 'get_orders_for_movement') {
+    delete tempPayload.timestamp
+  }
+  const message = `${payloadName},${getRawPayload(tempPayload)}`
+  console.log('message', message)
   const keypair = curve.keyFromPrivate(privateKey)
 
   const sig = keypair.sign(SHA256(message).toString(hexEncoding), {
