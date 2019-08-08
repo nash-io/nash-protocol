@@ -1,5 +1,5 @@
 import { PayloadAndKind, SigningPayloadID, kindToOrderPrefix } from '../../payload'
-import { Config, BlockchainData, BlockchainMovement } from '../../types'
+import { Config, BlockchainData, BlockchainMovement, Asset } from '../../types'
 import getNEOScriptHash from '../getNEOScriptHash'
 import { normalizeAmount, toLittleEndianHex } from '../currency'
 import reverseHexString from '../reverseHexString'
@@ -63,6 +63,23 @@ export function getUnitPairs(market: string): any {
   return {
     unitA: pairs[0],
     unitB: pairs[1]
+  }
+}
+
+export function convertEthNonce(nonce: number): string {
+  const out = nonce.toString(16)
+  if (out.length > 8) {
+    throw Error('Nonce too large for uint32')
+  }
+  return out.padStart(8, '0')
+}
+
+export function getNEOAssetHash(asset: Asset): string {
+  switch (asset.blockchain) {
+    case 'neo':
+      return reverseHexString(asset.hash)
+    default:
+      return 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
   }
 }
 

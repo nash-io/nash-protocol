@@ -1,5 +1,5 @@
 import { normalizeAmount, toLittleEndianHex } from '../utils/currency'
-import { getUnitPairs, inferBlockchainData } from '../utils/blockchain'
+import { getUnitPairs, inferBlockchainData, getNEOAssetHash } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { maxOrderRate, maxFeeRate, minOrderRate } from '../constants'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
@@ -32,11 +32,10 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind)) // prefix
   buffer.writeString(reverseHexString(getNEOScriptHash(config.wallets.neo.address)))
-  buffer.writeString(reverseHexString(config.assetData[unitA].hash))
-
+  buffer.writeString(getNEOAssetHash(config.assetData[unitA]))
   // only orders have a destination market.
   if (isOrderPayload(kind)) {
-    buffer.writeString(reverseHexString(config.assetData[unitB].hash))
+    buffer.writeString(getNEOAssetHash(config.assetData[unitB]))
     buffer.writeString(toLittleEndianHex(blockchainData.nonceTo))
     buffer.writeString(toLittleEndianHex(blockchainData.nonceFrom))
   }

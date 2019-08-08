@@ -8,6 +8,7 @@ export interface PayloadSignature {
   readonly payload: Record<string, any>
   readonly signature: string
   readonly blockchainMovement?: BlockchainMovement
+  readonly canonicalString?: string
 }
 
 export interface BlockchainMovement {

@@ -1,12 +1,17 @@
 import { SmartBuffer } from 'smart-buffer'
-import { inferBlockchainData, getUnitPairs, getETHAssetID } from '../utils/blockchain'
+import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
 import { Config, BlockchainSignature } from '../types'
-import * as bitcoin from 'bitcoinjs-lib'
+// import * as bitcoin from 'bitcoinjs-lib'
 import createKeccakHash from 'keccak'
+
+import * as EC from 'elliptic'
+
+// only do this once
+const ellipticContext = new EC.ec('secp256k1')
 
 // Signing for Ethereum needs a little more work to be done.
 // 1. Compute a KEKKAC256 hash of the data.
@@ -14,8 +19,7 @@ import createKeccakHash from 'keccak'
 // 3. Compute a KEKKAC256 hash of the prefix result.
 // 4. Sign that hash with the private key.
 export function signETHBlockchainData(privateKey: string, data: string): BlockchainSignature {
-  const pair = bitcoin.ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'))
-
+  const kp = ellipticContext.keyFromPrivate(privateKey)
   const initialHash = createKeccakHash('keccak256')
     .update(data, 'hex')
     .digest()
@@ -27,13 +31,13 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
     .update(finalMsg)
     .digest()
 
+  const sig = kp.sign(finalHash)
+  const v = sig.recoveryParam === 0 ? '00' : '01'
+  const signature = `${sig.r.toString('hex')}${sig.s.toString('hex')}${v}`
+
   return {
     blockchain: 'eth',
-    signature:
-      pair
-        .sign(finalHash)
-        .toString('hex')
-        .toUpperCase() + '00' // not sure why this is needed?
+    signature
   }
 }
 
@@ -55,9 +59,8 @@ export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: 
   if (isOrderPayload(kind)) {
     buffer.writeString(getETHAssetID(unitB))
 
-    // TOOD: Write nonces in the 4 byte ETH format.
-    buffer.writeString('00000000')
-    buffer.writeString('00000000')
+    buffer.writeString(convertEthNonce(blockchainData.nonceTo))
+    buffer.writeString(convertEthNonce(blockchainData.nonceFrom))
   }
 
   // normalize + to big endian
@@ -77,14 +80,9 @@ export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: 
   }
 
   if (isOrderPayload(kind)) {
-    // also, the nonce needs to be the order nonce
-    // convertEthNonce
-    // buffer.writeString(toLittleEndian(blockchainData.nonceOrder))
-    buffer.writeString('00000000')
+    buffer.writeString(convertEthNonce(blockchainData.nonceOrder))
   } else {
-    // covertEthNonce
-    // buffer.writeString(toLittleEndian(blockchainData.nonce))
-    buffer.writeString('00000000')
+    buffer.writeString(convertEthNonce(blockchainData.nonce))
   }
 
   if (!isOrderPayload(kind)) {

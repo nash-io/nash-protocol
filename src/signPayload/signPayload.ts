@@ -12,7 +12,7 @@ import stringify from '../stringify'
 import deep from '../utils/deep'
 
 import { kindToName, needBlockchainMovement, needBlockchainSignature } from '../payload/signingPayloadID'
-import { Config, PayloadSignature, BlockchainSignature } from '../types'
+import { Config, PayloadSignature, BlockchainSignature, Asset } from '../types'
 import { PayloadAndKind } from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
 import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
@@ -60,12 +60,14 @@ export default function signPayload(
     }
     return {
       blockchainMovement: getBlockchainMovement(config, { kind, payload }),
+      canonicalString: message,
       payload,
       signature: stringify(bufferize(sig.toDER()))
     }
   }
 
   return {
+    canonicalString: message,
     payload,
     signature: stringify(bufferize(sig.toDER()))
   }
@@ -79,10 +81,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
   // Infer blockchain data for the given payload.
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-  const blockchains: ReadonlyArray<string> = [unitA, unitB]
-
+  const blockchains: ReadonlyArray<Asset> = [config.assetData[unitA], config.assetData[unitB]]
   const sigs = _.map(_.uniq(blockchains), unit => {
-    switch (unit) {
+    switch (unit.blockchain) {
       case 'neo':
         const neoData = buildNEOBlockchainSignatureData(config, payloadAndKind)
         return signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
