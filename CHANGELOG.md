@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.8.4"></a>
+## [1.8.4](https://github.com/neonexchange/nex-auth-protocol/compare/v1.8.2...v1.8.4) (2019-08-08)
+
+
+
 <a name="1.8.3"></a>
 ## [1.8.3](https://github.com/neonexchange/nex-auth-protocol/compare/v1.8.2...v1.8.3) (2019-08-07)
 
