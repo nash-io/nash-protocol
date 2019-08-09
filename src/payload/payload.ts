@@ -12,6 +12,9 @@ export interface SignedState extends SyncState {
   signature: string
 }
 
+export const MovementTypeDeposit = 'deposit'
+export const MovementTypeWithdrawal = 'withdrawal'
+
 /**
  *
  * @param before
@@ -282,15 +285,16 @@ export function createPlaceStopMarketOrderParams(
   }
 }
 
-export function createSignMovementParams(address: string, quantity: object): PayloadAndKind {
+export function createAddMovementParams(address: string, quantity: object, type: string): PayloadAndKind {
   const payload = {
     address,
     quantity,
-    timestamp: createTimestamp()
+    timestamp: createTimestamp(),
+    type
   }
 
   return {
-    kind: SigningPayloadID.signMovementPayload,
+    kind: SigningPayloadID.addMovementPayload,
     payload
   }
 }
@@ -326,34 +330,6 @@ export function createSignStatesParams(clientSignedStates: SignedState[]): Paylo
 
   return {
     kind: SigningPayloadID.signStatesPayload,
-    payload
-  }
-}
-
-export function createDepositRequestParams(address: string, quantity: object, nonce?: number): PayloadAndKind {
-  const payload = {
-    address,
-    nonce: nonce || createTimestamp32(),
-    quantity,
-    timestamp: createTimestamp()
-  }
-
-  return {
-    kind: SigningPayloadID.depositRequestPayload,
-    payload
-  }
-}
-
-export function createWithdrawalRequestParams(address: string, quantity: object, nonce?: number): PayloadAndKind {
-  const payload = {
-    address,
-    nonce: nonce || createTimestamp32(),
-    quantity,
-    timestamp: createTimestamp()
-  }
-
-  return {
-    kind: SigningPayloadID.withdrawRequestPayload,
     payload
   }
 }

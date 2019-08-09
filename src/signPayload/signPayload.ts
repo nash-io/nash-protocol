@@ -11,7 +11,12 @@ import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
 
-import { kindToName, needBlockchainMovement, needBlockchainSignature } from '../payload/signingPayloadID'
+import {
+  kindToName,
+  needBlockchainMovement,
+  needBlockchainSignature,
+  SigningPayloadID
+} from '../payload/signingPayloadID'
 import { Config, PayloadSignature, BlockchainSignature, Asset } from '../types'
 import { PayloadAndKind } from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
@@ -78,7 +83,20 @@ export default function signPayload(
 // Otherwise we are trading cross chain, hence need signatures for both blockchains,
 // neo_eth, eth_btc, etc..
 export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKind): ReadonlyArray<BlockchainSignature> {
-  // Infer blockchain data for the given payload.
+  // if this is a movement we don't want to do all the stuff below
+  if (payloadAndKind.kind === SigningPayloadID.addMovementPayload) {
+    const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
+    switch (blockchain) {
+      case 'neo':
+        const neoData = buildNEOBlockchainSignatureData(config, payloadAndKind)
+        return [signNEOBlockchainData(config.wallets.neo.privateKey, neoData)]
+      case 'eth':
+        const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
+        return [signETHBlockchainData(config.wallets.neo.privateKey, ethData)]
+    }
+  }
+
+  // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
   const blockchains: ReadonlyArray<Asset> = [config.assetData[unitA], config.assetData[unitB]]

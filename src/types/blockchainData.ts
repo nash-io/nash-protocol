@@ -5,4 +5,5 @@ export default interface BlockchainData {
   readonly nonceFrom: number
   readonly nonceTo: number
   readonly nonceOrder: number
+  readonly limitPrice: string
 }

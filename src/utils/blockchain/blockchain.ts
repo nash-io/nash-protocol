@@ -1,4 +1,4 @@
-import { PayloadAndKind, SigningPayloadID, kindToOrderPrefix } from '../../payload'
+import { PayloadAndKind, SigningPayloadID, kindToOrderPrefix, isLimitOrderPayload } from '../../payload'
 import { Config, BlockchainData, BlockchainMovement, Asset } from '../../types'
 import getNEOScriptHash from '../getNEOScriptHash'
 import { normalizeAmount, toLittleEndianHex } from '../currency'
@@ -14,14 +14,22 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
     case SigningPayloadID.placeStopMarketOrderPayload:
     case SigningPayloadID.placeLimitOrderPayload:
     case SigningPayloadID.placeStopLimitOrderPayload:
+      let limitPrice: string = ''
+
+      if (isLimitOrderPayload(kind)) {
+        limitPrice = payload.limitPrice.amount
+      }
+
       return {
         amount: payload.amount.amount,
+        limitPrice,
         marketName: payload.marketName,
         nonce: payload.nonce,
         nonceFrom: payload.nonceFrom,
         nonceOrder: payload.nonceOrder,
         nonceTo: payload.nonceTo
       }
+
     default:
       throw new Error('invalid kind')
   }
@@ -38,9 +46,9 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
       return {
         address: Buffer.from(scriptHash).toString('hex'),
         amount: String(normalizeAmount(blockchainData.amount, 8)),
-        asset: reverseHexString(assets[unitA].hash),
+        asset: getNEOAssetHash(assets[unitA]),
         nonce: toLittleEndianHex(blockchainData.nonce),
-        prefix: kindToOrderPrefix(payloadAndKind.kind),
+        prefix: kindToOrderPrefix(payloadAndKind.kind, payloadAndKind),
         userPubKey: config.wallets.neo.publicKey
       }
     case 'eth':
@@ -49,8 +57,8 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
         address: config.wallets.eth.address,
         amount: String(normalizeAmount(blockchainData.amount, chainPrecision)),
         asset: getETHAssetID(unitA),
-        nonce: '00000000', // TODO: convertETHNonce
-        prefix: kindToOrderPrefix(payloadAndKind.kind),
+        nonce: convertEthNonce(blockchainData.nonce),
+        prefix: kindToOrderPrefix(payloadAndKind.kind, payloadAndKind),
         userPubKey: config.wallets.eth.address
       }
     default:
@@ -60,9 +68,16 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
 
 export function getUnitPairs(market: string): any {
   const pairs = market.split('_')
-  return {
-    unitA: pairs[0],
-    unitB: pairs[1]
+  switch (pairs.length) {
+    case 1:
+      return { unitA: pairs[0] }
+    case 2:
+      return {
+        unitA: pairs[0],
+        unitB: pairs[1]
+      }
+    default:
+      throw new Error(`Cannot get market pairs for ${market}`)
   }
 }
 

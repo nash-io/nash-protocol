@@ -2,7 +2,7 @@ import { normalizeAmount, toLittleEndianHex } from '../utils/currency'
 import { getUnitPairs, inferBlockchainData, getNEOAssetHash } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { maxOrderRate, maxFeeRate, minOrderRate } from '../constants'
-import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
+import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID } from '../payload'
 import { BlockchainSignature, Config } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { SmartBuffer } from 'smart-buffer'
@@ -25,6 +25,16 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
     throw new Error('NEO wallet not found in config.wallets')
   }
 
+  if (isOrderPayload(payloadAndKind.kind)) {
+    return buildNEOOrderSignatureData(config, payloadAndKind)
+  } else if (payloadAndKind.kind === SigningPayloadID.addMovementPayload) {
+    return buildNEOMovementSignatureData(config, payloadAndKind)
+  } else {
+    throw new Error(`Could not sign blockchain data for payload type ${payloadAndKind}`)
+  }
+}
+
+function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
   const { kind } = payloadAndKind
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
@@ -33,39 +43,49 @@ export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: 
   buffer.writeString(kindToOrderPrefix(kind)) // prefix
   buffer.writeString(reverseHexString(getNEOScriptHash(config.wallets.neo.address)))
   buffer.writeString(getNEOAssetHash(config.assetData[unitA]))
-  // only orders have a destination market.
-  if (isOrderPayload(kind)) {
-    buffer.writeString(getNEOAssetHash(config.assetData[unitB]))
-    buffer.writeString(toLittleEndianHex(blockchainData.nonceTo))
-    buffer.writeString(toLittleEndianHex(blockchainData.nonceFrom))
-  }
+
+  buffer.writeString(getNEOAssetHash(config.assetData[unitB]))
+  buffer.writeString(toLittleEndianHex(blockchainData.nonceTo))
+  buffer.writeString(toLittleEndianHex(blockchainData.nonceFrom))
 
   const precision = config.marketData[blockchainData.marketName].minTradeIncrement
   const amount = normalizeAmount(blockchainData.amount, precision)
   buffer.writeString(toLittleEndianHex(amount))
 
-  // only write the fee's when the it's an order.
-  if (isOrderPayload(kind)) {
-    // NOTE: limit orders price needs normalization.
-    if (isLimitOrderPayload(kind)) {
-      // TODO: normalization on the price of the limit order.
-      buffer.writeString(toLittleEndianHex(minOrderRate))
-      buffer.writeString(maxOrderRate)
-      buffer.writeString(toLittleEndianHex(maxFeeRate))
-    }
-
-    // TODO: need normalization whith precicions
-    buffer.writeString(toLittleEndianHex(minOrderRate))
-    buffer.writeString(maxOrderRate)
-    buffer.writeString(toLittleEndianHex(maxFeeRate))
+  let orderRate: string = maxOrderRate
+  if (isLimitOrderPayload(kind)) {
+    orderRate = toLittleEndianHex(
+      normalizeAmount(blockchainData.limitPrice as string, config.marketData[blockchainData.marketName].minTickSize)
+    )
   }
+  // TODO: need normalization whith precicions
+  buffer.writeString(toLittleEndianHex(minOrderRate))
+  buffer.writeString(orderRate)
+  buffer.writeString(toLittleEndianHex(maxFeeRate))
 
   // use the nonceOrder field when we need to sign any order payload.
-  if (isOrderPayload(kind)) {
-    buffer.writeString(toLittleEndianHex(blockchainData.nonceOrder))
-  } else {
-    buffer.writeString(toLittleEndianHex(blockchainData.nonce))
-  }
+  buffer.writeString(toLittleEndianHex(blockchainData.nonceOrder))
+  buffer.writeString(config.wallets.neo.publicKey)
+
+  // Already written everthing in hex, so just return the utf8 string from the
+  // buffer.
+  return buffer.toString('utf8').toLowerCase()
+}
+
+function buildNEOMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+  const { kind } = payloadAndKind
+  const { unitA } = getUnitPairs(payloadAndKind.payload.quantity.currency)
+
+  const buffer = new SmartBuffer()
+  buffer.writeString(kindToOrderPrefix(kind, payloadAndKind.payload)) // prefix
+  buffer.writeString(reverseHexString(getNEOScriptHash(config.wallets.neo.address)))
+  buffer.writeString(getNEOAssetHash(config.assetData[unitA]))
+
+  const amount = normalizeAmount(payloadAndKind.payload.quantity.amount, 8)
+  buffer.writeString(toLittleEndianHex(amount))
+
+  // use the nonceOrder field when we need to sign any order payload.
+  buffer.writeString(toLittleEndianHex(payloadAndKind.payload.nonce))
   buffer.writeString(config.wallets.neo.publicKey)
 
   // Already written everthing in hex, so just return the utf8 string from the

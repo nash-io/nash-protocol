@@ -1,3 +1,5 @@
+import { MovementTypeWithdrawal, MovementTypeDeposit } from './payload'
+
 // This is currently the same as api-client-ts/constants/PayloadID
 export enum SigningPayloadID {
   listOrderPayload = 0,
@@ -15,16 +17,19 @@ export enum SigningPayloadID {
   placeStopLimitOrderPayload = 10,
   placeStopMarketOrderPayload = 11,
   placeMarketOrderPayload = 12,
-  signMovementPayload = 13,
+  addMovementPayload = 13,
   syncStatePayload = 14,
-  depositRequestPayload = 15,
-  withdrawRequestPayload = 16,
 
   cancelAllOrdersPayload = 17,
   listAccountTransactionsPayload = 18,
   getAccountPortfolioPayload = 19,
+
   getStatesPayload = 20,
-  signStatesPayload = 21
+  signStatesPayload = 21,
+  updateMovementPayload = 22,
+  listAccountStakesPayload = 23,
+  listAccountStakingStatementsPayload = 24,
+  listAccountStakingDividendsPayload = 25
 }
 
 export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
@@ -41,15 +46,17 @@ export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.placeStopLimitOrderPayload]: 'place_stop_limit_order',
   [SigningPayloadID.placeStopMarketOrderPayload]: 'place_stop_market_order',
   [SigningPayloadID.placeMarketOrderPayload]: 'place_market_order',
-  [SigningPayloadID.signMovementPayload]: 'sign_movement',
+  [SigningPayloadID.addMovementPayload]: 'add_movement',
   [SigningPayloadID.syncStatePayload]: 'sync_state',
-  [SigningPayloadID.depositRequestPayload]: 'deposit_request',
-  [SigningPayloadID.withdrawRequestPayload]: 'whithdraw_request',
   [SigningPayloadID.cancelAllOrdersPayload]: 'cancel_all_orders',
   [SigningPayloadID.listAccountTransactionsPayload]: 'list_account_transactions',
   [SigningPayloadID.getAccountPortfolioPayload]: 'get_account_portfolio',
   [SigningPayloadID.getStatesPayload]: 'get_states',
-  [SigningPayloadID.signStatesPayload]: 'sign_states'
+  [SigningPayloadID.signStatesPayload]: 'sign_states',
+  [SigningPayloadID.updateMovementPayload]: 'update_movement',
+  [SigningPayloadID.listAccountStakesPayload]: 'list_account_stakes',
+  [SigningPayloadID.listAccountStakingStatementsPayload]: 'list_account_staking_statements',
+  [SigningPayloadID.listAccountStakingDividendsPayload]: 'list_account_staking_dividends'
 }
 
 export function kindToName(kind: SigningPayloadID): string {
@@ -71,7 +78,7 @@ export function needBlockchainMovement(kind: SigningPayloadID): boolean {
 }
 
 export function isOrderPayload(kind: SigningPayloadID): boolean {
-  return kind > SigningPayloadID.getOrderPayload && kind < SigningPayloadID.signMovementPayload
+  return kind > SigningPayloadID.getOrderPayload && kind < SigningPayloadID.addMovementPayload
 }
 
 export function isLimitOrderPayload(kind: SigningPayloadID): boolean {
@@ -79,17 +86,17 @@ export function isLimitOrderPayload(kind: SigningPayloadID): boolean {
 }
 
 // Returns the prefix for the blockchain data based on the id of the payload.
-export function kindToOrderPrefix(kind: SigningPayloadID): string {
+export function kindToOrderPrefix(kind: SigningPayloadID, payload?: any): string {
   if (kind === SigningPayloadID.syncStatePayload) {
     return '00'
   }
   if (isOrderPayload(kind)) {
     return '01'
   }
-  if (kind === SigningPayloadID.depositRequestPayload) {
+  if (kind === SigningPayloadID.addMovementPayload && payload.type === MovementTypeDeposit) {
     return '02'
   }
-  if (kind === SigningPayloadID.withdrawRequestPayload) {
+  if (kind === SigningPayloadID.addMovementPayload && payload.type === MovementTypeWithdrawal) {
     return '03'
   }
 
