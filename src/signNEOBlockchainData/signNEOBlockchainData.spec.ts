@@ -1,6 +1,6 @@
 import { signNEOBlockchainData, buildNEOBlockchainSignatureData } from './signNEOBlockchainData'
 import signPayload from '../signPayload'
-import { SigningPayloadID, MovementTypeDeposit } from '../payload'
+import { SigningPayloadID, MovementTypeDeposit, MovementTypeWithdrawal } from '../payload'
 import config from '../__tests__/blockchain_config.json'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 
@@ -30,10 +30,45 @@ test('sign NEO deposit movement', async () => {
 
   expect(payloadRes.blockchainMovement).toEqual({
     address: '6f6f85bfffb412967af3dd0d71a5e2f8a759006c',
-    amount: '1700000000',
+    amount: '00f1536500000000',
     asset: '9b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc5',
     nonce: '2ce6520000000000',
     prefix: '02',
+    userPubKey: config.wallets.neo.publicKey,
+    userSig: data.blockchainSignatures.neo
+  })
+})
+
+test('sign GAS withdrawal movement', async () => {
+  const data = sigTestVectors.movements.c
+  const payload = {
+    address: data.address,
+    nonce: data.nonce,
+    quantity: { amount: '11.00000000', currency: 'gas' },
+    timestamp: data.timestamp,
+    type: MovementTypeWithdrawal
+  }
+
+  const signingPayload = { kind: SigningPayloadID.addMovementPayload, payload }
+
+  const rawData = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
+  expect(rawData).toBe(data.raw.neo)
+  const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
+  expect(sig.blockchain).toBe('neo')
+  expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.neo)
+
+  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+
+  const expectedCanonicalString =
+    'add_movement,{"address":"arw6fwqwtmtzsfdjkzih1vvmy4ibnmuvmo","nonce":5432876,"quantity":{"amount":"11.00000000","currency":"gas"},"timestamp":1565362337483,"type":"withdrawal"}'
+  expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+
+  expect(payloadRes.blockchainMovement).toEqual({
+    address: '6f6f85bfffb412967af3dd0d71a5e2f8a759006c',
+    amount: '00ab904100000000',
+    asset: 'e72d286979ee6cb1b7e65dfddfb2e384100b8d148e7758de42e4168b71792c60',
+    nonce: '2ce6520000000000',
+    prefix: '03',
     userPubKey: config.wallets.neo.publicKey,
     userSig: data.blockchainSignatures.neo
   })

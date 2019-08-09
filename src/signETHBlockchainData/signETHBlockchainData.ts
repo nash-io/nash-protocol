@@ -1,6 +1,5 @@
 import { SmartBuffer } from 'smart-buffer'
 import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID } from '../utils/blockchain'
-import reverseHexString from '../utils/reverseHexString'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
@@ -63,7 +62,7 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind))
   buffer.writeString(address)
-  buffer.writeString(reverseHexString(getETHAssetID(unitA)))
+  buffer.writeString(getETHAssetID(unitA))
 
   buffer.writeString(getETHAssetID(unitB))
   buffer.writeString(convertEthNonce(blockchainData.nonceTo))
@@ -98,7 +97,7 @@ function buildETHMovementSignatureData(config: Config, payloadAndKind: PayloadAn
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(payloadAndKind.kind, payloadAndKind.payload)) // prefix
   buffer.writeString(address)
-  buffer.writeString(reverseHexString(getETHAssetID(unitA)))
+  buffer.writeString(getETHAssetID(unitA))
 
   // normalize + to big endian
   const amount = normalizeAmount(payloadAndKind.payload.quantity.amount, 8)

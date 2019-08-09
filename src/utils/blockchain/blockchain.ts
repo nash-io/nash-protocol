@@ -46,7 +46,7 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
       const scriptHash = getNEOScriptHash(config.wallets.neo.address)
       return {
         address: reverseHexString(scriptHash),
-        amount: String(normalizeAmount(payload.quantity.amount, 8)),
+        amount: toLittleEndianHex(normalizeAmount(payload.quantity.amount, 8)),
         asset: getNEOAssetHash(assets[unit]),
         nonce: toLittleEndianHex(payload.nonce),
         prefix,
