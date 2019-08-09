@@ -2,7 +2,7 @@ import { SmartBuffer } from 'smart-buffer'
 import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
-import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind } from '../payload'
+import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
 import { Config, BlockchainSignature } from '../types'
 // import * as bitcoin from 'bitcoinjs-lib'
@@ -42,10 +42,21 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
 }
 
 export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
-  // make sure we have a NEO wallet in our config object.
+  // make sure we have a ETH wallet in our config object.
   if (!('eth' in config.wallets)) {
-    throw new Error('NEO wallet not found in config.wallets')
+    throw new Error('ETH wallet not found in config.wallets')
   }
+
+  if (isOrderPayload(payloadAndKind.kind)) {
+    return buildETHOrderSignatureData(config, payloadAndKind)
+  } else if (payloadAndKind.kind === SigningPayloadID.addMovementPayload) {
+    return buildETHMovementSignatureData(config, payloadAndKind)
+  } else {
+    throw new Error(`Could not sign blockchain data for payload type ${payloadAndKind}`)
+  }
+}
+
+function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
   const { kind } = payloadAndKind
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
@@ -56,38 +67,48 @@ export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: 
   buffer.writeString(address)
   buffer.writeString(reverseHexString(getETHAssetID(unitA)))
 
-  if (isOrderPayload(kind)) {
-    buffer.writeString(getETHAssetID(unitB))
-
-    buffer.writeString(convertEthNonce(blockchainData.nonceTo))
-    buffer.writeString(convertEthNonce(blockchainData.nonceFrom))
-  }
+  buffer.writeString(getETHAssetID(unitB))
+  buffer.writeString(convertEthNonce(blockchainData.nonceTo))
+  buffer.writeString(convertEthNonce(blockchainData.nonceFrom))
 
   // normalize + to big endian
   const precision = config.marketData[blockchainData.marketName].minTradeIncrement
   const amount = normalizeAmount(blockchainData.amount, precision)
   buffer.writeString(toBigEndianHex(amount))
 
-  if (isOrderPayload(kind)) {
-    if (isLimitOrderPayload(kind)) {
-      buffer.writeString(toBigEndianHex(minOrderRate))
-      buffer.writeString(maxOrderRate)
-      buffer.writeString(toBigEndianHex(maxFeeRate))
-    }
-    buffer.writeString(toBigEndianHex(minOrderRate))
-    buffer.writeString(maxOrderRate)
-    buffer.writeString(toBigEndianHex(maxFeeRate))
+  let orderRate: string = maxOrderRate
+
+  if (isLimitOrderPayload(kind)) {
+    orderRate = toBigEndianHex(
+      normalizeAmount(blockchainData.limitPrice as string, config.marketData[blockchainData.marketName].minTickSize)
+    )
   }
 
-  if (isOrderPayload(kind)) {
-    buffer.writeString(convertEthNonce(blockchainData.nonceOrder))
-  } else {
-    buffer.writeString(convertEthNonce(blockchainData.nonce))
-  }
+  buffer.writeString(toBigEndianHex(minOrderRate))
+  buffer.writeString(orderRate)
+  buffer.writeString(toBigEndianHex(maxFeeRate))
 
-  if (!isOrderPayload(kind)) {
-    buffer.writeString(address)
-  }
+  buffer.writeString(convertEthNonce(blockchainData.nonceOrder))
+
+  return buffer.toString('utf8').toUpperCase()
+}
+
+function buildETHMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+  const { unitA } = getUnitPairs(payloadAndKind.payload.quantity.currency)
+  const address = config.wallets.eth.address
+
+  const buffer = new SmartBuffer()
+  buffer.writeString(kindToOrderPrefix(payloadAndKind.kind, payloadAndKind.payload)) // prefix
+  buffer.writeString(address)
+  buffer.writeString(reverseHexString(getETHAssetID(unitA)))
+
+  // normalize + to big endian
+  const amount = normalizeAmount(payloadAndKind.payload.quantity.amount, 8)
+  buffer.writeString(toBigEndianHex(amount))
+
+  buffer.writeString(convertEthNonce(payloadAndKind.payload.nonce))
+
+  buffer.writeString(address)
 
   return buffer.toString('utf8').toUpperCase()
 }
