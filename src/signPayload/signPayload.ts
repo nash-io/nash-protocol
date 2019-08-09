@@ -92,7 +92,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
         return [signNEOBlockchainData(config.wallets.neo.privateKey, neoData)]
       case 'eth':
         const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
-        return [signETHBlockchainData(config.wallets.neo.privateKey, ethData)]
+        return [signETHBlockchainData(config.wallets.eth.privateKey, ethData)]
     }
   }
 

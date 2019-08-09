@@ -1,6 +1,6 @@
 import { buildETHBlockchainSignatureData, signETHBlockchainData } from './signETHBlockchainData'
 import { SigningPayloadID, MovementTypeDeposit } from '../payload'
-import config from '../__tests__/config.json'
+import config from '../__tests__/blockchain_config.json'
 import signPayload from '../signPayload'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
@@ -28,6 +28,16 @@ test('sign eth deposit movement', async () => {
   const expectedCanonicalString =
     'add_movement,{"address":"fa39fddde46cea3060b91f80abed8672f77c5bea","nonce":5432876,"quantity":{"amount":"1.32450000","currency":"eth"},"timestamp":1565323885016,"type":"deposit"}'
   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+
+  expect(payloadRes.blockchainMovement).toEqual({
+    address: 'fa39fddde46cea3060b91f80abed8672f77c5bea',
+    amount: '1324500000000000000',
+    asset: '0000',
+    nonce: '0052e62c',
+    prefix: '02',
+    userPubKey: 'fa39fddde46cea3060b91f80abed8672f77c5bea',
+    userSig: data.blockchainSignatures.eth
+  })
 })
 
 test('sign ETH blockchain market order data', async () => {

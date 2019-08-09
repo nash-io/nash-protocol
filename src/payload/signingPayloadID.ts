@@ -70,11 +70,20 @@ export function kindToName(kind: SigningPayloadID): string {
 }
 
 export function needBlockchainSignature(kind: SigningPayloadID): boolean {
-  return kind > SigningPayloadID.getOrderPayload
+  return (
+    [
+      SigningPayloadID.placeLimitOrderPayload,
+      SigningPayloadID.placeMarketOrderPayload,
+      SigningPayloadID.placeStopLimitOrderPayload,
+      SigningPayloadID.placeStopMarketOrderPayload,
+      SigningPayloadID.addMovementPayload,
+      SigningPayloadID.signStatesPayload
+    ].indexOf(kind) > -1
+  )
 }
 
 export function needBlockchainMovement(kind: SigningPayloadID): boolean {
-  return kind > SigningPayloadID.syncStatePayload
+  return kind === SigningPayloadID.addMovementPayload
 }
 
 export function isOrderPayload(kind: SigningPayloadID): boolean {

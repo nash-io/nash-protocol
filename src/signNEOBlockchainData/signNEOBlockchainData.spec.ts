@@ -1,7 +1,7 @@
 import { signNEOBlockchainData, buildNEOBlockchainSignatureData } from './signNEOBlockchainData'
 import signPayload from '../signPayload'
 import { SigningPayloadID, MovementTypeDeposit } from '../payload'
-import config from '../__tests__/config.json'
+import config from '../__tests__/blockchain_config.json'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 
 test('sign NEO deposit movement', async () => {
@@ -27,6 +27,16 @@ test('sign NEO deposit movement', async () => {
   const expectedCanonicalString =
     'add_movement,{"address":"arw6fwqwtmtzsfdjkzih1vvmy4ibnmuvmo","nonce":5432876,"quantity":{"amount":"17.00000000","currency":"neo"},"timestamp":1565314439709,"type":"deposit"}'
   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+
+  expect(payloadRes.blockchainMovement).toEqual({
+    address: '6f6f85bfffb412967af3dd0d71a5e2f8a759006c',
+    amount: '1700000000',
+    asset: '9b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc5',
+    nonce: '2ce6520000000000',
+    prefix: '02',
+    userPubKey: config.wallets.neo.publicKey,
+    userSig: data.blockchainSignatures.neo
+  })
 })
 
 test('sign NEO_GAS blockchain market order data', async () => {

@@ -5,9 +5,7 @@ import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
 import { Config, BlockchainSignature } from '../types'
-// import * as bitcoin from 'bitcoinjs-lib'
 import createKeccakHash from 'keccak'
-
 import * as EC from 'elliptic'
 
 // only do this once

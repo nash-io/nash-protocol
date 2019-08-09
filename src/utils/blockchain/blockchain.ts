@@ -36,33 +36,35 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
 }
 
 export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAndKind): BlockchainMovement {
-  const blockchainData = inferBlockchainData(payloadAndKind)
   const assets = config.assetData
-  const { unitA } = getUnitPairs(blockchainData.marketName)
+  const { payload, kind } = payloadAndKind
+  const unit = payload.quantity.currency
+  const prefix = kindToOrderPrefix(kind, payload)
 
-  switch (assets[unitA].blockchain) {
+  switch (assets[unit].blockchain) {
     case 'neo':
       const scriptHash = getNEOScriptHash(config.wallets.neo.address)
       return {
-        address: Buffer.from(scriptHash).toString('hex'),
-        amount: String(normalizeAmount(blockchainData.amount, 8)),
-        asset: getNEOAssetHash(assets[unitA]),
-        nonce: toLittleEndianHex(blockchainData.nonce),
-        prefix: kindToOrderPrefix(payloadAndKind.kind, payloadAndKind),
-        userPubKey: config.wallets.neo.publicKey
+        address: reverseHexString(scriptHash),
+        amount: String(normalizeAmount(payload.quantity.amount, 8)),
+        asset: getNEOAssetHash(assets[unit]),
+        nonce: toLittleEndianHex(payload.nonce),
+        prefix,
+        userPubKey: config.wallets.neo.publicKey,
+        userSig: payload.blockchainSignatures[0].signature.toUpperCase()
       }
     case 'eth':
-      const chainPrecision = config.assetData.eth.precision
       return {
         address: config.wallets.eth.address,
-        amount: String(normalizeAmount(blockchainData.amount, chainPrecision)),
-        asset: getETHAssetID(unitA),
-        nonce: convertEthNonce(blockchainData.nonce),
-        prefix: kindToOrderPrefix(payloadAndKind.kind, payloadAndKind),
-        userPubKey: config.wallets.eth.address
+        amount: String(normalizeAmount(payload.quantity.amount, 18)),
+        asset: getETHAssetID(unit),
+        nonce: convertEthNonce(payload.nonce),
+        prefix,
+        userPubKey: config.wallets.eth.address,
+        userSig: payload.blockchainSignatures[0].signature.toUpperCase()
       }
     default:
-      throw new Error(`invalid blockchain: ${assets[unitA].blockchain}`)
+      throw new Error(`invalid blockchain: ${assets[unit].blockchain}`)
   }
 }
 

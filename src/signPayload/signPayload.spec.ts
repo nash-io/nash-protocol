@@ -4,7 +4,7 @@ import bufferize from '../bufferize'
 import stringify from '../stringify'
 import { SigningPayloadID } from '../payload'
 import signPayload, { canonicalString } from '../signPayload'
-import config from '../__tests__/config.json'
+import config from '../__tests__/blockchain_config.json'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 import _ from 'lodash'
 
@@ -103,14 +103,14 @@ test('serialize, hash, and sign list account orders payload', () => {
 })
 
 test('serialize, hash, and sign market order payload NEO_ETH', async () => {
-  const data = sigTestVectors.marketOrders.neo_eth
+  const data = sigTestVectors.marketOrders.eth_neo
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
     buyOrSell: data.buyOrSell,
     marketName: data.marketName,
-    nonceFrom: 0,
-    nonceOrder: 0,
-    nonceTo: 0,
+    nonceFrom: data.nonceFrom,
+    nonceOrder: data.nonceOrder,
+    nonceTo: data.nonceTo,
     timestamp: data.timestamp
   }
 

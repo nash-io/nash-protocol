@@ -90,22 +90,22 @@
   },
   "payloadSigningKey": {
     "index": 0,
-    "publicKey": "0250f1431b1b5cd69df8fd0288c1a995a030cd370c28d267b43a730c7aa83b1f37",
-    "privateKey": "fdc7de6f07e1ec4c1d29cd7a3707cabe9c0a76da4d540dec74c939ffcd46a7b3",
+    "privateKey": "79e43c31a362345fa8dda07ab46b1b3158b1c8bd88ec1ffa994c77a72282106e",
+    "publicKey": "03bcf9c758706248e3050c6ddb46ba67b4701891cef99eea5d80fd3e0909677fab",
     "address": ""
   },
   "wallets": {
-    "neo": {
-      "index": 0,
-      "privateKey": "491aac461bd2e0eb02ffe6cdb534a03617e8811764e4eea042f24231ba99b76f",
-      "publicKey": "0208035f32c5d0e59f71c55b1e060f6d504c004222c25670ff2b788d76a84af2f2",
-      "address": "AVSFwsxsedGGip1FgJdjavVBuFHHRXD2Uz"
-    },
     "eth": {
-      "index": 0,
-      "privateKey": "0b7561f1c775ef4715accd21aac8629bcda2e6eb4e434c0d55c917bd7c297ac6",
-      "publicKey": "02be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46",
-      "address": "55D16CA38dFB219141Ab6617B2872B978aF84702"
+      "privateKey": "ceb3ba316f7aa4a7745d5d16eb9ac0491601428b828f7a1c1080f985e749a419",
+      "publicKey": "04446e9cda311fa5c0916430a48a41b35cc7604f037b5f7eec036b07ec97b0ffbf2162278ec211f81a98147b08ee650e3d33748075d93fcfe58562e81b3f76efae",
+      "address": "fa39fddde46cea3060b91f80abed8672f77c5bea",
+      "index": 0
+    },
+    "neo": {
+      "privateKey": "be0b6d54594784f4cf7b06ae4ed20073798ad253f244bd34d03166bdbc9c7b74",
+      "publicKey": "0292cbf3790801cef47c5cdc9abf4b010ec50aad117f595350d77ecd385d286e63",
+      "address": "ARw6FWQwTmTZsfdJKziH1VvMy4ibNmuvmo",
+      "index": 0
     }
   }
 }
