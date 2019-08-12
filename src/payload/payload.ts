@@ -15,6 +15,24 @@ export interface SignedState extends SyncState {
 export const MovementTypeDeposit = 'deposit'
 export const MovementTypeWithdrawal = 'withdrawal'
 
+export interface SignStatesPayload {
+  timestamp: number
+  states: ClientSignedState[]
+  recycled_orders: ClientSignedState[]
+}
+
+export interface SignStatesRequestPayload {
+  timestamp: number
+  client_signed_states: ClientSignedState[]
+  signed_recycled_orders: ClientSignedState[]
+}
+
+export interface ClientSignedState {
+  blockchain: string
+  message: string
+  signature?: string
+}
+
 /**
  *
  * @param before

@@ -15,10 +15,11 @@ import {
   kindToName,
   needBlockchainMovement,
   needBlockchainSignature,
-  SigningPayloadID
+  SigningPayloadID,
+  isStateSigning
 } from '../payload/signingPayloadID'
 import { Config, PayloadSignature, BlockchainSignature, Asset } from '../types'
-import { PayloadAndKind } from '../payload'
+import { PayloadAndKind, SignStatesPayload, ClientSignedState, SignStatesRequestPayload } from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
 import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
 import { buildETHBlockchainSignatureData, signETHBlockchainData } from '../signETHBlockchainData'
@@ -36,15 +37,26 @@ export const canonicalString = compose(
   deep(mapKeys(snakeCase))
 )
 
+export const canonicalizePayload = (kind: SigningPayloadID, payload: object): string => {
+  switch (kind) {
+    case SigningPayloadID.signStatesPayload:
+      const signStatesPayload = { timestamp: (payload as SignStatesPayload).timestamp }
+      return canonicalString(signStatesPayload)
+    default:
+      return canonicalString(payload)
+  }
+}
+
 // Signs the given payload with the given private key.
 export default function signPayload(
   privateKey: Buffer,
   payloadAndKind: PayloadAndKind,
   config?: Config
 ): PayloadSignature {
-  const { kind, payload } = payloadAndKind
+  const kind = payloadAndKind.kind
+  let payload = payloadAndKind.payload
   const payloadName = kindToName(kind)
-  const message = `${payloadName},${canonicalString(payload)}`
+  const message = `${payloadName},${canonicalizePayload(kind, payload)}`
   const keypair = curve.keyFromPrivate(privateKey)
 
   const sig = keypair.sign(SHA256(message).toString(hexEncoding), {
@@ -69,6 +81,10 @@ export default function signPayload(
       payload,
       signature: stringify(bufferize(sig.toDER()))
     }
+  }
+
+  if (isStateSigning(kind)) {
+    payload = signStateListAndRecycledOrders(config as Config, payload)
   }
 
   return {
@@ -114,4 +130,29 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
   })
 
   return sigs
+}
+
+export function signStateListAndRecycledOrders(config: Config, payload: any): SignStatesRequestPayload {
+  const signStatesPayload = payload as SignStatesPayload
+  return {
+    client_signed_states: signStateList(config, signStatesPayload.states),
+    signed_recycled_orders: signStateList(config, signStatesPayload.recycled_orders),
+    timestamp: signStatesPayload.timestamp
+  }
+}
+
+export function signStateList(config: Config, items: ClientSignedState[]): ClientSignedState[] {
+  const result: ClientSignedState[] = items.map((item: ClientSignedState) => {
+    switch (item.blockchain.toLowerCase()) {
+      case 'neo':
+        item.signature = signNEOBlockchainData(config.wallets.neo.privateKey, item.message).signature.toUpperCase()
+        return item
+      case 'eth':
+        item.signature = signETHBlockchainData(config.wallets.eth.privateKey, item.message).signature.toUpperCase()
+        return item
+      default:
+        throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)
+    }
+  })
+  return result
 }

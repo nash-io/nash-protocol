@@ -69,6 +69,10 @@ export function kindToName(kind: SigningPayloadID): string {
   return PayloadIDToName[kind] as string
 }
 
+export function isStateSigning(kind: SigningPayloadID): boolean {
+  return kind === SigningPayloadID.signStatesPayload
+}
+
 export function needBlockchainSignature(kind: SigningPayloadID): boolean {
   return (
     [
@@ -76,8 +80,7 @@ export function needBlockchainSignature(kind: SigningPayloadID): boolean {
       SigningPayloadID.placeMarketOrderPayload,
       SigningPayloadID.placeStopLimitOrderPayload,
       SigningPayloadID.placeStopMarketOrderPayload,
-      SigningPayloadID.addMovementPayload,
-      SigningPayloadID.signStatesPayload
+      SigningPayloadID.addMovementPayload
     ].indexOf(kind) > -1
   )
 }

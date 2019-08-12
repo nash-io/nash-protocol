@@ -1,0 +1,249 @@
+{
+  "assetData": {
+    "eth": {
+      "blockchain": "eth",
+      "hash": "0000000000000000000000000000000000000000",
+      "precision": 18
+    },
+    "gas": {
+      "blockchain": "neo",
+      "hash": "602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7",
+      "precision": 8
+    },
+    "neo": {
+      "blockchain": "neo",
+      "hash": "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+      "precision": 8
+    },
+    "nos": {
+      "blockchain": "neo",
+      "hash": "36dfd2c33d4948a8429d00fc00a5bd70e02520ef",
+      "precision": 8
+    },
+    "usdc": {
+      "blockchain": "eth",
+      "hash": "aed88173df2578fad078c48a33f0040364989fa8",
+      "precision": 18
+    }
+  },
+  "marketData": {
+    "eth_gas": {
+      "minTickSize": 4,
+      "minTradeSize": 8,
+      "minTradeIncrement": 8
+    },
+    "eth_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 8,
+      "minTradeIncrement": 8
+    },
+    "eth_usdc": {
+      "minTickSize": 2,
+      "minTradeSize": 5,
+      "minTradeIncrement": 5
+    },
+    "gas_eth": {
+      "minTickSize": 8,
+      "minTradeSize": 4,
+      "minTradeIncrement": 4
+    },
+    "gas_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 6,
+      "minTradeIncrement": 4
+    },
+    "neo_eth": {
+      "minTickSize": 8,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3
+    },
+    "neo_gas": {
+      "minTickSize": 4,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3
+    },
+    "neo_nos": {
+      "minTickSize": 6,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3
+    },
+    "neo_usdc": {
+      "minTickSize": 4,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3
+    },
+    "nos_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 6,
+      "minTradeIncrement": 6
+    },
+    "usdc_eth": {
+      "minTickSize": 5,
+      "minTradeSize": 2,
+      "minTradeIncrement": 2
+    },
+    "usdc_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 4,
+      "minTradeIncrement": 4
+    }
+  },
+  "payloadSigningKey": {
+    "index": 0,
+    "privateKey": "4a4a7ddbd7c273b2487f7ffc2ffe4068ba821167b26fe742b2313bc43ba3f749",
+    "publicKey": "0254a27eedaef08f10188c30f836e0a7b18555065932fbb62f019e3ffe3c308b68",
+    "address": ""
+  },
+  "wallets": {
+    "eth": {
+      "privateKey": "e21d6d28e71fa66c41f6a3b148d418d04948fa3c90fc8ea06945b7f7da3748ce",
+      "publicKey": "045ceb8f6e02ced39dc2b1d9ac67a3fb2b359806bdbed836895413919ecfd3096c4bf9b2ec99c1c05875b81332ddc2aa2a093f3844d10524d19d5dfa521339467b",
+      "address": "7935dca948678574521fb57cab3ac52e807c7e58",
+      "index": 0
+    },
+    "neo": {
+      "privateKey": "66c508993f4d441eadd81c94c6019e2215a508b28465e43d1cd76c85a9f69e76",
+      "publicKey": "02f98cfd70d57707006ce58cea6e69c3f270d3e5b7744101b1e376dc6c136ae9c2",
+      "address": "AGVDBVria2QZMXcnXhCZcJ9yBwPHVgXFtZ",
+      "index": 0
+    }
+  },
+  "fixtures": {
+    "getStates": {
+      "timestamp": 1565613913256,
+      "signature": "3045022100c53e1f93849c839679bb7d0244756519852da25e4d32e910408b964672ce3c9202201433dbf93abc4c602ee7ffb6a1c0640ca3e65bb18d41adb4056e356bde7ea325"
+    },
+    "signStates": {
+      "a": {
+        "timestamp": 1565613913000,
+        "states": [
+          {
+            "message": "000000000000004D7C6D005D1069397935DCA948678574521FB57CAB3AC52E807C7E58",
+            "blockchain": "ETH"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDF9B7CFFDAA674BEAE0F930EBE6085AF9093E5FE56B34A5C220CCDCF6EFC336FC5004E7253000000002399105D00000000",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDFEF2025E070BDA500FC009D42A848493DC3D2DF360001B2C40000000083A0105D00000000",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "000003000000010642AC005D1078347935DCA948678574521FB57CAB3AC52E807C7E58",
+            "blockchain": "ETH"
+          }
+        ],
+        "recycled_orders": [],
+        "signature": "3044022051c9c818ec40992b9e5748bbc635af18b962fe895c10e03d70495a602f30e23a02207dc8ebe20113bf3cfd3bc91b7f0623cb4a4a57cbe60c336846695da868a550f5",
+        "client_signed_states": [
+          {
+            "message": "000000000000004D7C6D005D1069397935DCA948678574521FB57CAB3AC52E807C7E58",
+            "signature": "63696C5CF6274925DEDC1EA8062C0E0B914F58448EBD25FFBCDD332767F27AF1DD5383B723E705654217233CCA5BACCE1F9337BA67E19A37AE2D21B4D72DB4A600",
+            "blockchain": "ETH"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDF9B7CFFDAA674BEAE0F930EBE6085AF9093E5FE56B34A5C220CCDCF6EFC336FC5004E7253000000002399105D00000000",
+            "signature": "E4B26473DE526302F9053D6C4FD69FADC86C5D0A2AD35D838653FC9B9B4A99117264CB9A5A4B00A33DD0DAB48EC095B23124A021B9A05FFCE38F4540DB2C45EE",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDFEF2025E070BDA500FC009D42A848493DC3D2DF360001B2C40000000083A0105D00000000",
+            "signature": "2BCBF1A75C8202F90D0FFD8906DAC13D14C905F036CB91A8836749B770B1D99381AECC57F90D128FB78D4FE34E06C7285042BCA3B3E165E5A5F79E4BB23FBC89",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "000003000000010642AC005D1078347935DCA948678574521FB57CAB3AC52E807C7E58",
+            "signature": "6410C42D6BD3BD63E0F00F583E1CDD4DBAC223063DF186AAD723D7FAB3D281864F8D280E25827E7A3C131ADDE864AF4F564A2C2D2060EB97CB8C65E3DDB6399600",
+            "blockchain": "ETH"
+          }
+        ],
+        "signed_recycled_orders": []
+      },
+      "b": {
+        "timestamp": 1565631597000,
+        "states": [
+          {
+            "message": "000000000000004D7C6D005D10693A7935DCA948678574521FB57CAB3AC52E807C7E58",
+            "blockchain": "ETH"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDF9B7CFFDAA674BEAE0F930EBE6085AF9093E5FE56B34A5C220CCDCF6EFC336FC5004E7253000000002499105D00000000",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDFEF2025E070BDA500FC009D42A848493DC3D2DF360001B2C40000000084A0105D00000000",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "000003000000010642AC005D1078357935DCA948678574521FB57CAB3AC52E807C7E58",
+            "blockchain": "ETH"
+          }
+        ],
+        "recycled_orders": [
+          {
+            "message": "98B1556C87269D35EB17016E6E50E54DDAC83188C4D6F3ECE2B149A3330C158E",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "E63A8AA0B2F563BBB10E57EE0E0D4009BEAE48A4321942F517DA38699FF16956",
+            "blockchain": "ETH"
+          },
+          {
+            "message": "4CF8FD500B3C1B30C79C9C762C7F4FE22511C95748C984F6605DF32FF6952A39",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "FDDA2545E6504BCA469237FE85C289B36076523405BBABF77CEDAEE9B420B829",
+            "blockchain": "ETH"
+          }
+        ],
+        "signature": "3045022100982601ab28489f72dbc9792ed35db0e7143525e26cdb1aeaa515844135dd619a022009a451c7b8b672e4b2656fad407a8e57c002f7bef5a1edff0af004a265a21779",
+        "client_signed_states": [
+          {
+            "message": "000000000000004D7C6D005D10693A7935DCA948678574521FB57CAB3AC52E807C7E58",
+            "signature": "A4C046077AB8C3D0E3690A6AF716E2299B691F6E05A42FA737F2D82B7B0B0623180C54370531ADA3BB097A7EAB5ED075B1929E51A0C4F36315536919C05991AE00",
+            "blockchain": "ETH"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDF9B7CFFDAA674BEAE0F930EBE6085AF9093E5FE56B34A5C220CCDCF6EFC336FC5004E7253000000002499105D00000000",
+            "signature": "3B4557CAFB06F0ABD76EF5D48FACB85BEBCED800F06C6CE406ABB6C09E0EEE50B77DA490C61C4950DB261EF635A99BAB0D924E0106ED3C85ECF4293C11759F86",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "0007D15C6A6A2E7A0BD1654CEF262A54A64F151BDFEF2025E070BDA500FC009D42A848493DC3D2DF360001B2C40000000084A0105D00000000",
+            "signature": "FD9D334EC0E62866E781F057279C74FF4D4A0809AB3D3CE86BC0031A8C1534043E013D365C265D49FF3808BFD85A0BA8A60D37844C10ACE87535181E57D15728",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "000003000000010642AC005D1078357935DCA948678574521FB57CAB3AC52E807C7E58",
+            "signature": "A42C9294BFE28F41D4C0E073D516FB762F43FC0A8E8AF21704BB48815446F8FB96D61516431381F06CB0DD46506BEC2FA49831E54CA35768CD5ADCC935A8F99300",
+            "blockchain": "ETH"
+          }
+        ],
+        "signed_recycled_orders": [
+          {
+            "message": "98B1556C87269D35EB17016E6E50E54DDAC83188C4D6F3ECE2B149A3330C158E",
+            "signature": "E1E75C85391B29E4324602073AE4DDBBF7598A848C081C87054B95DA70336E00FD65A8BC7070392E0E55A392BD4901056733928761C6C2E85BF5C1963A9CBC5F",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "E63A8AA0B2F563BBB10E57EE0E0D4009BEAE48A4321942F517DA38699FF16956",
+            "signature": "C7034639E150A9D7F2888200781CE766D28589BCC1F1C5A35491E32C1A00860280AE29F7A1D3692E7F3BD28C5B430A17C155CB33C77063D88B8AD0AE16974DA601",
+            "blockchain": "ETH"
+          },
+          {
+            "message": "4CF8FD500B3C1B30C79C9C762C7F4FE22511C95748C984F6605DF32FF6952A39",
+            "signature": "8287B0A8170D5AE5DF6DCECF6CA75227ABD773B3AE57460BA3E06FB4B03E88135EC1B992B093C789335061FD6F5094D447C3ECA157C5BC139C2361C9A29E6B12",
+            "blockchain": "NEO"
+          },
+          {
+            "message": "FDDA2545E6504BCA469237FE85C289B36076523405BBABF77CEDAEE9B420B829",
+            "signature": "9E1BFCD4355EA8EF439A074636B52E8FACF8B1214F92D0B044966952B0B9D16ACC3439182BCBFFEB2818A9432B169F22023A4C2F8E086E2A516C07C7E317795000",
+            "blockchain": "ETH"
+          }
+        ]
+      }
+    }
+  }
+}
