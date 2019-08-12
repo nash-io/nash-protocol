@@ -33,6 +33,14 @@ export interface ClientSignedState {
   signature?: string
 }
 
+export interface AddMovementPayload {
+  recycled_orders?: ClientSignedState[]
+}
+
+export interface AddMovementRequestPayload {
+  resigned_orders: ClientSignedState[]
+}
+
 /**
  *
  * @param before

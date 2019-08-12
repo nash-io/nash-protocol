@@ -19,7 +19,14 @@ import {
   isStateSigning
 } from '../payload/signingPayloadID'
 import { Config, PayloadSignature, BlockchainSignature, Asset } from '../types'
-import { PayloadAndKind, SignStatesPayload, ClientSignedState, SignStatesRequestPayload } from '../payload'
+import {
+  PayloadAndKind,
+  SignStatesPayload,
+  ClientSignedState,
+  SignStatesRequestPayload,
+  AddMovementPayload,
+  AddMovementRequestPayload
+} from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
 import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
 import { buildETHBlockchainSignatureData, signETHBlockchainData } from '../signETHBlockchainData'
@@ -42,6 +49,10 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
     case SigningPayloadID.signStatesPayload:
       const signStatesPayload = { timestamp: (payload as SignStatesPayload).timestamp }
       return canonicalString(signStatesPayload)
+    case SigningPayloadID.addMovementPayload:
+      const newPayload: AddMovementPayload = { ...payload }
+      delete newPayload.recycled_orders
+      return canonicalString(newPayload)
     default:
       return canonicalString(payload)
   }
@@ -75,6 +86,12 @@ export default function signPayload(
     if (config === undefined) {
       throw new Error('blockchain movement needs a Config object')
     }
+
+    ; (payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
+      config as Config,
+      payload as AddMovementPayload
+    )
+    delete (payload as AddMovementPayload).recycled_orders
     return {
       blockchainMovement: getBlockchainMovement(config, { kind, payload }),
       canonicalString: message,
@@ -139,6 +156,13 @@ export function signStateListAndRecycledOrders(config: Config, payload: any): Si
     signed_recycled_orders: signStateList(config, signStatesPayload.recycled_orders),
     timestamp: signStatesPayload.timestamp
   }
+}
+
+export function signRecycledOrdersForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
+  if (payload.recycled_orders !== undefined) {
+    return signStateList(config, payload.recycled_orders as ClientSignedState[])
+  }
+  return []
 }
 
 export function signStateList(config: Config, items: ClientSignedState[]): ClientSignedState[] {
