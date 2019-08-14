@@ -167,6 +167,7 @@ test('sign ETH_GAS blockchain limit order data', async () => {
   expect(sigEth.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
 
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+  expect(payloadRes.payload.blockchainSignatures).toHaveLength(2)
 
   const expectedCanonicalString =
     'place_limit_order,{"allow_taker":true,"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","cancellation_policy":"immediate_or_cancel","limit_price":{"amount":"0.0024","currency_a":"gas","currency_b":"eth"},"market_name":"eth_gas","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":1565361133707}'

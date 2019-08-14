@@ -101,6 +101,8 @@ test('sign NEO_GAS blockchain market order data', async () => {
   const expectedCanonicalString =
     'place_market_order,{"amount":{"amount":"10.000","currency":"neo"},"buy_or_sell":"sell","market_name":"neo_gas","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
 
+  expect(payloadRes.payload.blockchainSignatures).toHaveLength(1)
+
   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
   expect(payloadRes.blockchainRaw[0].raw).toBe(data.raw.neo)
 })

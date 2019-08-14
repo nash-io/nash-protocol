@@ -19,7 +19,7 @@ import {
   isStateSigning,
   isOrderPayload
 } from '../payload/signingPayloadID'
-import { Config, PayloadSignature, BlockchainSignature, Asset } from '../types'
+import { Config, PayloadSignature, BlockchainSignature } from '../types'
 import {
   PayloadAndKind,
   SignStatesPayload,
@@ -141,9 +141,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-  const blockchains: ReadonlyArray<Asset> = [config.assetData[unitA], config.assetData[unitB]]
-  const sigs = _.map(_.uniq(blockchains), unit => {
-    switch (unit.blockchain) {
+  const blockchains: ReadonlyArray<string> = [config.assetData[unitA].blockchain, config.assetData[unitB].blockchain]
+  const sigs = _.map(_.uniq(blockchains), blockchain => {
+    switch (blockchain) {
       case 'neo':
         const neoData = buildNEOBlockchainSignatureData(config, payloadAndKind)
         return signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
@@ -151,7 +151,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
         const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
         return signETHBlockchainData(config.wallets.eth.privateKey, ethData)
       default:
-        throw new Error(`invalid unit ${unit}`)
+        throw new Error(`invalid blockchain ${blockchain}`)
     }
   })
 
@@ -166,9 +166,9 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-  const blockchains: ReadonlyArray<Asset> = [config.assetData[unitA], config.assetData[unitB]]
-  const rawData = _.map(_.uniq(blockchains), unit => {
-    switch (unit.blockchain) {
+  const blockchains: ReadonlyArray<string> = [config.assetData[unitA].blockchain, config.assetData[unitB].blockchain]
+  const rawData = _.map(_.uniq(blockchains), blockchain => {
+    switch (blockchain) {
       case 'neo':
         return {
           payload: payloadAndKind.payload,
@@ -180,7 +180,7 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
           raw: buildETHBlockchainSignatureData(config, payloadAndKind).toUpperCase()
         }
       default:
-        throw new Error(`invalid unit ${unit}`)
+        throw new Error(`invalid chain ${blockchain}`)
     }
   })
 
