@@ -12,8 +12,8 @@ export interface SignedState extends SyncState {
   signature: string
 }
 
-export const MovementTypeDeposit = 'deposit'
-export const MovementTypeWithdrawal = 'withdrawal'
+export const MovementTypeDeposit = 'DEPOSIT'
+export const MovementTypeWithdrawal = 'WITHDRAWAL'
 
 export interface SignStatesPayload {
   timestamp: number
@@ -80,9 +80,10 @@ export function createListAccountOrdersParams(
   }
 }
 
-export function createCancelOrderParams(id: string): PayloadAndKind {
+export function createCancelOrderParams(id: string, marketName: string): PayloadAndKind {
   const payload = {
-    order_id: id,
+    marketName,
+    orderId: id,
     timestamp: createTimestamp()
   }
 
@@ -92,9 +93,9 @@ export function createCancelOrderParams(id: string): PayloadAndKind {
   }
 }
 
-export function createListAccountBalanceParams(ignoreLowBalance: boolean): PayloadAndKind {
+export function createListAccountBalanceParams(ignoreLowBalance: boolean = false): PayloadAndKind {
   const payload = {
-    ignore_low_balance: ignoreLowBalance,
+    ignoreLowBalance,
     timestamp: createTimestamp()
   }
 
@@ -311,11 +312,18 @@ export function createPlaceStopMarketOrderParams(
   }
 }
 
-export function createAddMovementParams(address: string, quantity: object, type: string): PayloadAndKind {
+export function createAddMovementParams(
+  address: string,
+  quantity: object,
+  type: string,
+  nonce?: number,
+  timestamp?: number
+): PayloadAndKind {
   const payload = {
     address,
+    nonce: nonce || createTimestamp32(),
     quantity,
-    timestamp: createTimestamp(),
+    timestamp: timestamp || createTimestamp(),
     type
   }
 

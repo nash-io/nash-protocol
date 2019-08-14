@@ -16,7 +16,8 @@ import {
   needBlockchainMovement,
   needBlockchainSignature,
   SigningPayloadID,
-  isStateSigning
+  isStateSigning,
+  isOrderPayload
 } from '../payload/signingPayloadID'
 import { Config, PayloadSignature, BlockchainSignature, Asset } from '../types'
 import {
@@ -64,6 +65,8 @@ export default function signPayload(
   payloadAndKind: PayloadAndKind,
   config?: Config
 ): PayloadSignature {
+  let blockchainRaw: any
+
   const kind = payloadAndKind.kind
   let payload = payloadAndKind.payload
   const payloadName = kindToName(kind)
@@ -80,6 +83,9 @@ export default function signPayload(
       throw new Error('blockchain signatures needs a Config object')
     }
     payload.blockchainSignatures = signBlockchainData(config, { payload, kind })
+    if (isOrderPayload(kind)) {
+      blockchainRaw = addRawBlockchainOrderData(config, { payload, kind })
+    }
   }
 
   if (needBlockchainMovement(kind)) {
@@ -87,13 +93,15 @@ export default function signPayload(
       throw new Error('blockchain movement needs a Config object')
     }
 
-    ; (payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
+    ;(payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
       config as Config,
       payload as AddMovementPayload
     )
     delete (payload as AddMovementPayload).recycled_orders
+    const movement = getBlockchainMovement(config, { kind, payload })
+    delete (payload as any).blockchainSignatures
     return {
-      blockchainMovement: getBlockchainMovement(config, { kind, payload }),
+      blockchainMovement: movement,
       canonicalString: message,
       payload,
       signature: stringify(bufferize(sig.toDER()))
@@ -105,6 +113,7 @@ export default function signPayload(
   }
 
   return {
+    blockchainRaw,
     canonicalString: message,
     payload,
     signature: stringify(bufferize(sig.toDER()))
@@ -147,6 +156,35 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
   })
 
   return sigs
+}
+
+// If we are trading within the same blockchain origin we only need 1 signature,
+// neo_gas, nos_neo, etc..
+// Otherwise we are trading cross chain, hence need signatures for both blockchains,
+// neo_eth, eth_btc, etc..
+export function addRawBlockchainOrderData(config: Config, payloadAndKind: PayloadAndKind): object {
+  // if this is an order then its a bit more complicated
+  const blockchainData = inferBlockchainData(payloadAndKind)
+  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
+  const blockchains: ReadonlyArray<Asset> = [config.assetData[unitA], config.assetData[unitB]]
+  const rawData = _.map(_.uniq(blockchains), unit => {
+    switch (unit.blockchain) {
+      case 'neo':
+        return {
+          payload: payloadAndKind.payload,
+          raw: buildNEOBlockchainSignatureData(config, payloadAndKind).toUpperCase()
+        }
+      case 'eth':
+        return {
+          payload: payloadAndKind.payload,
+          raw: buildETHBlockchainSignatureData(config, payloadAndKind).toUpperCase()
+        }
+      default:
+        throw new Error(`invalid unit ${unit}`)
+    }
+  })
+
+  return rawData
 }
 
 export function signStateListAndRecycledOrders(config: Config, payload: any): SignStatesRequestPayload {

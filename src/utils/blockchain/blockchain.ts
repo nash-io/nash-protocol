@@ -3,6 +3,7 @@ import { Config, BlockchainData, BlockchainMovement, Asset } from '../../types'
 import getNEOScriptHash from '../getNEOScriptHash'
 import { normalizeAmount, toLittleEndianHex } from '../currency'
 import reverseHexString from '../reverseHexString'
+import BigNumber from 'bignumber.js'
 
 // infers the blockchain specific data we need for the given payload. Some payloads
 // have different fields, hence need different approach to retrieve the data we need.
@@ -17,17 +18,17 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
       let limitPrice: string = ''
 
       if (isLimitOrderPayload(kind)) {
-        limitPrice = payload.limitPrice.amount
+        limitPrice = payload.limit_price.amount
       }
 
       return {
         amount: payload.amount.amount,
         limitPrice,
-        marketName: payload.marketName,
+        marketName: payload.market_name,
         nonce: payload.nonce,
-        nonceFrom: payload.nonceFrom,
-        nonceOrder: payload.nonceOrder,
-        nonceTo: payload.nonceTo
+        nonceFrom: payload.nonce_from,
+        nonceOrder: payload.nonce_order,
+        nonceTo: payload.nonce_to
       }
 
     default:
@@ -54,9 +55,10 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
         userSig: payload.blockchainSignatures[0].signature.toUpperCase()
       }
     case 'eth':
+      const bnAmount: BigNumber = new BigNumber(normalizeAmount(payload.quantity.amount, 8))
       return {
         address: config.wallets.eth.address,
-        amount: String(normalizeAmount(payload.quantity.amount, 18)),
+        amount: bnAmount.toFixed(0),
         asset: getETHAssetID(unit),
         nonce: convertEthNonce(payload.nonce),
         prefix,

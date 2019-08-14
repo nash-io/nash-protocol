@@ -39,6 +39,7 @@
   "dependencies": {
     "@cityofzion/neon-core": "^4.5.2",
     "@cityofzion/neon-js": "^4.5.2",
+    "bignumber.js": "8.1.1",
     "bip32": "^2.0.3",
     "bip39": "2.5.0",
     "bitcoinjs-lib": "^5.0.5",

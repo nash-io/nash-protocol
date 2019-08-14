@@ -167,10 +167,10 @@ test('serialize, hash, and sign market order payload NEO_ETH', async () => {
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
     buyOrSell: data.buyOrSell,
-    marketName: data.marketName,
-    nonceFrom: data.nonceFrom,
-    nonceOrder: data.nonceOrder,
-    nonceTo: data.nonceTo,
+    market_name: data.marketName,
+    nonce_from: data.nonceFrom,
+    nonce_order: data.nonceOrder,
+    nonce_to: data.nonceTo,
     timestamp: data.timestamp
   }
 

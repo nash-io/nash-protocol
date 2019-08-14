@@ -1,5 +1,5 @@
 import { buildETHBlockchainSignatureData, signETHBlockchainData } from './signETHBlockchainData'
-import { SigningPayloadID, MovementTypeDeposit, MovementTypeWithdrawal } from '../payload'
+import { SigningPayloadID, MovementTypeDeposit, MovementTypeWithdrawal, createAddMovementParams } from '../payload'
 import config from '../__tests__/blockchain_config.json'
 import signPayload from '../signPayload'
 import sigTestVectors from '../__tests__/signatureVectors.json'
@@ -7,20 +7,19 @@ import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signN
 
 test('sign eth deposit movement', async () => {
   const data = sigTestVectors.movements.b
-  const payload = {
-    address: data.address,
-    nonce: data.nonce,
-    quantity: { amount: '1.32450000', currency: 'eth' },
-    timestamp: data.timestamp,
-    type: MovementTypeDeposit
-  }
 
-  const signingPayload = { kind: SigningPayloadID.addMovementPayload, payload }
+  const signingPayload = createAddMovementParams(
+    data.address,
+    { amount: '1.32450000', currency: 'eth' },
+    MovementTypeDeposit,
+    data.nonce,
+    data.timestamp
+  )
 
   const rawData = buildETHBlockchainSignatureData(config, signingPayload).toUpperCase()
   expect(rawData).toBe(data.raw.eth)
   const sig = signETHBlockchainData(config.wallets.eth.privateKey, rawData)
-  expect(sig.blockchain).toBe('eth')
+  expect(sig.blockchain).toBe('ETH')
   expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
 
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
@@ -31,7 +30,7 @@ test('sign eth deposit movement', async () => {
 
   expect(payloadRes.blockchainMovement).toEqual({
     address: 'fa39fddde46cea3060b91f80abed8672f77c5bea',
-    amount: '1324500000000000000',
+    amount: '132450000',
     asset: '0000',
     nonce: '0052e62c',
     prefix: '02',
@@ -55,7 +54,7 @@ test('sign usdc withdraw movement', async () => {
   const rawData = buildETHBlockchainSignatureData(config, signingPayload).toUpperCase()
   expect(rawData).toBe(data.raw.eth)
   const sig = signETHBlockchainData(config.wallets.eth.privateKey, rawData)
-  expect(sig.blockchain).toBe('eth')
+  expect(sig.blockchain).toBe('ETH')
   expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
 
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
@@ -67,7 +66,7 @@ test('sign usdc withdraw movement', async () => {
 
   expect(payloadRes.blockchainMovement).toEqual({
     address: 'fa39fddde46cea3060b91f80abed8672f77c5bea',
-    amount: '3032004000000000000',
+    amount: '303200400',
     asset: '0003',
     nonce: '0052e62c',
     prefix: '03',
@@ -81,10 +80,10 @@ test('sign ETH blockchain market order data', async () => {
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
     buyOrSell: data.buyOrSell,
-    marketName: data.marketName,
-    nonceFrom: data.nonceFrom,
-    nonceOrder: data.nonceOrder,
-    nonceTo: data.nonceTo,
+    market_name: data.marketName,
+    nonce_from: data.nonceFrom,
+    nonce_order: data.nonceOrder,
+    nonce_to: data.nonceTo,
     timestamp: data.timestamp
   }
 
@@ -93,7 +92,7 @@ test('sign ETH blockchain market order data', async () => {
   expect(rawData).toBe(data.raw.eth)
 
   const sig = await signETHBlockchainData(config.wallets.eth.privateKey, rawData)
-  expect(sig.blockchain).toBe('eth')
+  expect(sig.blockchain).toBe('ETH')
   expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
 
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
@@ -108,10 +107,10 @@ test('sign ETH/NEO blockchain market order data', async () => {
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
     buyOrSell: data.buyOrSell,
-    marketName: data.marketName,
-    nonceFrom: data.nonceFrom,
-    nonceOrder: data.nonceOrder,
-    nonceTo: data.nonceTo,
+    market_name: data.marketName,
+    nonce_from: data.nonceFrom,
+    nonce_order: data.nonceOrder,
+    nonce_to: data.nonceTo,
     timestamp: data.timestamp
   }
 
@@ -142,15 +141,15 @@ test('sign ETH_GAS blockchain limit order data', async () => {
     amount: { amount: data.amount.value, currency: data.amount.currency },
     buyOrSell: data.buyOrSell,
     cancellationPolicy: data.cancellationPolicy,
-    limitPrice: {
+    limit_price: {
       amount: data.limitPrice.value,
       currency_a: data.limitPrice.currency_a,
       currency_b: data.limitPrice.currency_b
     },
-    marketName: data.marketName,
-    nonceFrom: data.nonceFrom,
-    nonceOrder: data.nonceOrder,
-    nonceTo: data.nonceTo,
+    market_name: data.marketName,
+    nonce_from: data.nonceFrom,
+    nonce_order: data.nonceOrder,
+    nonce_to: data.nonceTo,
     timestamp: data.timestamp
   }
 

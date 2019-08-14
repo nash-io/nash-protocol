@@ -33,7 +33,7 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
   const signature = `${sig.r.toString('hex')}${sig.s.toString('hex')}${v}`
 
   return {
-    blockchain: 'eth',
+    blockchain: 'ETH',
     signature
   }
 }

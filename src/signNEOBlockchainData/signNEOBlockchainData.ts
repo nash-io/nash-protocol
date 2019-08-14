@@ -14,7 +14,7 @@ export function signNEOBlockchainData(privateKey: string, data: string): Blockch
   const msg = sha256.update(Buffer.from(data, 'hex')).digest('hex')
 
   return {
-    blockchain: 'neo',
+    blockchain: 'NEO',
     signature: wallet.sign(msg, privateKey)
   }
 }
