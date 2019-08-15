@@ -45,7 +45,7 @@
     "bitcoinjs-lib": "^5.0.5",
     "browserify-aes": "1.2.0",
     "crypto-js": "3.1.9-1",
-    "elliptic": "^6.5.0",
+    "elliptic": "6.4.0",
     "ethereumjs-util": "^6.1.0",
     "futoin-hkdf": "1.0.2",
     "int64-buffer": "^0.99.1007",

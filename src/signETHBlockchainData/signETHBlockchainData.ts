@@ -5,6 +5,7 @@ import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind,
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
 import { Config, BlockchainSignature } from '../types'
 import createKeccakHash from 'keccak'
+import * as bitcoin from 'bitcoinjs-lib'
 import * as EC from 'elliptic'
 
 // only do this once
@@ -17,6 +18,8 @@ const ellipticContext = new EC.ec('secp256k1')
 // 4. Sign that hash with the private key.
 export function signETHBlockchainData(privateKey: string, data: string): BlockchainSignature {
   const kp = ellipticContext.keyFromPrivate(privateKey)
+  const pair = bitcoin.ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'))
+
   const initialHash = createKeccakHash('keccak256')
     .update(data, 'hex')
     .digest()
@@ -28,10 +31,11 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
     .update(finalMsg)
     .digest()
 
-  const sig = kp.sign(finalHash)
-  const v = sig.recoveryParam === 0 ? '00' : '01'
+  const signatureRS = pair.sign(finalHash).toString('hex')
+  const sigRecovery = kp.sign(finalHash)
+  const v = sigRecovery.recoveryParam === 0 ? '00' : '01'
 
-  const signature = `${sig.r.toString('hex')}${sig.s.toString('hex')}${v}`
+  const signature = `${signatureRS}${v}`
 
   return {
     blockchain: 'ETH',
