@@ -335,7 +335,7 @@ export function createAddMovementParams(
 
 export function createSyncStatesParams(syncStateList: SyncState[]): PayloadAndKind {
   const payload = {
-    syncStateList,
+    server_signed_states: syncStateList,
     timestamp: createTimestamp()
   }
 
@@ -356,12 +356,12 @@ export function createGetStatesParams(): PayloadAndKind {
   }
 }
 
-export function createSignStatesParams(clientSignedStates: SignedState[]): PayloadAndKind {
+export function createSignStatesParams(states: SyncState[], recycledOrders: SyncState[]): PayloadAndKind {
   const payload = {
-    clientSignedStates,
+    recycled_orders: recycledOrders,
+    states,
     timestamp: createTimestamp()
   }
-
   return {
     kind: SigningPayloadID.signStatesPayload,
     payload

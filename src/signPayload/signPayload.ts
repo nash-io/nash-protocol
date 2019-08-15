@@ -22,7 +22,6 @@ import {
 import { Config, PayloadSignature, BlockchainSignature } from '../types'
 import {
   PayloadAndKind,
-  SignStatesPayload,
   ClientSignedState,
   SignStatesRequestPayload,
   AddMovementPayload,
@@ -48,7 +47,8 @@ export const canonicalString = compose(
 export const canonicalizePayload = (kind: SigningPayloadID, payload: object): string => {
   switch (kind) {
     case SigningPayloadID.signStatesPayload:
-      const signStatesPayload = { timestamp: (payload as SignStatesPayload).timestamp }
+    case SigningPayloadID.syncStatePayload:
+      const signStatesPayload = { timestamp: (payload as any).timestamp }
       return canonicalString(signStatesPayload)
     case SigningPayloadID.addMovementPayload:
       const newPayload: AddMovementPayload = { ...payload }
@@ -188,11 +188,10 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
 }
 
 export function signStateListAndRecycledOrders(config: Config, payload: any): SignStatesRequestPayload {
-  const signStatesPayload = payload as SignStatesPayload
   return {
-    client_signed_states: signStateList(config, signStatesPayload.states),
-    signed_recycled_orders: signStateList(config, signStatesPayload.recycled_orders),
-    timestamp: signStatesPayload.timestamp
+    client_signed_states: signStateList(config, payload.states),
+    signed_recycled_orders: signStateList(config, payload.recycled_orders),
+    timestamp: payload.timestamp
   }
 }
 

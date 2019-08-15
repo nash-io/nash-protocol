@@ -69,6 +69,18 @@ describe('state signing', () => {
       state_signing_config.fixtures.signStates.b.signed_recycled_orders
     )
   })
+
+  test('sync states has correct payload', async () => {
+    const payload = {
+      kind: SigningPayloadID.syncStatePayload,
+      payload: {
+        server_signed_states: state_signing_config.fixtures.syncStates.server_signed_states,
+        timestamp: state_signing_config.fixtures.syncStates.timestamp
+      }
+    }
+    const signedPayload = signPayload(stateSigningPrivateKey, payload, state_signing_config)
+    expect(signedPayload.canonicalString).toBe('sync_states,{"timestamp":1565613913256}')
+  })
 })
 
 test('get private key import behaves correctly', () => {

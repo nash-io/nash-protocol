@@ -47,7 +47,7 @@ export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.placeStopMarketOrderPayload]: 'place_stop_market_order',
   [SigningPayloadID.placeMarketOrderPayload]: 'place_market_order',
   [SigningPayloadID.addMovementPayload]: 'add_movement',
-  [SigningPayloadID.syncStatePayload]: 'sync_state',
+  [SigningPayloadID.syncStatePayload]: 'sync_states',
   [SigningPayloadID.cancelAllOrdersPayload]: 'cancel_all_orders',
   [SigningPayloadID.listAccountTransactionsPayload]: 'list_account_transactions',
   [SigningPayloadID.getAccountPortfolioPayload]: 'get_account_portfolio',
