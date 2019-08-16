@@ -5,6 +5,13 @@ import signPayload from '../signPayload'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
 
+test('eth sig generation', async () => {
+  const payload =
+    '018A9CFDCE74362D038BE959C063F7078D7116EDB60000FFFF5F2667E85F2667E8000000000000269A0000000000000000FFFFFFFFFFFFFFFF000000000003D0905F2667E8'
+  const result = signETHBlockchainData('499541c745fd4c442e22cc160e69c8063d9885a9a680c23ceb1501b8d883eea6', payload)
+  expect(result.signature).toHaveLength(130)
+})
+
 test('sign eth deposit movement', async () => {
   const data = sigTestVectors.movements.b
 

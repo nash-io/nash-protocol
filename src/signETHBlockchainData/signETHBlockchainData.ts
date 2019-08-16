@@ -30,8 +30,9 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
 
   const sig = kp.sign(finalHash)
   const v = sig.recoveryParam === 0 ? '00' : '01'
-
-  const signature = `${sig.r.toString('hex')}${sig.s.toString('hex')}${v}`
+  const r = sig.r.toString('hex', 64)
+  const s = sig.s.toString('hex', 64)
+  const signature = `${r}${s}${v}`
 
   return {
     blockchain: 'ETH',
