@@ -3,6 +3,7 @@ import { Wallet } from '../types'
 import Neon from '@cityofzion/neon-js'
 import * as EthUtil from 'ethereumjs-util'
 import * as Bitcoin from 'bitcoinjs-lib'
+import * as tiny from 'tiny-secp256k1'
 
 const bip44Purpose = 44
 const nashPurpose = 1337
@@ -81,11 +82,12 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         publicKey: account.publicKey
       }
     case CoinType.ETH:
+      const pubkey = tiny.pointFromScalar(key.privateKey, false)
       return {
         address: EthUtil.pubToAddress(key.publicKey, true).toString('hex'),
         index,
         privateKey: key.privateKey.toString('hex'),
-        publicKey: key.publicKey.toString('hex')
+        publicKey: pubkey.toString('hex')
       }
     case CoinType.BTC:
       return {

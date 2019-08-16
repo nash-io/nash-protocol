@@ -104,7 +104,7 @@
     "eth": {
       "index": 0,
       "privateKey": "0b7561f1c775ef4715accd21aac8629bcda2e6eb4e434c0d55c917bd7c297ac6",
-      "publicKey": "02be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46",
+      "publicKey": "04be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46390ebb4dab62e8b01352f37308dbff1512615856bffd3c752db95737d3bc93a4",
       "address": "55D16CA38dFB219141Ab6617B2872B978aF84702"
     }
   }
