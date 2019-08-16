@@ -393,8 +393,9 @@ export function createGetOrdersForMovementParams(unit: string): PayloadAndKind {
   }
 }
 
-export function createGetAssetsNoncesParams(): PayloadAndKind {
+export function createGetAssetsNoncesParams(assets: string[]): PayloadAndKind {
   const payload = {
+    assets,
     timestamp: createTimestamp()
   }
 
