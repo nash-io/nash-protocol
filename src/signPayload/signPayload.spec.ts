@@ -100,12 +100,12 @@ test('serialize, hash, and sign list account balances payload', () => {
   )
 })
 
-test('serialize, hash, and sign list account volumes payload', () => {
+test('serialize, hash, and sign get account volumes payload', () => {
   const payload = { timestamp: 1552027307483 }
 
   const signature = signPayload(
     privateKey,
-    SigningPayloadID.listAccountVolumesPayload,
+    SigningPayloadID.getAccountVolumesPayload,
     payload
   )
   expect(signature).toBe(
