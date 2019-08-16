@@ -5,7 +5,7 @@ export enum SigningPayloadID {
   listOrderPayload = 0,
   cancelOrderPayload = 1,
   listAccountBalancePayload = 2,
-  listAccountVolumesPayload = 3,
+  getAccountVolumesPayload = 3,
   listMovementsPayload = 4,
   getAccountBalancePayload = 5,
   getDepositAddressPayload = 6,
@@ -29,14 +29,17 @@ export enum SigningPayloadID {
   updateMovementPayload = 22,
   listAccountStakesPayload = 23,
   listAccountStakingStatementsPayload = 24,
-  listAccountStakingDividendsPayload = 25
+  listAccountStakingDividendsPayload = 25,
+
+  getOrdersForMovementPayload = 26,
+  getAssetsNoncesPayload = 27
 }
 
 export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.listOrderPayload]: 'list_account_orders',
   [SigningPayloadID.cancelOrderPayload]: 'cancel_order',
   [SigningPayloadID.listAccountBalancePayload]: 'list_account_balances',
-  [SigningPayloadID.listAccountVolumesPayload]: 'list_account_volumes',
+  [SigningPayloadID.getAccountVolumesPayload]: 'get_account_volumes',
   [SigningPayloadID.listMovementsPayload]: 'list_movements',
   [SigningPayloadID.getAccountBalancePayload]: 'get_account_balance',
   [SigningPayloadID.getDepositAddressPayload]: 'get_deposit_address',
@@ -56,7 +59,9 @@ export const PayloadIDToName: Partial<Record<SigningPayloadID, string>> = {
   [SigningPayloadID.updateMovementPayload]: 'update_movement',
   [SigningPayloadID.listAccountStakesPayload]: 'list_account_stakes',
   [SigningPayloadID.listAccountStakingStatementsPayload]: 'list_account_staking_statements',
-  [SigningPayloadID.listAccountStakingDividendsPayload]: 'list_account_staking_dividends'
+  [SigningPayloadID.listAccountStakingDividendsPayload]: 'list_account_staking_dividends',
+  [SigningPayloadID.getOrdersForMovementPayload]: 'get_orders_for_movement',
+  [SigningPayloadID.getAssetsNoncesPayload]: 'get_assets_nonces'
 }
 
 export function kindToName(kind: SigningPayloadID): string {

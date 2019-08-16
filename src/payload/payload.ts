@@ -105,13 +105,13 @@ export function createListAccountBalanceParams(ignoreLowBalance: boolean = false
   }
 }
 
-export function createListAccountVolumesParams(): PayloadAndKind {
+export function createGetAccountVolumesParams(): PayloadAndKind {
   const payload = {
     timestamp: createTimestamp()
   }
 
   return {
-    kind: SigningPayloadID.listAccountVolumesPayload,
+    kind: SigningPayloadID.getAccountVolumesPayload,
     payload
   }
 }
@@ -377,6 +377,29 @@ export function createAccountPortfolioParams(fiatSymbol?: string, period?: strin
 
   return {
     kind: SigningPayloadID.getAccountPortfolioPayload,
+    payload
+  }
+}
+
+export function createGetOrdersForMovementParams(unit: string): PayloadAndKind {
+  const payload = {
+    timestamp: createTimestamp(),
+    unit
+  }
+
+  return {
+    kind: SigningPayloadID.getOrdersForMovementPayload,
+    payload
+  }
+}
+
+export function createGetAssetsNoncesParams(): PayloadAndKind {
+  const payload = {
+    timestamp: createTimestamp()
+  }
+
+  return {
+    kind: SigningPayloadID.getAssetsNoncesPayload,
     payload
   }
 }

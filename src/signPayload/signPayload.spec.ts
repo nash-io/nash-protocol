@@ -159,9 +159,9 @@ test('serialize, hash, and sign list account balances payload', () => {
 test('serialize, hash, and sign list account volumes payload', () => {
   const payload = { timestamp: 1552027307483 }
 
-  const payloadSignature = signPayload(privateKey, { kind: SigningPayloadID.listAccountVolumesPayload, payload })
+  const payloadSignature = signPayload(privateKey, { kind: SigningPayloadID.getAccountVolumesPayload, payload })
   expect(payloadSignature.signature).toBe(
-    '3045022100b3f97d5c0fdfc1cc703de90aafd255846cffca4e968b7cafb7468c3491593e29022053464a5583a18ab1b975fd31610f3152e7ef230cacc47719075e4efabd19806e'
+    '30450221008110ecd1db536668293d71615807cbb43514f438c26dbce163299277dcb5ca1602205ade911bae3a020667981880ca1401045e3a2ee841f429ae11a1fa1e73aada70'
   )
 })
 
