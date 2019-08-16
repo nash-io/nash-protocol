@@ -15,12 +15,10 @@ export default async function initialize(params: InitParams): Promise<Config> {
     wallets[name] = generateWallet(masterSeed, coinTypeFromString(name), index, params.net)
   }
 
-  const nashSigningKey = generateNashPayloadSigningKey(masterSeed, 1)
-  if (nashSigningKey.privateKey === undefined) {
+  const payloadSigningKey = generateNashPayloadSigningKey(masterSeed, 1)
+  if (payloadSigningKey.privateKey === undefined) {
     throw new Error('nash private is undefined')
   }
-
-  const payloadSigningKey = generateNashPayloadSigningKey(masterSeed, 0)
 
   return {
     assetData: params.assetData!,

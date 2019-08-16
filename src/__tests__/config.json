@@ -89,9 +89,9 @@
     }
   },
   "payloadSigningKey": {
-    "index": 0,
-    "publicKey": "0250f1431b1b5cd69df8fd0288c1a995a030cd370c28d267b43a730c7aa83b1f37",
-    "privateKey": "fdc7de6f07e1ec4c1d29cd7a3707cabe9c0a76da4d540dec74c939ffcd46a7b3",
+    "index": 1,
+    "publicKey": "037bc9bec8f542971308e400bc34e2f05d87c16b095017a9948e6bff314c1401f1",
+    "privateKey": "4b02442aafb756bbee9877168700601a6946a6d3508ce29122f477ae8425d375",
     "address": ""
   },
   "wallets": {
