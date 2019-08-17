@@ -2,7 +2,14 @@ import { normalizeAmount, toLittleEndianHex } from '../utils/currency'
 import { getUnitPairs, inferBlockchainData, getNEOAssetHash } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { maxOrderRate, maxFeeRate, minOrderRate } from '../constants'
-import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID } from '../payload'
+import {
+  isLimitOrderPayload,
+  isOrderPayload,
+  kindToOrderPrefix,
+  PayloadAndKind,
+  SigningPayloadID,
+  BuyOrSellSell
+} from '../payload'
 import { BlockchainSignature, Config } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { SmartBuffer } from 'smart-buffer'
@@ -39,12 +46,20 @@ function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
 
+  let assetTo = unitA
+  let assetFrom = unitB
+
+  if (blockchainData.buyOrSell === BuyOrSellSell) {
+    assetTo = unitB
+    assetFrom = unitA
+  }
+
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind)) // prefix
   buffer.writeString(reverseHexString(getNEOScriptHash(config.wallets.neo.address)))
-  buffer.writeString(getNEOAssetHash(config.assetData[unitA]))
+  buffer.writeString(getNEOAssetHash(config.assetData[assetTo]))
 
-  buffer.writeString(getNEOAssetHash(config.assetData[unitB]))
+  buffer.writeString(getNEOAssetHash(config.assetData[assetFrom]))
   buffer.writeString(toLittleEndianHex(blockchainData.nonceTo))
   buffer.writeString(toLittleEndianHex(blockchainData.nonceFrom))
 
@@ -54,11 +69,9 @@ function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
 
   let orderRate: string = maxOrderRate
   if (isLimitOrderPayload(kind)) {
-    orderRate = toLittleEndianHex(
-      normalizeAmount(blockchainData.limitPrice as string, config.marketData[blockchainData.marketName].minTickSize)
-    )
+    orderRate = toLittleEndianHex(normalizeAmount(blockchainData.limitPrice as string, 8))
   }
-  // TODO: need normalization whith precicions
+
   buffer.writeString(toLittleEndianHex(minOrderRate))
   buffer.writeString(orderRate)
   buffer.writeString(toLittleEndianHex(maxFeeRate))

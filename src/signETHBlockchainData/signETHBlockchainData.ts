@@ -1,7 +1,15 @@
 import { SmartBuffer } from 'smart-buffer'
 import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID } from '../utils/blockchain'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
-import { isLimitOrderPayload, isOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID } from '../payload'
+import {
+  isLimitOrderPayload,
+  isOrderPayload,
+  kindToOrderPrefix,
+  PayloadAndKind,
+  SigningPayloadID,
+  BuyOrSellSell,
+  BuyOrSellBuy
+} from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
 import { Config, BlockchainSignature } from '../types'
 import createKeccakHash from 'keccak'
@@ -61,12 +69,24 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
   const address = config.wallets.eth.address
 
+  let assetTo = unitA
+  let assetFrom = unitB
+
+  if (blockchainData.buyOrSell === BuyOrSellSell) {
+    assetTo = unitB
+    assetFrom = unitA
+  } else if (blockchainData.buyOrSell === BuyOrSellBuy) {
+    console.log('Use first way')
+  } else {
+    throw Error(`Could not determine buy or sell:  ${blockchainData.buyOrSell}`)
+  }
+
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind))
   buffer.writeString(address)
-  buffer.writeString(getETHAssetID(unitA))
+  buffer.writeString(getETHAssetID(assetTo))
 
-  buffer.writeString(getETHAssetID(unitB))
+  buffer.writeString(getETHAssetID(assetFrom))
   buffer.writeString(convertEthNonce(blockchainData.nonceTo))
   buffer.writeString(convertEthNonce(blockchainData.nonceFrom))
 
@@ -78,9 +98,7 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   let orderRate: string = maxOrderRate
 
   if (isLimitOrderPayload(kind)) {
-    orderRate = toBigEndianHex(
-      normalizeAmount(blockchainData.limitPrice as string, config.marketData[blockchainData.marketName].minTickSize)
-    )
+    orderRate = toBigEndianHex(normalizeAmount(blockchainData.limitPrice as string, 8))
   }
 
   buffer.writeString(toBigEndianHex(minOrderRate))

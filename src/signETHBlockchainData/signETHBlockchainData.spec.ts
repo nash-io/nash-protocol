@@ -86,7 +86,7 @@ test('sign ETH blockchain market order data', async () => {
   const data = sigTestVectors.marketOrders.eth_usdc
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buyOrSell: data.buyOrSell,
+    buy_or_sell: data.buyOrSell,
     market_name: data.marketName,
     nonce_from: data.nonceFrom,
     nonce_order: data.nonceOrder,
@@ -113,7 +113,7 @@ test('sign ETH/NEO blockchain market order data', async () => {
   const data = sigTestVectors.marketOrders.eth_neo
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buyOrSell: data.buyOrSell,
+    buy_or_sell: data.buyOrSell,
     market_name: data.marketName,
     nonce_from: data.nonceFrom,
     nonce_order: data.nonceOrder,
@@ -146,7 +146,7 @@ test('sign ETH_GAS blockchain limit order data', async () => {
   const payload = {
     allowTaker: data.allowTaker,
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buyOrSell: data.buyOrSell,
+    buy_or_sell: data.buyOrSell,
     cancellationPolicy: data.cancellationPolicy,
     limit_price: {
       amount: data.limitPrice.value,

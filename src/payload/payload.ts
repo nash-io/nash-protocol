@@ -14,6 +14,8 @@ export interface SignedState extends SyncState {
 
 export const MovementTypeDeposit = 'DEPOSIT'
 export const MovementTypeWithdrawal = 'WITHDRAWAL'
+export const BuyOrSellBuy = 'BUY'
+export const BuyOrSellSell = 'SELL'
 
 export interface SignStatesPayload {
   timestamp: number

@@ -178,7 +178,7 @@ test('serialize, hash, and sign market order payload NEO_ETH', async () => {
   const data = sigTestVectors.marketOrders.eth_neo
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buyOrSell: data.buyOrSell,
+    buy_or_sell: data.buyOrSell,
     market_name: data.marketName,
     nonce_from: data.nonceFrom,
     nonce_order: data.nonceOrder,

@@ -1,9 +1,10 @@
-import { PayloadAndKind, SigningPayloadID, kindToOrderPrefix, isLimitOrderPayload } from '../../payload'
+import { PayloadAndKind, SigningPayloadID, kindToOrderPrefix, isLimitOrderPayload, BuyOrSellSell } from '../../payload'
 import { Config, BlockchainData, BlockchainMovement, Asset } from '../../types'
 import getNEOScriptHash from '../getNEOScriptHash'
 import { normalizeAmount, toLittleEndianHex } from '../currency'
 import reverseHexString from '../reverseHexString'
 import BigNumber from 'bignumber.js'
+import { stringify } from 'querystring'
 
 // infers the blockchain specific data we need for the given payload. Some payloads
 // have different fields, hence need different approach to retrieve the data we need.
@@ -18,11 +19,12 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
       let limitPrice: string = ''
 
       if (isLimitOrderPayload(kind)) {
-        limitPrice = payload.limit_price.amount
+        limitPrice = getLimitPrice(payload.market_name, payload.buy_or_sell, payload.limit_price)
       }
 
       return {
         amount: payload.amount.amount,
+        buyOrSell: payload.buy_or_sell,
         limitPrice,
         marketName: payload.market_name,
         nonce: payload.nonce,
@@ -68,6 +70,26 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
     default:
       throw new Error(`invalid blockchain: ${assets[unit].blockchain}`)
   }
+}
+
+export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice: any): string {
+  const { unitA, unitB } = getUnitPairs(marketName)
+  let assetFrom = unitB
+  if (buyOrSell === BuyOrSellSell) {
+    assetFrom = unitA
+  }
+  if (limitPrice.currency_a === assetFrom) {
+    return limitPrice.amount
+  } else if (limitPrice.currency_b === assetFrom) {
+    const reciprocal = 1 / limitPrice.amount
+    return stringify(reciprocal)
+  }
+
+  throw Error(
+    `Could not determine limit price for market: ${marketName} with direction ${buyOrSell} and limit price ${JSON.stringify(
+      limitPrice
+    )}`
+  )
 }
 
 export function getUnitPairs(market: string): any {
