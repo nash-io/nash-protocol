@@ -7,7 +7,6 @@ import {
   kindToOrderPrefix,
   PayloadAndKind,
   SigningPayloadID,
-  BuyOrSellSell,
   BuyOrSellBuy
 } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
@@ -72,13 +71,9 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   let assetTo = unitA
   let assetFrom = unitB
 
-  if (blockchainData.buyOrSell === BuyOrSellSell) {
+  if (blockchainData.buyOrSell === BuyOrSellBuy) {
     assetTo = unitB
     assetFrom = unitA
-  } else if (blockchainData.buyOrSell === BuyOrSellBuy) {
-    console.log('Use first way')
-  } else {
-    throw Error(`Could not determine buy or sell:  ${blockchainData.buyOrSell}`)
   }
 
   const buffer = new SmartBuffer()

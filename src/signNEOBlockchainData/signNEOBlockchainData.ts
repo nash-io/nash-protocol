@@ -8,7 +8,7 @@ import {
   kindToOrderPrefix,
   PayloadAndKind,
   SigningPayloadID,
-  BuyOrSellSell
+  BuyOrSellBuy
 } from '../payload'
 import { BlockchainSignature, Config } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
@@ -49,7 +49,7 @@ function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   let assetTo = unitA
   let assetFrom = unitB
 
-  if (blockchainData.buyOrSell === BuyOrSellSell) {
+  if (blockchainData.buyOrSell === BuyOrSellBuy) {
     assetTo = unitB
     assetFrom = unitA
   }

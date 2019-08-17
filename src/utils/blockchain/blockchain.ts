@@ -4,7 +4,6 @@ import getNEOScriptHash from '../getNEOScriptHash'
 import { normalizeAmount, toLittleEndianHex } from '../currency'
 import reverseHexString from '../reverseHexString'
 import BigNumber from 'bignumber.js'
-import { stringify } from 'querystring'
 
 // infers the blockchain specific data we need for the given payload. Some payloads
 // have different fields, hence need different approach to retrieve the data we need.
@@ -82,7 +81,7 @@ export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice:
     return limitPrice.amount
   } else if (limitPrice.currency_b === assetFrom) {
     const reciprocal = 1 / limitPrice.amount
-    return stringify(reciprocal)
+    return reciprocal.toString()
   }
 
   throw Error(
