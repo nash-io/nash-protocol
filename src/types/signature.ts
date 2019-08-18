@@ -1,6 +1,9 @@
 export interface BlockchainSignature {
   readonly blockchain: string
   readonly signature: string
+  readonly publicKey?: string
+  nonceTo?: number
+  nonceFrom?: number
 }
 
 export interface PayloadSignature {

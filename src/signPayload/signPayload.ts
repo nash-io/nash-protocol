@@ -146,10 +146,22 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
     switch (blockchain) {
       case 'neo':
         const neoData = buildNEOBlockchainSignatureData(config, payloadAndKind)
-        return signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
+        const neoSignature = signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
+        return {
+          ...neoSignature,
+          nonceFrom: blockchainData.nonceFrom,
+          nonceTo: blockchainData.nonceTo,
+          publicKey: config.wallets.neo.publicKey
+        }
       case 'eth':
         const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
-        return signETHBlockchainData(config.wallets.eth.privateKey, ethData)
+        const ethSignature = signETHBlockchainData(config.wallets.eth.privateKey, ethData)
+        return {
+          ...ethSignature,
+          nonceFrom: blockchainData.nonceFrom,
+          nonceTo: blockchainData.nonceTo,
+          publicKey: config.wallets.eth.publicKey
+        }
       default:
         throw new Error(`invalid blockchain ${blockchain}`)
     }
