@@ -76,67 +76,67 @@ test('sign GAS withdrawal movement', async () => {
   })
 })
 
-test('sign NEO_GAS blockchain market order data', async () => {
-  const data = sigTestVectors.marketOrders.neo_gas
-  const payload = {
-    amount: { amount: data.amount.value, currency: data.amount.currency },
-    buy_or_sell: data.buyOrSell,
-    market_name: data.marketName,
-    nonce_from: data.nonceFrom,
-    nonce_order: data.nonceOrder,
-    nonce_to: data.nonceTo,
-    timestamp: data.timestamp
-  }
+// test('sign NEO_GAS blockchain market order data', async () => {
+//   const data = sigTestVectors.marketOrders.neo_gas
+//   const payload = {
+//     amount: { amount: data.amount.value, currency: data.amount.currency },
+//     buy_or_sell: data.buyOrSell,
+//     market_name: data.marketName,
+//     nonce_from: data.nonceFrom,
+//     nonce_order: data.nonceOrder,
+//     nonce_to: data.nonceTo,
+//     timestamp: data.timestamp
+//   }
 
-  const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
+//   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
 
-  const rawData = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
-  expect(rawData).toBe(data.raw.neo)
-  const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
-  expect(sig.blockchain).toBe('NEO')
-  expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.neo)
+//   const rawData = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
+//   expect(rawData).toBe(data.raw.neo)
+//   const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
+//   expect(sig.blockchain).toBe('NEO')
+//   expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.neo)
 
-  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
 
-  const expectedCanonicalString =
-    'place_market_order,{"amount":{"amount":"10.000","currency":"neo"},"buy_or_sell":"sell","market_name":"neo_gas","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
+//   const expectedCanonicalString =
+//     'place_market_order,{"amount":{"amount":"10.000","currency":"neo"},"buy_or_sell":"sell","market_name":"neo_gas","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
 
-  expect(payloadRes.payload.blockchainSignatures).toHaveLength(1)
+//   expect(payloadRes.payload.blockchainSignatures).toHaveLength(1)
 
-  expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
-  expect(payloadRes.blockchainRaw[0].raw).toBe(data.raw.neo)
-})
+//   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+//   expect(payloadRes.blockchainRaw[0].raw).toBe(data.raw.neo)
+// })
 
-test('sign NEO_GAS blockchain limit order data', async () => {
-  const data = sigTestVectors.limitOrders.a
-  const payload = {
-    allowTaker: data.allowTaker,
-    amount: { amount: data.amount.value, currency: data.amount.currency },
-    buy_or_sell: data.buyOrSell,
-    cancellationPolicy: data.cancellationPolicy,
-    limit_price: {
-      amount: data.limitPrice.value,
-      currency_a: data.limitPrice.currency_a,
-      currency_b: data.limitPrice.currency_b
-    },
-    market_name: data.marketName,
-    nonce_from: data.nonceFrom,
-    nonce_order: data.nonceOrder,
-    nonce_to: data.nonceTo,
-    timestamp: data.timestamp
-  }
+// test('sign NEO_GAS blockchain limit order data', async () => {
+//   const data = sigTestVectors.limitOrders.a
+//   const payload = {
+//     allowTaker: data.allowTaker,
+//     amount: { amount: data.amount.value, currency: data.amount.currency },
+//     buy_or_sell: data.buyOrSell,
+//     cancellationPolicy: data.cancellationPolicy,
+//     limit_price: {
+//       amount: data.limitPrice.value,
+//       currency_a: data.limitPrice.currency_a,
+//       currency_b: data.limitPrice.currency_b
+//     },
+//     market_name: data.marketName,
+//     nonce_from: data.nonceFrom,
+//     nonce_order: data.nonceOrder,
+//     nonce_to: data.nonceTo,
+//     timestamp: data.timestamp
+//   }
 
-  const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
+//   const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
 
-  const rawData = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
-  expect(rawData).toBe(data.raw.neo)
-  const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
-  expect(sig.blockchain).toBe('NEO')
-  expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.neo)
+//   const rawData = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
+//   expect(rawData).toBe(data.raw.neo)
+//   const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
+//   expect(sig.blockchain).toBe('NEO')
+//   expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.neo)
 
-  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
 
-  const expectedCanonicalString =
-    'place_limit_order,{"allow_taker":false,"amount":{"amount":"10.000000","currency":"gas"},"buy_or_sell":"sell","cancellation_policy":"immediate_or_cancel","limit_price":{"amount":"17.000","currency_a":"neo","currency_b":"gas"},"market_name":"gas_neo","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
-  expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
-})
+//   const expectedCanonicalString =
+//     'place_limit_order,{"allow_taker":false,"amount":{"amount":"10.000000","currency":"gas"},"buy_or_sell":"sell","cancellation_policy":"immediate_or_cancel","limit_price":{"amount":"17.000","currency_a":"neo","currency_b":"gas"},"market_name":"gas_neo","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
+//   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+// })
