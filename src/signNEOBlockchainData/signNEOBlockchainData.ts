@@ -57,11 +57,12 @@ function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind)) // prefix
   buffer.writeString(reverseHexString(getNEOScriptHash(config.wallets.neo.address)))
-  buffer.writeString(getNEOAssetHash(config.assetData[assetTo]))
 
   buffer.writeString(getNEOAssetHash(config.assetData[assetFrom]))
-  buffer.writeString(toLittleEndianHex(blockchainData.nonceTo))
+  buffer.writeString(getNEOAssetHash(config.assetData[assetTo]))
+
   buffer.writeString(toLittleEndianHex(blockchainData.nonceFrom))
+  buffer.writeString(toLittleEndianHex(blockchainData.nonceTo))
 
   const precision = config.marketData[blockchainData.marketName].minTradeIncrement
   const amount = normalizeAmount(blockchainData.amount, precision)

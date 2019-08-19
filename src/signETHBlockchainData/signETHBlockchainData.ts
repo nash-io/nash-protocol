@@ -79,11 +79,12 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind))
   buffer.writeString(address)
-  buffer.writeString(getETHAssetID(assetTo))
 
   buffer.writeString(getETHAssetID(assetFrom))
-  buffer.writeString(convertEthNonce(blockchainData.nonceTo))
+  buffer.writeString(getETHAssetID(assetTo))
+
   buffer.writeString(convertEthNonce(blockchainData.nonceFrom))
+  buffer.writeString(convertEthNonce(blockchainData.nonceTo))
 
   // normalize + to big endian
   const precision = config.marketData[blockchainData.marketName].minTradeIncrement
