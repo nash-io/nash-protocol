@@ -19,6 +19,7 @@ export { default as randomBytes } from './randomBytes'
 // Utilities
 export { default as bufferize } from './bufferize'
 export { default as stringify } from './stringify'
+export * from './utils/createTimestamp'
 
 // Types
 export * from './types'
