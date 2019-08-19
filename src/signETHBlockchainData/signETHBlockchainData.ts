@@ -68,12 +68,12 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
   const address = config.wallets.eth.address
 
-  let assetTo = unitA
-  let assetFrom = unitB
+  let assetFrom = unitA
+  let assetTo = unitB
 
   if (blockchainData.buyOrSell === BuyOrSellBuy) {
-    assetTo = unitB
-    assetFrom = unitA
+    assetFrom = unitB
+    assetTo = unitA
   }
 
   const buffer = new SmartBuffer()

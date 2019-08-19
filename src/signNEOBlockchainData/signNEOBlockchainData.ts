@@ -46,12 +46,12 @@ function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
 
-  let assetTo = unitA
-  let assetFrom = unitB
+  let assetFrom = unitA
+  let assetTo = unitB
 
   if (blockchainData.buyOrSell === BuyOrSellBuy) {
-    assetTo = unitB
-    assetFrom = unitA
+    assetFrom = unitB
+    assetTo = unitA
   }
 
   const buffer = new SmartBuffer()
