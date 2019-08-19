@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.11"></a>
+## [2.1.11](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v2.1.6...v2.1.11) (2019-08-19)
+
+
+### Features
+
+* expose createTimestamp as export ([ab14794](https://gitlab.com/nash-io/frontend/nash-protocol/commit/ab14794))
+
+
+
 <a name="2.1.10"></a>
 ## [2.1.10](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v2.1.8...v2.1.10) (2019-08-19)
 
