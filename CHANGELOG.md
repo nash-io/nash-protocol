@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.8.6"></a>
+## [1.8.6](https://github.com/neonexchange/nex-auth-protocol/compare/v1.8.5...v1.8.6) (2019-08-19)
+
+
+### Bug Fixes
+
+* Rename listAccountVolumes => getAccountVolumes ([925ac5a](https://github.com/neonexchange/nex-auth-protocol/commit/925ac5a))
+
+
+
 <a name="1.8.5"></a>
 ## [1.8.5](https://github.com/neonexchange/nex-auth-protocol/compare/v1.8.4...v1.8.5) (2019-08-08)
 
