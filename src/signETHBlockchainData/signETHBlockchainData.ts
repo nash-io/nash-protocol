@@ -39,11 +39,11 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
   const v = sig.recoveryParam === 0 ? '00' : '01'
   const r = sig.r.toString('hex', 64)
   const s = sig.s.toString('hex', 64)
-  const signature = `${r}${s}${v}`
+  const signature: string = `${r}${s}${v}`
 
   return {
     blockchain: 'ETH',
-    signature
+    signature: signature.toLowerCase()
   }
 }
 

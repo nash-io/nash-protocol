@@ -22,7 +22,7 @@ export function signNEOBlockchainData(privateKey: string, data: string): Blockch
 
   return {
     blockchain: 'NEO',
-    signature: wallet.sign(msg, privateKey)
+    signature: wallet.sign(msg, privateKey).toLowerCase()
   }
 }
 

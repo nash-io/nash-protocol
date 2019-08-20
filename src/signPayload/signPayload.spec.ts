@@ -193,5 +193,5 @@ test('serialize, hash, and sign market order payload NEO_ETH', async () => {
   )
 
   expect(signedPayload.payload.blockchainSignatures).toHaveLength(2)
-  expect(signedPayload.signature.toUpperCase()).toBe(data.signature)
+  expect(signedPayload.signature).toBe(data.signature)
 })

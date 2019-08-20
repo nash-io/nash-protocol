@@ -53,7 +53,7 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
         nonce: toLittleEndianHex(payload.nonce),
         prefix,
         userPubKey: config.wallets.neo.publicKey,
-        userSig: payload.blockchainSignatures[0].signature.toUpperCase()
+        userSig: payload.blockchainSignatures[0].signature
       }
     case 'eth':
       const bnAmount: BigNumber = new BigNumber(normalizeAmount(payload.quantity.amount, 8))
@@ -64,7 +64,7 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
         nonce: convertEthNonce(payload.nonce),
         prefix,
         userPubKey: config.wallets.eth.address,
-        userSig: payload.blockchainSignatures[0].signature.toUpperCase()
+        userSig: payload.blockchainSignatures[0].signature
       }
     default:
       throw new Error(`invalid blockchain: ${assets[unit].blockchain}`)
