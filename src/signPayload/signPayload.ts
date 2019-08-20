@@ -93,7 +93,7 @@ export default function signPayload(
       throw new Error('blockchain movement needs a Config object')
     }
 
-    ;(payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
+    ; (payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
       config as Config,
       payload as AddMovementPayload
     )
@@ -151,7 +151,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
           ...neoSignature,
           nonceFrom: blockchainData.nonceFrom,
           nonceTo: blockchainData.nonceTo,
-          publicKey: config.wallets.neo.publicKey
+          publicKey: config.wallets.neo.publicKey.toLowerCase()
         }
       case 'eth':
         const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
@@ -160,7 +160,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
           ...ethSignature,
           nonceFrom: blockchainData.nonceFrom,
           nonceTo: blockchainData.nonceTo,
-          publicKey: config.wallets.eth.publicKey
+          publicKey: config.wallets.eth.publicKey.toLowerCase()
         }
       default:
         throw new Error(`invalid blockchain ${blockchain}`)
