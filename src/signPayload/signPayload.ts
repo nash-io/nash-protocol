@@ -104,7 +104,7 @@ export default function signPayload(
       blockchainMovement: movement,
       canonicalString: message,
       payload,
-      signature: stringify(bufferize(sig.toDER()))
+      signature: stringify(bufferize(sig.toDER())).toLowerCase()
     }
   }
 
@@ -151,7 +151,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
           ...neoSignature,
           nonceFrom: blockchainData.nonceFrom,
           nonceTo: blockchainData.nonceTo,
-          publicKey: config.wallets.neo.publicKey
+          publicKey: config.wallets.neo.publicKey.toLowerCase()
         }
       case 'eth':
         const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
@@ -160,7 +160,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
           ...ethSignature,
           nonceFrom: blockchainData.nonceFrom,
           nonceTo: blockchainData.nonceTo,
-          publicKey: config.wallets.eth.publicKey
+          publicKey: config.wallets.eth.publicKey.toLowerCase()
         }
       default:
         throw new Error(`invalid blockchain ${blockchain}`)
@@ -184,12 +184,12 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
       case 'neo':
         return {
           payload: payloadAndKind.payload,
-          raw: buildNEOBlockchainSignatureData(config, payloadAndKind).toUpperCase()
+          raw: buildNEOBlockchainSignatureData(config, payloadAndKind)
         }
       case 'eth':
         return {
           payload: payloadAndKind.payload,
-          raw: buildETHBlockchainSignatureData(config, payloadAndKind).toUpperCase()
+          raw: buildETHBlockchainSignatureData(config, payloadAndKind)
         }
       default:
         throw new Error(`invalid chain ${blockchain}`)
@@ -218,10 +218,10 @@ export function signStateList(config: Config, items: ClientSignedState[]): Clien
   const result: ClientSignedState[] = items.map((item: ClientSignedState) => {
     switch (item.blockchain.toLowerCase()) {
       case 'neo':
-        item.signature = signNEOBlockchainData(config.wallets.neo.privateKey, item.message).signature.toUpperCase()
+        item.signature = signNEOBlockchainData(config.wallets.neo.privateKey, item.message).signature
         return item
       case 'eth':
-        item.signature = signETHBlockchainData(config.wallets.eth.privateKey, item.message).signature.toUpperCase()
+        item.signature = signETHBlockchainData(config.wallets.eth.privateKey, item.message).signature
         return item
       default:
         throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)

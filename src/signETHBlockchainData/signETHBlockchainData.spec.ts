@@ -3,7 +3,7 @@ import { SigningPayloadID, MovementTypeDeposit, MovementTypeWithdrawal, createAd
 import config from '../__tests__/blockchain_config.json'
 import signPayload from '../signPayload'
 import sigTestVectors from '../__tests__/signatureVectors.json'
-// import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
+import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
 
 test('eth sig generation', async () => {
   const payload =
@@ -27,7 +27,7 @@ test('sign eth deposit movement', async () => {
   expect(rawData).toBe(data.raw.eth)
   const sig = signETHBlockchainData(config.wallets.eth.privateKey, rawData)
   expect(sig.blockchain).toBe('ETH')
-  expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
+  expect(sig.signature).toBe(data.blockchainSignatures.eth)
 
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
 
@@ -62,7 +62,7 @@ test('sign usdc withdraw movement', async () => {
   expect(rawData).toBe(data.raw.eth)
   const sig = signETHBlockchainData(config.wallets.eth.privateKey, rawData)
   expect(sig.blockchain).toBe('ETH')
-  expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
+  expect(sig.signature).toBe(data.blockchainSignatures.eth)
 
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
 
@@ -82,101 +82,101 @@ test('sign usdc withdraw movement', async () => {
   })
 })
 
-// test('sign ETH blockchain market order data', async () => {
-//   const data = sigTestVectors.marketOrders.eth_usdc
-//   const payload = {
-//     amount: { amount: data.amount.value, currency: data.amount.currency },
-//     buy_or_sell: data.buyOrSell,
-//     market_name: data.marketName,
-//     nonce_from: data.nonceFrom,
-//     nonce_order: data.nonceOrder,
-//     nonce_to: data.nonceTo,
-//     timestamp: data.timestamp
-//   }
+test('sign ETH blockchain market order data', async () => {
+  const data = sigTestVectors.marketOrders.eth_usdc
+  const payload = {
+    amount: { amount: data.amount.value, currency: data.amount.currency },
+    buy_or_sell: data.buyOrSell,
+    market_name: data.marketName,
+    nonce_from: data.nonceFrom,
+    nonce_order: data.nonceOrder,
+    nonce_to: data.nonceTo,
+    timestamp: data.timestamp
+  }
 
-//   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
-//   const rawData = buildETHBlockchainSignatureData(config, signingPayload)
-//   expect(rawData).toBe(data.raw.eth)
+  const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
+  const rawData = buildETHBlockchainSignatureData(config, signingPayload)
+  expect(rawData).toBe(data.raw.eth)
 
-//   const sig = await signETHBlockchainData(config.wallets.eth.privateKey, rawData)
-//   expect(sig.blockchain).toBe('ETH')
-//   expect(sig.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
+  const sig = await signETHBlockchainData(config.wallets.eth.privateKey, rawData)
+  expect(sig.blockchain).toBe('ETH')
+  expect(sig.signature).toBe(data.blockchainSignatures.eth)
 
-//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
-//   const canonicalExpected =
-//     'place_market_order,{"amount":{"amount":"10.000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_usdc","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
+  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+  const canonicalExpected =
+    'place_market_order,{"amount":{"amount":"10.000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_usdc","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
 
-//   expect(payloadRes.canonicalString).toBe(canonicalExpected)
-// })
+  expect(payloadRes.canonicalString).toBe(canonicalExpected)
+})
 
-// test('sign ETH/NEO blockchain market order data', async () => {
-//   const data = sigTestVectors.marketOrders.eth_neo
-//   const payload = {
-//     amount: { amount: data.amount.value, currency: data.amount.currency },
-//     buy_or_sell: data.buyOrSell,
-//     market_name: data.marketName,
-//     nonce_from: data.nonceFrom,
-//     nonce_order: data.nonceOrder,
-//     nonce_to: data.nonceTo,
-//     timestamp: data.timestamp
-//   }
+test('sign ETH/NEO blockchain market order data', async () => {
+  const data = sigTestVectors.marketOrders.eth_neo
+  const payload = {
+    amount: { amount: data.amount.value, currency: data.amount.currency },
+    buy_or_sell: data.buyOrSell,
+    market_name: data.marketName,
+    nonce_from: data.nonceFrom,
+    nonce_order: data.nonceOrder,
+    nonce_to: data.nonceTo,
+    timestamp: data.timestamp
+  }
 
-//   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
-//   const rawDataEth = buildETHBlockchainSignatureData(config, signingPayload).toUpperCase()
-//   const rawDataNeo = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
-//   expect(rawDataEth).toBe(data.raw.eth)
-//   expect(rawDataNeo).toBe(data.raw.neo)
+  const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
+  const rawDataEth = buildETHBlockchainSignatureData(config, signingPayload).toUpperCase()
+  const rawDataNeo = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
+  expect(rawDataEth).toBe(data.raw.eth)
+  expect(rawDataNeo).toBe(data.raw.neo)
 
-//   const sigEth = signETHBlockchainData(config.wallets.eth.privateKey, rawDataEth)
-//   const sigNeo = signNEOBlockchainData(config.wallets.neo.privateKey, rawDataNeo)
+  const sigEth = signETHBlockchainData(config.wallets.eth.privateKey, rawDataEth)
+  const sigNeo = signNEOBlockchainData(config.wallets.neo.privateKey, rawDataNeo)
 
-//   expect(sigNeo.signature.toUpperCase()).toBe(data.blockchainSignatures.neo)
-//   expect(sigEth.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
+  expect(sigNeo.signature).toBe(data.blockchainSignatures.neo)
+  expect(sigEth.signature).toBe(data.blockchainSignatures.eth)
 
-//   const canonicalExpected =
-//     'place_market_order,{"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_neo","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
-//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
-//   expect(payloadRes.canonicalString).toBe(canonicalExpected)
+  const canonicalExpected =
+    'place_market_order,{"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_neo","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
+  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+  expect(payloadRes.canonicalString).toBe(canonicalExpected)
 
-//   expect(payloadRes.signature.toUpperCase()).toBe(data.signature)
-// })
+  expect(payloadRes.signature).toBe(data.signature)
+})
 
-// test('sign ETH_GAS blockchain limit order data', async () => {
-//   const data = sigTestVectors.limitOrders.b
-//   const payload = {
-//     allowTaker: data.allowTaker,
-//     amount: { amount: data.amount.value, currency: data.amount.currency },
-//     buy_or_sell: data.buyOrSell,
-//     cancellationPolicy: data.cancellationPolicy,
-//     limit_price: {
-//       amount: data.limitPrice.value,
-//       currency_a: data.limitPrice.currency_a,
-//       currency_b: data.limitPrice.currency_b
-//     },
-//     market_name: data.marketName,
-//     nonce_from: data.nonceFrom,
-//     nonce_order: data.nonceOrder,
-//     nonce_to: data.nonceTo,
-//     timestamp: data.timestamp
-//   }
+test('sign ETH_GAS blockchain limit order data', async () => {
+  const data = sigTestVectors.limitOrders.b
+  const payload = {
+    allowTaker: data.allowTaker,
+    amount: { amount: data.amount.value, currency: data.amount.currency },
+    buy_or_sell: data.buyOrSell,
+    cancellationPolicy: data.cancellationPolicy,
+    limit_price: {
+      amount: data.limitPrice.value,
+      currency_a: data.limitPrice.currency_a,
+      currency_b: data.limitPrice.currency_b
+    },
+    market_name: data.marketName,
+    nonce_from: data.nonceFrom,
+    nonce_order: data.nonceOrder,
+    nonce_to: data.nonceTo,
+    timestamp: data.timestamp
+  }
 
-//   const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
+  const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
 
-//   const rawDataEth = buildETHBlockchainSignatureData(config, signingPayload).toUpperCase()
-//   const rawDataNeo = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
-//   expect(rawDataEth).toBe(data.raw.eth)
-//   expect(rawDataNeo).toBe(data.raw.neo)
+  const rawDataEth = buildETHBlockchainSignatureData(config, signingPayload).toUpperCase()
+  const rawDataNeo = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
+  expect(rawDataEth).toBe(data.raw.eth)
+  expect(rawDataNeo).toBe(data.raw.neo)
 
-//   const sigEth = signETHBlockchainData(config.wallets.eth.privateKey, rawDataEth)
-//   const sigNeo = signNEOBlockchainData(config.wallets.neo.privateKey, rawDataNeo)
+  const sigEth = signETHBlockchainData(config.wallets.eth.privateKey, rawDataEth)
+  const sigNeo = signNEOBlockchainData(config.wallets.neo.privateKey, rawDataNeo)
 
-//   expect(sigNeo.signature.toUpperCase()).toBe(data.blockchainSignatures.neo)
-//   expect(sigEth.signature.toUpperCase()).toBe(data.blockchainSignatures.eth)
+  expect(sigNeo.signature).toBe(data.blockchainSignatures.neo)
+  expect(sigEth.signature).toBe(data.blockchainSignatures.eth)
 
-//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
-//   expect(payloadRes.payload.blockchainSignatures).toHaveLength(2)
+  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+  expect(payloadRes.payload.blockchainSignatures).toHaveLength(2)
 
-//   const expectedCanonicalString =
-//     'place_limit_order,{"allow_taker":true,"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","cancellation_policy":"immediate_or_cancel","limit_price":{"amount":"0.0024","currency_a":"gas","currency_b":"eth"},"market_name":"eth_gas","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":1565361133707}'
-//   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
-// })
+  const expectedCanonicalString =
+    'place_limit_order,{"allow_taker":true,"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","cancellation_policy":"immediate_or_cancel","limit_price":{"amount":"0.0024","currency_a":"gas","currency_b":"eth"},"market_name":"eth_gas","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":1565361133707}'
+  expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+})
