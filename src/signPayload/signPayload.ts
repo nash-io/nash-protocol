@@ -164,9 +164,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
 
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
-
   const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config, blockchainData)
-  console.log('signature needed: ', signatureNeeded)
 
   const sigs = signatureNeeded.map(chainNoncePair => {
     switch (chainNoncePair.chain) {
@@ -221,17 +219,11 @@ export function determineSignatureNonceTuplesNeeded(config: Config, blockchainDa
       })
     })
   })
-  return _.uniq(needed)
+  return _.uniqWith(needed, _.isEqual)
 }
 
-// If we are trading within the same blockchain origin we only need 1 signature,
-// neo_gas, nos_neo, etc..
-// Otherwise we are trading cross chain, hence need signatures for both blockchains,
-// neo_eth, eth_btc, etc..
 export function addRawBlockchainOrderData(config: Config, payloadAndKind: PayloadAndKind): object {
-  // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
-
   const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config, blockchainData)
 
   const rawData = signatureNeeded.map(chainNoncePair => {

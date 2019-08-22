@@ -8,6 +8,8 @@ import config from '../__tests__/blockchain_config.json'
 import state_signing_config from '../__tests__/state_signing_config.json'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 import _ from 'lodash'
+import { inferBlockchainData } from '../utils/blockchain'
+import { determineSignatureNonceTuplesNeeded } from './signPayload'
 
 const privateKeyHex = '2304cae8deb223fbc6774964af6bc4fcda6ba6cff8276cb2c0f49fb0c8a51d57'
 const privateKey = Buffer.from(privateKeyHex, 'hex')
@@ -194,4 +196,74 @@ test('serialize, hash, and sign market order payload NEO_ETH', async () => {
 
   expect(signedPayload.payload.blockchainSignatures).toHaveLength(2)
   expect(signedPayload.signature).toBe(data.signature)
+})
+
+test('signing orders with multiple nonces', async () => {
+  const data = sigTestVectors.marketOrders.eth_neo
+  const payload = {
+    amount: { amount: data.amount.value, currency: data.amount.currency },
+    buy_or_sell: data.buyOrSell,
+    market_name: data.marketName,
+    nonce_order: data.nonceOrder,
+    nonces_from: [1],
+    nonces_to: [1, 2],
+    timestamp: data.timestamp
+  }
+
+  let blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
+  let result = determineSignatureNonceTuplesNeeded(config, blockchainData)
+  expect(result).toEqual([
+    { chain: 'eth', nonceFrom: 1, nonceTo: 0 },
+    { chain: 'neo', nonceFrom: 0, nonceTo: 1 },
+    { chain: 'neo', nonceFrom: 0, nonceTo: 2 }
+  ])
+
+  let signedPayload = signPayload(
+    Buffer.from(config.payloadSigningKey.privateKey, 'hex'),
+    { kind: SigningPayloadID.placeMarketOrderPayload, payload },
+    config
+  )
+  expect(signedPayload.payload.blockchainSignatures).toHaveLength(3)
+
+  payload.nonces_from = [1, 2]
+  payload.nonces_to = [1]
+
+  blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
+  result = determineSignatureNonceTuplesNeeded(config, blockchainData)
+  expect(result).toEqual([
+    { chain: 'eth', nonceFrom: 1, nonceTo: 0 },
+    { chain: 'eth', nonceFrom: 2, nonceTo: 0 },
+    { chain: 'neo', nonceFrom: 0, nonceTo: 1 }
+  ])
+
+  payload.nonces_from = [1, 2]
+  payload.nonces_to = [7, 8]
+
+  blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
+  result = determineSignatureNonceTuplesNeeded(config, blockchainData)
+  expect(result).toEqual([
+    { chain: 'eth', nonceFrom: 1, nonceTo: 0 },
+    { chain: 'eth', nonceFrom: 2, nonceTo: 0 },
+    { chain: 'neo', nonceFrom: 0, nonceTo: 7 },
+    { chain: 'neo', nonceFrom: 0, nonceTo: 8 }
+  ])
+
+  payload.nonces_from = [11, 12]
+  payload.nonces_to = [17, 18]
+  payload.market_name = 'neo_gas'
+  blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
+  result = determineSignatureNonceTuplesNeeded(config, blockchainData)
+  expect(result).toEqual([
+    { chain: 'neo', nonceFrom: 11, nonceTo: 17 },
+    { chain: 'neo', nonceFrom: 11, nonceTo: 18 },
+    { chain: 'neo', nonceFrom: 12, nonceTo: 17 },
+    { chain: 'neo', nonceFrom: 12, nonceTo: 18 }
+  ])
+
+  signedPayload = signPayload(
+    Buffer.from(config.payloadSigningKey.privateKey, 'hex'),
+    { kind: SigningPayloadID.placeMarketOrderPayload, payload },
+    config
+  )
+  expect(signedPayload.payload.blockchainSignatures).toHaveLength(4)
 })
