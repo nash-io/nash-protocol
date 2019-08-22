@@ -27,9 +27,9 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
         limitPrice,
         marketName: payload.market_name,
         nonce: payload.nonce,
-        nonceFrom: payload.nonce_from,
         nonceOrder: payload.nonce_order,
-        nonceTo: payload.nonce_to
+        noncesFrom: payload.nonces_from,
+        noncesTo: payload.nonces_to
       }
 
     default:

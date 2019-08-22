@@ -205,8 +205,8 @@ export function createPlaceLimitOrderParams(
   cancellationPolicy: string,
   limitPrice: object,
   marketName: string,
-  nonceFrom: number,
-  nonceTo: number,
+  noncesFrom: number[],
+  noncesTo: number[],
   nonceOrder?: number,
   cancelAt?: string
 ): PayloadAndKind {
@@ -218,9 +218,9 @@ export function createPlaceLimitOrderParams(
     cancellation_policy: cancellationPolicy,
     limit_price: snakeCase(limitPrice),
     market_name: marketName,
-    nonce_from: nonceFrom,
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo,
+    nonces_from: noncesFrom,
+    nonces_to: noncesTo,
     timestamp: createTimestamp()
   }
 
@@ -238,8 +238,8 @@ export function createPlaceStopLimitOrderParams(
   limitPrice: object,
   marketName: string,
   stopPrice: object,
-  nonceFrom: number,
-  nonceTo: number,
+  noncesFrom: number[],
+  noncesTo: number[],
   nonceOrder?: number,
   cancelAt?: string
 ): PayloadAndKind {
@@ -251,9 +251,9 @@ export function createPlaceStopLimitOrderParams(
     cancellation_policy: cancellationPolicy,
     limit_price: snakeCase(limitPrice),
     market_name: marketName,
-    nonce_from: nonceFrom,
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo,
+    nonces_from: noncesFrom,
+    nonces_to: noncesTo,
     stop_price: snakeCase(stopPrice),
     timestamp: createTimestamp()
   }
@@ -268,17 +268,17 @@ export function createPlaceMarketOrderParams(
   amount: object,
   buyOrSell: string,
   marketName: string,
-  nonceFrom: number,
-  nonceTo: number,
+  noncesFrom: number[],
+  noncesTo: number[],
   nonceOrder?: number
 ): PayloadAndKind {
   const payload = {
     amount,
     buy_or_sell: buyOrSell,
     market_name: marketName,
-    nonce_from: nonceFrom,
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo,
+    nonces_from: noncesFrom,
+    nonces_to: noncesTo,
     timestamp: createTimestamp()
   }
 
@@ -293,17 +293,17 @@ export function createPlaceStopMarketOrderParams(
   buyOrSell: string,
   marketName: string,
   stopPrice: object,
-  nonceFrom: number,
-  nonceTo: number,
+  noncesFrom: number[],
+  noncesTo: number[],
   nonceOrder?: number
 ): PayloadAndKind {
   const payload = {
     amount,
     buy_or_sell: buyOrSell,
     market_name: marketName,
-    nonce_from: nonceFrom,
     nonce_order: nonceOrder || createTimestamp32(),
-    nonce_to: nonceTo,
+    nonces_from: noncesFrom,
+    nonces_to: noncesTo,
     stop_price: snakeCase(stopPrice),
     timestamp: createTimestamp()
   }

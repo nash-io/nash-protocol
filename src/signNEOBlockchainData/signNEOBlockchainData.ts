@@ -2,15 +2,8 @@ import { normalizeAmount, toLittleEndianHex } from '../utils/currency'
 import { getUnitPairs, inferBlockchainData, getNEOAssetHash } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { maxOrderRate, maxFeeRate, minOrderRate } from '../constants'
-import {
-  isLimitOrderPayload,
-  isOrderPayload,
-  kindToOrderPrefix,
-  PayloadAndKind,
-  SigningPayloadID,
-  BuyOrSellBuy
-} from '../payload'
-import { BlockchainSignature, Config } from '../types'
+import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } from '../payload'
+import { BlockchainSignature, Config, ChainNoncePair } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { SmartBuffer } from 'smart-buffer'
 import { wallet } from '@cityofzion/neon-core'
@@ -26,22 +19,11 @@ export function signNEOBlockchainData(privateKey: string, data: string): Blockch
   }
 }
 
-export function buildNEOBlockchainSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
-  // make sure we have a NEO wallet in our config object.
-  if (!('neo' in config.wallets)) {
-    throw new Error('NEO wallet not found in config.wallets')
-  }
-
-  if (isOrderPayload(payloadAndKind.kind)) {
-    return buildNEOOrderSignatureData(config, payloadAndKind)
-  } else if (payloadAndKind.kind === SigningPayloadID.addMovementPayload) {
-    return buildNEOMovementSignatureData(config, payloadAndKind)
-  } else {
-    throw new Error(`Could not sign blockchain data for payload type ${payloadAndKind}`)
-  }
-}
-
-function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+export function buildNEOOrderSignatureData(
+  config: Config,
+  payloadAndKind: PayloadAndKind,
+  chainNoncePair: ChainNoncePair
+): string {
   const { kind } = payloadAndKind
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
@@ -61,8 +43,8 @@ function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   buffer.writeString(getNEOAssetHash(config.assetData[assetFrom]))
   buffer.writeString(getNEOAssetHash(config.assetData[assetTo]))
 
-  buffer.writeString(toLittleEndianHex(blockchainData.nonceFrom))
-  buffer.writeString(toLittleEndianHex(blockchainData.nonceTo))
+  buffer.writeString(toLittleEndianHex(chainNoncePair.nonceFrom))
+  buffer.writeString(toLittleEndianHex(chainNoncePair.nonceTo))
 
   const precision = config.marketData[blockchainData.marketName].minTradeIncrement
   const amount = normalizeAmount(blockchainData.amount, precision)
@@ -86,7 +68,7 @@ function buildNEOOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   return buffer.toString('utf8').toLowerCase()
 }
 
-function buildNEOMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+export function buildNEOMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
   const { kind } = payloadAndKind
   const { unitA } = getUnitPairs(payloadAndKind.payload.quantity.currency)
 

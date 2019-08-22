@@ -1,1 +1,5 @@
-export { signNEOBlockchainData, buildNEOBlockchainSignatureData } from './signNEOBlockchainData'
+export {
+  signNEOBlockchainData,
+  buildNEOMovementSignatureData,
+  buildNEOOrderSignatureData
+} from './signNEOBlockchainData'

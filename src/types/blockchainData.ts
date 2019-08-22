@@ -3,8 +3,14 @@ export default interface BlockchainData {
   readonly marketName: string
   readonly buyOrSell: string
   readonly nonce: number
-  readonly nonceFrom: number
-  readonly nonceTo: number
   readonly nonceOrder: number
+  readonly noncesFrom: number[]
+  readonly noncesTo: number[]
   readonly limitPrice: string
+}
+
+export interface ChainNoncePair {
+  chain: string
+  nonceFrom: number
+  nonceTo: number
 }

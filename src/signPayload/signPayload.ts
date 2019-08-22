@@ -19,19 +19,30 @@ import {
   isStateSigning,
   isOrderPayload
 } from '../payload/signingPayloadID'
-import { Config, PayloadSignature, BlockchainSignature } from '../types'
+import { Config, PayloadSignature, BlockchainSignature, BlockchainData, ChainNoncePair } from '../types'
 import {
   PayloadAndKind,
   ClientSignedState,
   SignStatesRequestPayload,
   AddMovementPayload,
-  AddMovementRequestPayload
+  AddMovementRequestPayload,
+  BuyOrSellBuy
 } from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
-import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
-import { buildETHBlockchainSignatureData, signETHBlockchainData } from '../signETHBlockchainData'
+import {
+  buildNEOOrderSignatureData,
+  buildNEOMovementSignatureData,
+  signNEOBlockchainData
+} from '../signNEOBlockchainData'
+import {
+  buildETHMovementSignatureData,
+  buildETHOrderSignatureData,
+  signETHBlockchainData
+} from '../signETHBlockchainData'
 
 const curve = new EC('secp256k1')
+
+const ORDER_NONCE_IGNORE = 4294967295
 
 // Generates the canonical string for the given arbitrary payload.
 export const canonicalString = compose(
@@ -55,6 +66,19 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       delete newPayload.recycled_orders
       return canonicalString(newPayload)
     default:
+      if (isOrderPayload(kind)) {
+        // for order nonce_from/nonce_to, this is actually tracked from within the payload blockchain signatures object
+        // its also possibly a list of nonces for each!
+        // unfortunately the graphql schema expects nonce_from/nonce_to so we'll add a dummy value
+        // and delete nonces_from/nonces_to from the payload for canonical string purposes
+        const tempPayload: any = { ...payload }
+        delete tempPayload.nonces_from
+        delete tempPayload.nonces_to
+        tempPayload.nonce_from = ORDER_NONCE_IGNORE
+        tempPayload.nonce_to = ORDER_NONCE_IGNORE
+        return canonicalString(tempPayload)
+      }
+
       return canonicalString(payload)
   }
 }
@@ -130,44 +154,74 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
     const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
     switch (blockchain) {
       case 'neo':
-        const neoData = buildNEOBlockchainSignatureData(config, payloadAndKind)
+        const neoData = buildNEOMovementSignatureData(config, payloadAndKind)
         return [signNEOBlockchainData(config.wallets.neo.privateKey, neoData)]
       case 'eth':
-        const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
+        const ethData = buildETHMovementSignatureData(config, payloadAndKind)
         return [signETHBlockchainData(config.wallets.eth.privateKey, ethData)]
     }
   }
 
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-  const blockchains: ReadonlyArray<string> = [config.assetData[unitA].blockchain, config.assetData[unitB].blockchain]
-  const sigs = _.map(_.uniq(blockchains), blockchain => {
-    switch (blockchain) {
+
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config, blockchainData)
+  console.log('signature needed: ', signatureNeeded)
+
+  const sigs = signatureNeeded.map(chainNoncePair => {
+    switch (chainNoncePair.chain) {
       case 'neo':
-        const neoData = buildNEOBlockchainSignatureData(config, payloadAndKind)
+        const neoData = buildNEOOrderSignatureData(config, payloadAndKind, chainNoncePair)
         const neoSignature = signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
         return {
           ...neoSignature,
-          nonceFrom: blockchainData.nonceFrom,
-          nonceTo: blockchainData.nonceTo,
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
           publicKey: config.wallets.neo.publicKey.toLowerCase()
         }
       case 'eth':
-        const ethData = buildETHBlockchainSignatureData(config, payloadAndKind)
+        const ethData = buildETHOrderSignatureData(config, payloadAndKind, chainNoncePair)
         const ethSignature = signETHBlockchainData(config.wallets.eth.privateKey, ethData)
         return {
           ...ethSignature,
-          nonceFrom: blockchainData.nonceFrom,
-          nonceTo: blockchainData.nonceTo,
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
           publicKey: config.wallets.eth.publicKey.toLowerCase()
         }
       default:
-        throw new Error(`invalid blockchain ${blockchain}`)
+        throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
     }
   })
 
   return sigs
+}
+
+export function determineSignatureNonceTuplesNeeded(config: Config, blockchainData: BlockchainData): ChainNoncePair[] {
+  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
+
+  let assetFrom = unitA
+  let assetTo = unitB
+
+  if (blockchainData.buyOrSell === BuyOrSellBuy) {
+    assetFrom = unitB
+    assetTo = unitA
+  }
+
+  const blockchainFrom = config.assetData[assetFrom].blockchain
+  const blockchainTo = config.assetData[assetTo].blockchain
+  const blockchains = _.uniq([blockchainFrom, blockchainTo])
+  const needed: ChainNoncePair[] = []
+
+  blockchains.forEach(blockchain => {
+    blockchainData.noncesFrom.forEach(nonceFrom => {
+      blockchainData.noncesTo.forEach(nonceTo => {
+        const nFrom = blockchain === blockchainFrom ? nonceFrom : 0
+        const nTo = blockchain === blockchainTo ? nonceTo : 0
+        needed.push({ chain: blockchain, nonceFrom: nFrom, nonceTo: nTo })
+      })
+    })
+  })
+  return _.uniq(needed)
 }
 
 // If we are trading within the same blockchain origin we only need 1 signature,
@@ -177,22 +231,23 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
 export function addRawBlockchainOrderData(config: Config, payloadAndKind: PayloadAndKind): object {
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-  const blockchains: ReadonlyArray<string> = [config.assetData[unitA].blockchain, config.assetData[unitB].blockchain]
-  const rawData = _.map(_.uniq(blockchains), blockchain => {
-    switch (blockchain) {
+
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config, blockchainData)
+
+  const rawData = signatureNeeded.map(chainNoncePair => {
+    switch (chainNoncePair.chain) {
       case 'neo':
         return {
           payload: payloadAndKind.payload,
-          raw: buildNEOBlockchainSignatureData(config, payloadAndKind)
+          raw: buildNEOOrderSignatureData(config, payloadAndKind, chainNoncePair)
         }
       case 'eth':
         return {
           payload: payloadAndKind.payload,
-          raw: buildETHBlockchainSignatureData(config, payloadAndKind)
+          raw: buildETHOrderSignatureData(config, payloadAndKind, chainNoncePair)
         }
       default:
-        throw new Error(`invalid chain ${blockchain}`)
+        throw new Error(`invalid chain ${chainNoncePair.chain}`)
     }
   })
 

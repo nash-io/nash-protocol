@@ -1,16 +1,9 @@
 import { SmartBuffer } from 'smart-buffer'
 import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID } from '../utils/blockchain'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
-import {
-  isLimitOrderPayload,
-  isOrderPayload,
-  kindToOrderPrefix,
-  PayloadAndKind,
-  SigningPayloadID,
-  BuyOrSellBuy
-} from '../payload'
+import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
-import { Config, BlockchainSignature } from '../types'
+import { Config, BlockchainSignature, ChainNoncePair } from '../types'
 import createKeccakHash from 'keccak'
 import * as EC from 'elliptic'
 
@@ -47,22 +40,11 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
   }
 }
 
-export function buildETHBlockchainSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
-  // make sure we have a ETH wallet in our config object.
-  if (!('eth' in config.wallets)) {
-    throw new Error('ETH wallet not found in config.wallets')
-  }
-
-  if (isOrderPayload(payloadAndKind.kind)) {
-    return buildETHOrderSignatureData(config, payloadAndKind)
-  } else if (payloadAndKind.kind === SigningPayloadID.addMovementPayload) {
-    return buildETHMovementSignatureData(config, payloadAndKind)
-  } else {
-    throw new Error(`Could not sign blockchain data for payload type ${payloadAndKind}`)
-  }
-}
-
-function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+export function buildETHOrderSignatureData(
+  config: Config,
+  payloadAndKind: PayloadAndKind,
+  chainNoncePair: ChainNoncePair
+): string {
   const { kind } = payloadAndKind
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
@@ -83,8 +65,8 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   buffer.writeString(getETHAssetID(assetFrom))
   buffer.writeString(getETHAssetID(assetTo))
 
-  buffer.writeString(convertEthNonce(blockchainData.nonceFrom))
-  buffer.writeString(convertEthNonce(blockchainData.nonceTo))
+  buffer.writeString(convertEthNonce(chainNoncePair.nonceFrom))
+  buffer.writeString(convertEthNonce(chainNoncePair.nonceTo))
 
   // normalize + to big endian
   const precision = config.marketData[blockchainData.marketName].minTradeIncrement
@@ -106,7 +88,7 @@ function buildETHOrderSignatureData(config: Config, payloadAndKind: PayloadAndKi
   return buffer.toString('utf8').toUpperCase()
 }
 
-function buildETHMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+export function buildETHMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
   const { unitA } = getUnitPairs(payloadAndKind.payload.quantity.currency)
   const address = config.wallets.eth.address
 
