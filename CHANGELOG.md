@@ -2,13 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="2.1.20"></a>
-## [2.1.20](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v2.1.18...v2.1.20) (2019-08-22)
-
-
-
-<a name="2.1.18"></a>
-## [2.1.18](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v2.1.17...v2.1.18) (2019-08-22)
+<a name="2.1.22"></a>
+## [2.1.22](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v2.1.11...v2.1.22) (2019-08-22)
 
 
 

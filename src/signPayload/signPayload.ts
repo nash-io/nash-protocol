@@ -110,7 +110,7 @@ export default function signPayload(
       throw new Error('blockchain movement needs a Config object')
     }
 
-    ;(payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
+    ; (payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
       config as Config,
       payload as AddMovementPayload
     )
