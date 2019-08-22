@@ -213,14 +213,14 @@ export function createPlaceLimitOrderParams(
   const payload = {
     allow_taker: allowTaker,
     amount,
-    buy_or_sell: buyOrSell,
-    cancel_at: cancelAt,
-    cancellation_policy: cancellationPolicy,
-    limit_price: snakeCase(limitPrice),
-    market_name: marketName,
-    nonce_order: nonceOrder || createTimestamp32(),
-    nonces_from: noncesFrom,
-    nonces_to: noncesTo,
+    buyOrSell,
+    cancelAt,
+    cancellationPolicy,
+    limitPrice: snakeCase(limitPrice),
+    marketName,
+    nonceOrder: nonceOrder || createTimestamp32(),
+    noncesFrom,
+    noncesTo,
     timestamp: createTimestamp()
   }
 
@@ -244,17 +244,17 @@ export function createPlaceStopLimitOrderParams(
   cancelAt?: string
 ): PayloadAndKind {
   const payload = {
-    allow_taker: allowTaker,
+    allowTaker,
     amount,
-    buy_or_sell: buyOrSell,
-    cancel_at: cancelAt,
-    cancellation_policy: cancellationPolicy,
-    limit_price: snakeCase(limitPrice),
-    market_name: marketName,
-    nonce_order: nonceOrder || createTimestamp32(),
-    nonces_from: noncesFrom,
-    nonces_to: noncesTo,
-    stop_price: snakeCase(stopPrice),
+    buyOrSell,
+    cancelAt,
+    cancellationPolicy,
+    limitPrice: snakeCase(limitPrice),
+    marketName,
+    nonceOrder: nonceOrder || createTimestamp32(),
+    noncesFrom,
+    noncesTo,
+    stopPrice: snakeCase(stopPrice),
     timestamp: createTimestamp()
   }
 
@@ -274,11 +274,11 @@ export function createPlaceMarketOrderParams(
 ): PayloadAndKind {
   const payload = {
     amount,
-    buy_or_sell: buyOrSell,
-    market_name: marketName,
-    nonce_order: nonceOrder || createTimestamp32(),
-    nonces_from: noncesFrom,
-    nonces_to: noncesTo,
+    buyOrSell,
+    marketName,
+    nonceOrder: nonceOrder || createTimestamp32(),
+    noncesFrom,
+    noncesTo,
     timestamp: createTimestamp()
   }
 
@@ -299,12 +299,12 @@ export function createPlaceStopMarketOrderParams(
 ): PayloadAndKind {
   const payload = {
     amount,
-    buy_or_sell: buyOrSell,
-    market_name: marketName,
-    nonce_order: nonceOrder || createTimestamp32(),
-    nonces_from: noncesFrom,
-    nonces_to: noncesTo,
-    stop_price: snakeCase(stopPrice),
+    buyOrSell,
+    marketName,
+    nonceOrder: nonceOrder || createTimestamp32(),
+    noncesFrom,
+    noncesTo,
+    stopPrice: snakeCase(stopPrice),
     timestamp: createTimestamp()
   }
 

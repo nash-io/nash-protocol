@@ -180,11 +180,11 @@ test('serialize, hash, and sign market order payload NEO_ETH', async () => {
   const data = sigTestVectors.marketOrders.eth_neo
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buy_or_sell: data.buyOrSell,
-    market_name: data.marketName,
-    nonce_order: data.nonceOrder,
-    nonces_from: [data.nonceFrom],
-    nonces_to: [data.nonceTo],
+    buyOrSell: data.buyOrSell,
+    marketName: data.marketName,
+    nonceOrder: data.nonceOrder,
+    noncesFrom: [data.nonceFrom],
+    noncesTo: [data.nonceTo],
     timestamp: data.timestamp
   }
 
@@ -202,11 +202,11 @@ test('signing orders with multiple nonces', async () => {
   const data = sigTestVectors.marketOrders.eth_neo
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buy_or_sell: data.buyOrSell,
-    market_name: data.marketName,
-    nonce_order: data.nonceOrder,
-    nonces_from: [1],
-    nonces_to: [1, 2],
+    buyOrSell: data.buyOrSell,
+    marketName: data.marketName,
+    nonceOrder: data.nonceOrder,
+    noncesFrom: [1],
+    noncesTo: [1, 2],
     timestamp: data.timestamp
   }
 
@@ -225,8 +225,8 @@ test('signing orders with multiple nonces', async () => {
   )
   expect(signedPayload.payload.blockchainSignatures).toHaveLength(3)
 
-  payload.nonces_from = [1, 2]
-  payload.nonces_to = [1]
+  payload.noncesFrom = [1, 2]
+  payload.noncesTo = [1]
 
   blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   result = determineSignatureNonceTuplesNeeded(config, blockchainData)
@@ -236,8 +236,8 @@ test('signing orders with multiple nonces', async () => {
     { chain: 'neo', nonceFrom: 0, nonceTo: 1 }
   ])
 
-  payload.nonces_from = [1, 2]
-  payload.nonces_to = [7, 8]
+  payload.noncesFrom = [1, 2]
+  payload.noncesTo = [7, 8]
 
   blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   result = determineSignatureNonceTuplesNeeded(config, blockchainData)
@@ -248,9 +248,9 @@ test('signing orders with multiple nonces', async () => {
     { chain: 'neo', nonceFrom: 0, nonceTo: 8 }
   ])
 
-  payload.nonces_from = [11, 12]
-  payload.nonces_to = [17, 18]
-  payload.market_name = 'neo_gas'
+  payload.noncesFrom = [11, 12]
+  payload.noncesTo = [17, 18]
+  payload.marketName = 'neo_gas'
   blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   result = determineSignatureNonceTuplesNeeded(config, blockchainData)
   expect(result).toEqual([

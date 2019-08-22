@@ -18,18 +18,18 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
       let limitPrice: string = ''
 
       if (isLimitOrderPayload(kind)) {
-        limitPrice = getLimitPrice(payload.market_name, payload.buy_or_sell, payload.limit_price)
+        limitPrice = getLimitPrice(payload.marketName, payload.buyOrSell, payload.limitPrice)
       }
 
       return {
         amount: payload.amount.amount,
-        buyOrSell: payload.buy_or_sell,
+        buyOrSell: payload.buyOrSell,
         limitPrice,
-        marketName: payload.market_name,
+        marketName: payload.marketName,
         nonce: payload.nonce,
-        nonceOrder: payload.nonce_order,
-        noncesFrom: payload.nonces_from,
-        noncesTo: payload.nonces_to
+        nonceOrder: payload.nonceOrder,
+        noncesFrom: payload.noncesFrom,
+        noncesTo: payload.noncesTo
       }
 
     default:

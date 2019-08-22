@@ -85,11 +85,11 @@ test('sign NEO_GAS blockchain market order data', async () => {
   const data = sigTestVectors.marketOrders.neo_gas
   const payload = {
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buy_or_sell: data.buyOrSell,
-    market_name: data.marketName,
-    nonce_order: data.nonceOrder,
-    nonces_from: [data.nonceFrom],
-    nonces_to: [data.nonceTo],
+    buyOrSell: data.buyOrSell,
+    marketName: data.marketName,
+    nonceOrder: data.nonceOrder,
+    noncesFrom: [data.nonceFrom],
+    noncesTo: [data.nonceTo],
     timestamp: data.timestamp
   }
 
@@ -121,17 +121,17 @@ test('sign NEO_GAS blockchain limit order data', async () => {
   const payload = {
     allowTaker: data.allowTaker,
     amount: { amount: data.amount.value, currency: data.amount.currency },
-    buy_or_sell: data.buyOrSell,
+    buyOrSell: data.buyOrSell,
     cancellationPolicy: data.cancellationPolicy,
-    limit_price: {
+    limitPrice: {
       amount: data.limitPrice.value,
       currency_a: data.limitPrice.currency_a,
       currency_b: data.limitPrice.currency_b
     },
-    market_name: data.marketName,
-    nonce_order: data.nonceOrder,
-    nonces_from: [data.nonceFrom],
-    nonces_to: [data.nonceTo],
+    marketName: data.marketName,
+    nonceOrder: data.nonceOrder,
+    noncesFrom: [data.nonceFrom],
+    noncesTo: [data.nonceTo],
     timestamp: data.timestamp
   }
 

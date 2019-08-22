@@ -276,9 +276,9 @@ export function alterOrderPayloadForGraphql(payload: any): any {
   // unfortunately the graphql schema expects nonce_from/nonce_to so we'll add a dummy value
   // and delete nonces_from/nonces_to from the payload for canonical string purposes
   const tempPayload: any = { ...payload }
-  delete tempPayload.nonces_from
-  delete tempPayload.nonces_to
-  tempPayload.nonce_from = ORDER_NONCE_IGNORE
-  tempPayload.nonce_to = ORDER_NONCE_IGNORE
+  delete tempPayload.noncesFrom
+  delete tempPayload.noncesTo
+  tempPayload.nonceFrom = ORDER_NONCE_IGNORE
+  tempPayload.nonceTo = ORDER_NONCE_IGNORE
   return tempPayload
 }
