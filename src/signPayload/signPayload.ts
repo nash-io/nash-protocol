@@ -67,15 +67,7 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       return canonicalString(newPayload)
     default:
       if (isOrderPayload(kind)) {
-        // for order nonce_from/nonce_to, this is actually tracked from within the payload blockchain signatures object
-        // its also possibly a list of nonces for each!
-        // unfortunately the graphql schema expects nonce_from/nonce_to so we'll add a dummy value
-        // and delete nonces_from/nonces_to from the payload for canonical string purposes
-        const tempPayload: any = { ...payload }
-        delete tempPayload.nonces_from
-        delete tempPayload.nonces_to
-        tempPayload.nonce_from = ORDER_NONCE_IGNORE
-        tempPayload.nonce_to = ORDER_NONCE_IGNORE
+        const tempPayload = alterOrderPayloadForGraphql(payload)
         return canonicalString(tempPayload)
       }
 
@@ -109,6 +101,7 @@ export default function signPayload(
     payload.blockchainSignatures = signBlockchainData(config, { payload, kind })
     if (isOrderPayload(kind)) {
       blockchainRaw = addRawBlockchainOrderData(config, { payload, kind })
+      payload = alterOrderPayloadForGraphql(payload)
     }
   }
 
@@ -275,4 +268,17 @@ export function signStateList(config: Config, items: ClientSignedState[]): Clien
     }
   })
   return result
+}
+
+export function alterOrderPayloadForGraphql(payload: any): any {
+  // for order nonce_from/nonce_to, this is actually tracked from within the payload blockchain signatures object
+  // its also possibly a list of nonces for each!
+  // unfortunately the graphql schema expects nonce_from/nonce_to so we'll add a dummy value
+  // and delete nonces_from/nonces_to from the payload for canonical string purposes
+  const tempPayload: any = { ...payload }
+  delete tempPayload.nonces_from
+  delete tempPayload.nonces_to
+  tempPayload.nonce_from = ORDER_NONCE_IGNORE
+  tempPayload.nonce_to = ORDER_NONCE_IGNORE
+  return tempPayload
 }
