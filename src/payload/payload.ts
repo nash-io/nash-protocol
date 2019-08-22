@@ -211,7 +211,7 @@ export function createPlaceLimitOrderParams(
   cancelAt?: string
 ): PayloadAndKind {
   const payload = {
-    allow_taker: allowTaker,
+    allowTaker,
     amount,
     buyOrSell,
     cancelAt,
