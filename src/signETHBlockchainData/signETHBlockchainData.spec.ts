@@ -7,11 +7,7 @@ import { SigningPayloadID, MovementTypeDeposit, MovementTypeWithdrawal, createAd
 import config from '../__tests__/blockchain_config.json'
 import signPayload from '../signPayload'
 import sigTestVectors from '../__tests__/signatureVectors.json'
-<<<<<<< HEAD
 import { buildNEOOrderSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
-=======
-import { buildNEOBlockchainSignatureData, signNEOBlockchainData } from '../signNEOBlockchainData'
->>>>>>> master
 
 test('eth sig generation', async () => {
   const payload =
@@ -96,28 +92,18 @@ test('sign ETH blockchain market order data', async () => {
     amount: { amount: data.amount.value, currency: data.amount.currency },
     buy_or_sell: data.buyOrSell,
     market_name: data.marketName,
-<<<<<<< HEAD
     nonce_order: data.nonceOrder,
     nonces_from: [data.nonceFrom],
     nonces_to: [data.nonceTo],
-=======
-    nonce_from: data.nonceFrom,
-    nonce_order: data.nonceOrder,
-    nonce_to: data.nonceTo,
->>>>>>> master
     timestamp: data.timestamp
   }
 
   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
-<<<<<<< HEAD
   const rawData = buildETHOrderSignatureData(config, signingPayload, {
     chain: 'eth',
     nonceFrom: data.nonceFrom,
     nonceTo: data.nonceTo
   })
-=======
-  const rawData = buildETHBlockchainSignatureData(config, signingPayload)
->>>>>>> master
   expect(rawData).toBe(data.raw.eth)
 
   const sig = await signETHBlockchainData(config.wallets.eth.privateKey, rawData)
@@ -126,11 +112,7 @@ test('sign ETH blockchain market order data', async () => {
 
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
   const canonicalExpected =
-<<<<<<< HEAD
     'place_market_order,{"amount":{"amount":"10.000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_usdc","nonce_from":4294967295,"nonce_order":5432876,"nonce_to":4294967295,"timestamp":12345648}'
-=======
-    'place_market_order,{"amount":{"amount":"10.000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_usdc","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
->>>>>>> master
 
   expect(payloadRes.canonicalString).toBe(canonicalExpected)
 })
@@ -141,20 +123,13 @@ test('sign ETH/NEO blockchain market order data', async () => {
     amount: { amount: data.amount.value, currency: data.amount.currency },
     buy_or_sell: data.buyOrSell,
     market_name: data.marketName,
-<<<<<<< HEAD
     nonce_order: data.nonceOrder,
     nonces_from: [data.nonceFrom],
     nonces_to: [data.nonceTo],
-=======
-    nonce_from: data.nonceFrom,
-    nonce_order: data.nonceOrder,
-    nonce_to: data.nonceTo,
->>>>>>> master
     timestamp: data.timestamp
   }
 
   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
-<<<<<<< HEAD
   const rawDataEth = buildETHOrderSignatureData(config, signingPayload, {
     chain: 'eth',
     nonceFrom: data.nonceFrom,
@@ -165,10 +140,6 @@ test('sign ETH/NEO blockchain market order data', async () => {
     nonceFrom: data.nonceFrom,
     nonceTo: data.nonceTo
   }).toUpperCase()
-=======
-  const rawDataEth = buildETHBlockchainSignatureData(config, signingPayload).toUpperCase()
-  const rawDataNeo = buildNEOBlockchainSignatureData(config, signingPayload).toUpperCase()
->>>>>>> master
   expect(rawDataEth).toBe(data.raw.eth)
   expect(rawDataNeo).toBe(data.raw.neo)
 
@@ -179,12 +150,8 @@ test('sign ETH/NEO blockchain market order data', async () => {
   expect(sigEth.signature).toBe(data.blockchainSignatures.eth)
 
   const canonicalExpected =
-<<<<<<< HEAD
     'place_market_order,{"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_neo","nonce_from":4294967295,"nonce_order":5432876,"nonce_to":4294967295,"timestamp":12345648}'
 
-=======
-    'place_market_order,{"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_neo","nonce_from":5432876,"nonce_order":5432876,"nonce_to":5432876,"timestamp":12345648}'
->>>>>>> master
   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
   expect(payloadRes.canonicalString).toBe(canonicalExpected)
 

@@ -196,7 +196,6 @@ test('serialize, hash, and sign market order payload NEO_ETH', async () => {
 
   expect(signedPayload.payload.blockchainSignatures).toHaveLength(2)
   expect(signedPayload.signature).toBe(data.signature)
-<<<<<<< HEAD
 })
 
 test('signing orders with multiple nonces', async () => {
@@ -267,6 +266,4 @@ test('signing orders with multiple nonces', async () => {
     config
   )
   expect(signedPayload.payload.blockchainSignatures).toHaveLength(4)
-=======
->>>>>>> master
 })
