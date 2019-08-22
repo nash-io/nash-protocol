@@ -133,7 +133,7 @@ export function getETHAssetID(asset: string): string {
       return '0002'
     case 'usdc':
       return '0003'
-    case 'bnb':
+    case 'zrx':
       return '0004'
     default:
       return 'ffff'
