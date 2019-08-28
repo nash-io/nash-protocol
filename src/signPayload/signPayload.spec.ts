@@ -13,6 +13,7 @@ import { determineSignatureNonceTuplesNeeded } from './signPayload'
 
 const privateKeyHex = '2304cae8deb223fbc6774964af6bc4fcda6ba6cff8276cb2c0f49fb0c8a51d57'
 const privateKey = Buffer.from(privateKeyHex, 'hex')
+const ORDER_NONCE_IGNORE = 4294967295
 
 describe('state signing', () => {
   const stateSigningPrivateKey = Buffer.from(state_signing_config.payloadSigningKey.privateKey, 'hex')
@@ -213,9 +214,9 @@ test('signing orders with multiple nonces', async () => {
   let blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   let result = determineSignatureNonceTuplesNeeded(config, blockchainData)
   expect(result).toEqual([
-    { chain: 'eth', nonceFrom: 1, nonceTo: -1 },
-    { chain: 'neo', nonceFrom: -1, nonceTo: 1 },
-    { chain: 'neo', nonceFrom: -1, nonceTo: 2 }
+    { chain: 'eth', nonceFrom: 1, nonceTo: ORDER_NONCE_IGNORE },
+    { chain: 'neo', nonceFrom: ORDER_NONCE_IGNORE, nonceTo: 1 },
+    { chain: 'neo', nonceFrom: ORDER_NONCE_IGNORE, nonceTo: 2 }
   ])
 
   let signedPayload = signPayload(
@@ -231,9 +232,9 @@ test('signing orders with multiple nonces', async () => {
   blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   result = determineSignatureNonceTuplesNeeded(config, blockchainData)
   expect(result).toEqual([
-    { chain: 'eth', nonceFrom: 1, nonceTo: -1 },
-    { chain: 'eth', nonceFrom: 2, nonceTo: -1 },
-    { chain: 'neo', nonceFrom: -1, nonceTo: 1 }
+    { chain: 'eth', nonceFrom: 1, nonceTo: ORDER_NONCE_IGNORE },
+    { chain: 'eth', nonceFrom: 2, nonceTo: ORDER_NONCE_IGNORE },
+    { chain: 'neo', nonceFrom: ORDER_NONCE_IGNORE, nonceTo: 1 }
   ])
 
   payload.noncesFrom = [1, 2]
@@ -242,10 +243,10 @@ test('signing orders with multiple nonces', async () => {
   blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   result = determineSignatureNonceTuplesNeeded(config, blockchainData)
   expect(result).toEqual([
-    { chain: 'eth', nonceFrom: 1, nonceTo: -1 },
-    { chain: 'eth', nonceFrom: 2, nonceTo: -1 },
-    { chain: 'neo', nonceFrom: -1, nonceTo: 7 },
-    { chain: 'neo', nonceFrom: -1, nonceTo: 8 }
+    { chain: 'eth', nonceFrom: 1, nonceTo: ORDER_NONCE_IGNORE },
+    { chain: 'eth', nonceFrom: 2, nonceTo: ORDER_NONCE_IGNORE },
+    { chain: 'neo', nonceFrom: ORDER_NONCE_IGNORE, nonceTo: 7 },
+    { chain: 'neo', nonceFrom: ORDER_NONCE_IGNORE, nonceTo: 8 }
   ])
 
   payload.noncesFrom = [11, 12]
