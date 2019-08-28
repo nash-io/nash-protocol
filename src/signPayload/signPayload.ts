@@ -206,8 +206,8 @@ export function determineSignatureNonceTuplesNeeded(config: Config, blockchainDa
   blockchains.forEach(blockchain => {
     blockchainData.noncesFrom.forEach(nonceFrom => {
       blockchainData.noncesTo.forEach(nonceTo => {
-        const nFrom = blockchain === blockchainFrom ? nonceFrom : 0
-        const nTo = blockchain === blockchainTo ? nonceTo : 0
+        const nFrom = blockchain === blockchainFrom ? nonceFrom : ORDER_NONCE_IGNORE
+        const nTo = blockchain === blockchainTo ? nonceTo : ORDER_NONCE_IGNORE
         needed.push({ chain: blockchain, nonceFrom: nFrom, nonceTo: nTo })
       })
     })
