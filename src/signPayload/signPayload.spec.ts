@@ -213,9 +213,9 @@ test('signing orders with multiple nonces', async () => {
   let blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   let result = determineSignatureNonceTuplesNeeded(config, blockchainData)
   expect(result).toEqual([
-    { chain: 'eth', nonceFrom: 1, nonceTo: 0 },
-    { chain: 'neo', nonceFrom: 0, nonceTo: 1 },
-    { chain: 'neo', nonceFrom: 0, nonceTo: 2 }
+    { chain: 'eth', nonceFrom: 1, nonceTo: -1 },
+    { chain: 'neo', nonceFrom: -1, nonceTo: 1 },
+    { chain: 'neo', nonceFrom: -1, nonceTo: 2 }
   ])
 
   let signedPayload = signPayload(
@@ -231,9 +231,9 @@ test('signing orders with multiple nonces', async () => {
   blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   result = determineSignatureNonceTuplesNeeded(config, blockchainData)
   expect(result).toEqual([
-    { chain: 'eth', nonceFrom: 1, nonceTo: 0 },
-    { chain: 'eth', nonceFrom: 2, nonceTo: 0 },
-    { chain: 'neo', nonceFrom: 0, nonceTo: 1 }
+    { chain: 'eth', nonceFrom: 1, nonceTo: -1 },
+    { chain: 'eth', nonceFrom: 2, nonceTo: -1 },
+    { chain: 'neo', nonceFrom: -1, nonceTo: 1 }
   ])
 
   payload.noncesFrom = [1, 2]
@@ -242,10 +242,10 @@ test('signing orders with multiple nonces', async () => {
   blockchainData = inferBlockchainData({ kind: SigningPayloadID.placeMarketOrderPayload, payload })
   result = determineSignatureNonceTuplesNeeded(config, blockchainData)
   expect(result).toEqual([
-    { chain: 'eth', nonceFrom: 1, nonceTo: 0 },
-    { chain: 'eth', nonceFrom: 2, nonceTo: 0 },
-    { chain: 'neo', nonceFrom: 0, nonceTo: 7 },
-    { chain: 'neo', nonceFrom: 0, nonceTo: 8 }
+    { chain: 'eth', nonceFrom: 1, nonceTo: -1 },
+    { chain: 'eth', nonceFrom: 2, nonceTo: -1 },
+    { chain: 'neo', nonceFrom: -1, nonceTo: 7 },
+    { chain: 'neo', nonceFrom: -1, nonceTo: 8 }
   ])
 
   payload.noncesFrom = [11, 12]
