@@ -65,6 +65,10 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       const newPayload: AddMovementPayload = { ...payload }
       delete newPayload.recycled_orders
       return canonicalString(newPayload)
+    case SigningPayloadID.listOrderPayload:
+      const newOrderPayload: any = { ...payload }
+      delete newOrderPayload.limit
+      return canonicalString(newOrderPayload)
     default:
       if (isOrderPayload(kind)) {
         const tempPayload = alterOrderPayloadForGraphql(payload)

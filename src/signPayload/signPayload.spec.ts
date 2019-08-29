@@ -175,6 +175,16 @@ test('serialize, hash, and sign list account orders payload', () => {
   expect(payloadSignature.signature).toBe(
     '304502210094e709789a11dcb1404d7d66d8d9db11b7173a19bd1bdadab8e09c46c0208a6802207d8f726b7cc7d48c4efd27b02f730339426073da9a6ac98e4a4f97d120f60300'
   )
+
+  const limitedPayload = { timestamp: 1552027307101, limit: 200 }
+
+  const limitedPayloadSignature = signPayload(privateKey, {
+    kind: SigningPayloadID.listOrderPayload,
+    payload: limitedPayload
+  })
+  expect(limitedPayloadSignature.signature).toBe(payloadSignature.signature)
+  expect(limitedPayloadSignature.canonicalString).toBe('list_account_orders,{"timestamp":1552027307101}')
+  expect(limitedPayloadSignature.payload).toEqual(limitedPayload)
 })
 
 test('serialize, hash, and sign market order payload NEO_ETH', async () => {
