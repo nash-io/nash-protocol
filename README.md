@@ -2,8 +2,6 @@
 
 Implementation of Nash cryptographic routines
 
-This document is very WIP and should be checked for accuracy by someone with more expertise!
-
 ## Getting started
 
     yarn install
