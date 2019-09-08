@@ -52,10 +52,12 @@ export function buildETHOrderSignatureData(
 
   let assetFrom = unitA
   let assetTo = unitB
+  let amountPrecision = config.marketData[blockchainData.marketName].minTradeIncrementB
 
   if (blockchainData.buyOrSell === BuyOrSellBuy) {
     assetFrom = unitB
     assetTo = unitA
+    amountPrecision = config.marketData[blockchainData.marketName].minTradeIncrementA
   }
 
   const buffer = new SmartBuffer()
@@ -69,8 +71,7 @@ export function buildETHOrderSignatureData(
   buffer.writeString(convertEthNonce(chainNoncePair.nonceTo))
 
   // normalize + to big endian
-  const precision = config.marketData[blockchainData.marketName].minTradeIncrement
-  const amount = normalizeAmount(blockchainData.amount, precision)
+  const amount = normalizeAmount(blockchainData.amount, amountPrecision)
   buffer.writeString(toBigEndianHex(amount))
 
   let orderRate: string = maxOrderRate
