@@ -30,7 +30,7 @@ export function buildNEOOrderSignatureData(
 
   let assetFrom = unitA
   let assetTo = unitB
-
+  const amountPrecision = config.marketData[blockchainData.marketName].minTradeIncrementA
   if (blockchainData.buyOrSell === BuyOrSellBuy) {
     assetFrom = unitB
     assetTo = unitA
@@ -46,8 +46,7 @@ export function buildNEOOrderSignatureData(
   buffer.writeString(toLittleEndianHex(chainNoncePair.nonceFrom))
   buffer.writeString(toLittleEndianHex(chainNoncePair.nonceTo))
 
-  const precision = config.marketData[blockchainData.marketName].minTradeIncrement
-  const amount = normalizeAmount(blockchainData.amount, precision)
+  const amount = normalizeAmount(blockchainData.amount, amountPrecision)
   buffer.writeString(toLittleEndianHex(amount))
 
   let orderRate: string = maxOrderRate

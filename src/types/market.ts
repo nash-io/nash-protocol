@@ -1,5 +1,6 @@
 export default interface Market {
   readonly minTickSize: number
   readonly minTradeSize: number
-  readonly minTradeIncrement: number
+  readonly minTradeIncrementA: number
+  readonly minTradeIncrementB: number
 }
