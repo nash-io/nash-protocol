@@ -1,6 +1,10 @@
 # nash-protocol
 
-Implementation of Nash cryptographic routines
+Implementation of Nash cryptographic routines.
+
+## [Documentation](docs/index.html)
+
+Currently, you should clone the repository to access the HTML documentation. This may be statically hosted separately at some point for convenience.
 
 ## Getting started
 
@@ -8,118 +12,53 @@ Implementation of Nash cryptographic routines
     yarn build
     yarn test
 
-
-## API
-
-```typescript
-/*
-  Secure-randomly generates a series of random bytes.
-  * publicKey is used to verify signatures.
-  * secretKey is the "master key" used to sign stuff and to generate mnemonic.
-
-  Uses crypto-browserify/randombytes which polyfills node crypto.
-
-  Spec: SIGGEN()
- */
-getEntropy = () => { publicKey: Buffer, secretKey: Buffer }
-
-/*
-  Converts entropy to wordlist. We can supply our own wordlist for i18n.
-  This is not an encryption, it's a simple mapping.
-
-  Uses bitcoinjs/bip39 implementation.
- */
-secretKeyToMnemonic = (secretKey: Buffer) => Array<string>
-
-/*
-  Converts wordlist back to entropy.
- */
-mnemonictoSecretKey = (Array<string>) => Buffer
-
-/*
-  Creates the master seed which is the foundation of all wallet secret keys.
-  Use PBKDF2.
-
-  Uses bitcoinjs/bip39 implementation.
- */
-mnemonicToMasterSeed = (mnemonic: Array<string>) => Buffer
-
-/*
-  Hashes user password using scrypt with parameters N = 16384, r = 8, p = 1.
-
-  Spec: SCRYPT()
-
-  Uses scrypt-js implementation.
- */
-hashPassword = (password: string) => Promise<Buffer>
-
-/*
-  Derives two symmetric secret keys from password via HKDF. Uses user ID as salt.
-  * authKey is stored server side for use in authentication
-  * encryptionKey is used to encrypt the secret key
-
-  Uses futoin-hkdf implementation.
-
-  Spec: HKDF()
- */
-getHKDFKeysFromPassword = (password: string, salt: string) => Promise<{ authKey: Buffer, encryptionKey: Buffer }>
-
-/*
-  Encrypts master key using encryptionKey. Uses AEAD. Reversible.
-
-  aead is stored server-side.
-
-  Uses crypto-browserify/browserify-aes implementation, which polyfills Node `crypto`.
-
-  Spec: ENC(), DEC()
- */
-interface AEAD = {
-  encryptedSecretKey: Buffer
-  nonce: Buffer
-  tag: Buffer
-}
-encryptSecretKey = (encryptionKey: Buffer, secretKey: Buffer) => AEAD
-decryptSecretKey = (encryptionKey: Buffer, aead: AEAD) => Promise<Buffer>
-
-/*
-  Regenerates mnemonic. Because the only information the user has is their
-  password, we have to go through several hash/encrypt/decrypt steps.
-
-  aead can come from the server as it is secure.
- */
-regenerateMnemonic = (aead: AEAD, password: string): Array<String>
-```
-
 ## Usage Summary
 
 ### Onboarding
 
-1. User signs up for an account with a password (and other stuff). `getEntropy()` generates their keys.
-2. Secret key is used to generate mnemonic with `secretKeyToMnemonic()`. Asynchronously, the master seed is used to generate the master seed with `mnemonicToMasterSeed()`.
-3. User confirms they recorded the mnemonic.
-4. Auth / encryption keys are derived from password with `hashPassword()` and `getHKDFKeysFromPassword()`. Auth key is sent to server.
-5. Encryption key is used to encrypt the secret key with `encryptSecretKey()`. Output is sent to server.
-6. Wallets are created with the master seed.
+The Nash Protocol contains functions necessary to create, setup, and authenticate into an account.
 
-### Logging in
+#### Account creation
 
-1. User submits password. Client processes into auth / encryption keys. Auth key is used to login, server responds with `aead` which can be decrypted using the encryption key.
+This step registers a new user with Nash's Central Accounts System.
+
+1. A user signs up for an account and provides a password.
+2. `hashPassword()` should be called to hash the password, and `getHKDFKeysFromPassword()` should be called on the hasked password to get an **authentication key** and **encryption key**.
+3. The **authentication key** is sent to Nash's Central Accounts System in lieu of the original password, and is what is used hereafter for authentication. The **encryption key** is never sent to Nash, and must be computed on the fly from the user's password by the client.
+
+#### Account setup
+
+This step creates blockchain wallets for a user.
+
+1. `getEntropy()` is called to generate a **secret key**.
+2. `secretKeyToMnemonic()` is called on the **secret key** to provide a user's **mnemonic**. The user should persist this and never share this value.
+3. `mnemonicToMasterSeed()` is called on the **mnemonic** to create the **master seed**, which is the seed value for BIP-44 HD wallet generation.
+4. `generateWallet` is called using the **master seed** for all supported coin types.
+5. Wallet public keys are sent to Nash. Private keys are never sent to Nash, and should be computed on the fly by the client.
+6. The **secret key** is encrypted with `encryptSecretKey()`, which produces an **encrypted secret key AEAD object**. This is sent to Nash.
+
+### Authentication
+
+1. User provides their password.
+2. `getHKDFKeysFromPassword()` is used to get the **authentication key** and **encryption key**.
+3. The **authentication key** is sent to Nash, which responds with the **encrypted secret key AEAD object** and some **wallet metadata** (public keys and chain heights).
+4. The client calls `initialize()` with the **encrypted secret key AEAD object**, **encryption key**, **wallet metadata**, and some Nash Matching Engine market and asset data to receive a **config**.
+5. This **config** contains all necessary values to interact with the Nash Matching Engine, including the ability to sign payloads needed for operations such as order placement, viewing private account information, asset transfers, and staking.
 
 ## Glossary
 
-- Auth key: Derived from password. **Stored on the server side** to validate sessions.
+**Secret** values are never sent to Nash. Values that are **visible to Nash** are. A combination of secret values and values accessible by Nash are needed for all sensitive operations. Both types of values are sensitive and should be carefully guarded.
+
+- Authentication key: Derived from password. Used to authentcate into Nash's systems. **Visible to Nash**.
 - BIP-39: Protocol for generating master seed from private key.
 - BIP-44: Protocol for generating wallet addresses from master seed.
-- Chain: an ID for each blockchain we want to generate a private key for. Constant. TODO: Should this use the standardized chain IDs described in BIP-44, or should we make our own?
-- Encryption key: Derived from password. Used to encrypt the private key for server side storage.
-- Entropy: A secure-randomly generated bitstring composed of public and private key.
-- Master seed: Hash generated by `PBKDF2(mnemonic, passphrase = "")` Iteration = 2048, uses HMAC-SHA512. Should be 512 bits (64 bytes). Used to generate wallet addresses.
-- Mnemonic: A n-word phrase generated from the entropy using a wordlist. Can be used along with passphrase to (re)generate the master seed. **User needs to memorize this.**
-- Passphrase: An optional string for use with the `PBKDF2()` encryption function.
-- Password: User's login credential. Used to generate encryption key and auth key via HKDF.
-- PBKDF2: The encryption function used to generate the master seed from the mnemonic and an optional passphrase.
-- Private key: Abstracted into the **mnemonic** for better UX. We use this as the "master key" -- the ultimate password from which everything is derived, that should be protected at all costs. **An encrypted version is stored on the server side.**
-- Public key: Used to verify signatures.
+- Chain: an ID for each blockchain we want to generate a private key for. Constant. Nash uses the [coin types](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#coin-type) as defined by BIP044.
+- Encrypted secret key: The secret key encrypted via the encryption key via AEAD. Cannot be decrypted without the encryption key. **Visible to Nash.**
+- Encryption key: Derived from password. Used to encrypt the private key for server side storage. **Secret.**
+- Master seed: Value used to generate wallets. Derived from mnemonic. **Secret.**
+- Mnemonic: A n-word phrase generated from the secret key using a wordlist. Can be used along with passphrase to (re)generate the master seed. **Secret.**
+- Password: User's login credential. Used to generate encryption key and auth key via HKDF. **Secret.**
+- Secret key: A random value. Abstracted into the **mnemonic** for better user experience. We use this as the "master key" -- the ultimate password from which everything is derived, that should be protected at all costs. **Secret.** (An encrypted version is visible to Nash.)
 
 ## Notes
 
