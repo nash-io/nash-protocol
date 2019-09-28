@@ -2,7 +2,11 @@ import { createDecipheriv } from 'browserify-aes'
 
 import AEAD from '../types/AEAD'
 
-// tslint:disable:no-expression-statement
+/**
+ * Decrypts an encrypted secret key via AEAD. Takes an `AEAD` object.
+ *
+ * See `encryptSecretKey.ts`.
+ */
 export default function decryptSecretKey(encryptionKey: Buffer, aead: AEAD): Promise<Buffer> {
   const { encryptedSecretKey, nonce, tag } = aead
   const decipher = createDecipheriv('aes-256-gcm', encryptionKey, nonce, {

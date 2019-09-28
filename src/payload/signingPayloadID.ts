@@ -1,6 +1,8 @@
 import { MovementTypeWithdrawal, MovementTypeDeposit } from './payload'
 
-// This is currently the same as api-client-ts/constants/PayloadID
+/**
+ * IDs mapping Nash Matching Engine operations with handling strategies.
+ */
 export enum SigningPayloadID {
   listOrderPayload = 0,
   cancelOrderPayload = 1,

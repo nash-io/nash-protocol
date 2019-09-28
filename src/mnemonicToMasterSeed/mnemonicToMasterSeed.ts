@@ -1,6 +1,9 @@
 import { mnemonicToSeed } from 'bip39'
 
-// We might want to customize this down the line but this works out of the box for now.
+/**
+ * Converts a BIP-39 mnemonic to its master seed representation. This
+ * representation is used to generate blockchain wallets.
+ */
 export default function mnemonicToMasterSeed(mnemonic: ReadonlyArray<string>): Buffer {
   return mnemonicToSeed(mnemonic.join(' '))
 }

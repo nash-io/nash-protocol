@@ -1,5 +1,8 @@
 const EPOCH_START = 155000000000
 
+/**
+ * Returns the number of milliseconds since the Unix Epoch.
+ */
 export const createTimestamp = (): number => {
   return new Date().getTime()
 }
