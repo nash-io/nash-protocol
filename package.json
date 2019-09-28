@@ -26,10 +26,11 @@
     "cov": "yarn build && yarn test:unit && yarn cov:html",
     "cov:html": "nyc report --reporter=html",
     "cov:check": "nyc report && nyc check-coverage --lines 100 --functions 100 --branches 100",
+    "docs": "typedoc src/",
     "version": "standard-version",
     "reset": "git clean -dfx && git reset --hard && yarn",
     "clean": "rm -rf build test",
-    "all": "yarn reset && yarn test && yarn cov:check",
+    "all": "yarn reset && yarn test && yarn cov:check && yarn docs",
     "prepare-release": "yarn all && yarn version",
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('nash-protocol must be installed with Yarn: https://yarnpkg.com/')\""
   },
@@ -72,6 +73,7 @@
     "tslint": "5.11.0",
     "tslint-config-prettier": "1.16.0",
     "tslint-immutable": "5.0.0",
+    "typedoc": "0.15.0",
     "typescript": "3.1.6"
   },
   "nyc": {
