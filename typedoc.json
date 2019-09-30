@@ -1,0 +1,11 @@
+{
+  "out": "docs",
+  "exclude": ["**/*.spec.ts", "**/index.ts"],
+  "excludeExternals": true,
+  "excludeNotExported": true,
+  "excludePrivate": true,
+  "mode": "file",
+  "name": "Nash Protocol",
+  "readme": "none",
+  "theme": "minimal"
+}

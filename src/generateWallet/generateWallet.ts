@@ -14,6 +14,12 @@ export enum CoinType {
   NEO = 888
 }
 
+/**
+ * Creates a wallet for a given token via the
+ * [BIP-44 protocol]((https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki).
+ *
+ * Requires the user's master seed.
+ */
 export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number, net?: string): Wallet {
   const key = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
   const derivedChainKey = deriveIndex(key, index)
@@ -21,6 +27,10 @@ export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: nu
   return generateWalletForCoinType(derivedChainKey, coinType, index, net)
 }
 
+/**
+ * Creates the keypair used for signing payloads. Used during Nash Protocol
+ * initialization.
+ */
 export function generateNashPayloadSigningKey(masterSeed: Buffer, index: number): Wallet {
   const extendedKey = derivePath(masterSeed, nashPurpose, 0, 0, 0)
   const key = deriveIndex(extendedKey, index)
@@ -37,9 +47,12 @@ export function generateNashPayloadSigningKey(masterSeed: Buffer, index: number)
   }
 }
 
-// Generates a deterministic key according to the BIP44 spec.
-// M' / purpose' / coin' / account' / change / index
-// M' / 44' / coin' / 0' / 0
+/**
+ * Generates a deterministic key according to the BIP-44 spec.
+ *
+ * `M' / purpose' / coin' / account' / change / index`
+ * `M' / 44' / coin' / 0' / 0`
+ */
 export function generateBIP44Key(masterSeed: Buffer, coinType: CoinType, index: number): bip32.BIP32Interface {
   const extendedKey = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
   const chainKey = deriveIndex(extendedKey, index)
@@ -47,7 +60,9 @@ export function generateBIP44Key(masterSeed: Buffer, coinType: CoinType, index: 
   return chainKey
 }
 
-// Derives a new key from the extended key for the given index.
+/**
+ * Derives a new key from the extended key for the given index.
+ */
 export function deriveIndex(extendedKey: bip32.BIP32Interface, index: number): bip32.BIP32Interface {
   return extendedKey.derive(index)
 }
@@ -82,6 +97,8 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         publicKey: account.publicKey
       }
     case CoinType.ETH:
+      // TODO: can we replace this with the elliptic package which we already
+      // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)
       return {
         address: EthUtil.pubToAddress(key.publicKey, true).toString('hex'),

@@ -44,7 +44,12 @@ const curve = new EC('secp256k1')
 
 const ORDER_NONCE_IGNORE = 4294967295
 
-// Generates the canonical string for the given arbitrary payload.
+/**
+ * Generates the canonical string for a given payload.
+ *
+ * The canonical string is a human-readable JSON representation of the payload
+ * parameters. The keys are alphabetized, and are represented in snake case.
+ */
 export const canonicalString = compose(
   toLower,
   JSON.stringify,
@@ -55,6 +60,10 @@ export const canonicalString = compose(
   deep(mapKeys(snakeCase))
 )
 
+/**
+ * Different payload types have different preprocessing strategies. This is a
+ * convenience function to properly process various payloads.
+ */
 export const canonicalizePayload = (kind: SigningPayloadID, payload: object): string => {
   switch (kind) {
     case SigningPayloadID.signStatesPayload:
@@ -79,7 +88,17 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
   }
 }
 
-// Signs the given payload with the given private key.
+/**
+ * Signs a payload using a private key. The private key should be the key
+ * created by initialization of the Nash Protocol. Payloads are signed via
+ * [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm)
+ * using [secp256k1](https://en.bitcoin.it/wiki/Secp256k1).
+ *
+ * If the payload to be signed is for a blockchain operation, the `Config`
+ * object must be passed as well to create the blockchain signatures.
+ *
+ * Refer to the documentation for the `Config` interface and to `initialize.ts`.
+ */
 export default function signPayload(
   privateKey: Buffer,
   payloadAndKind: PayloadAndKind,
@@ -141,10 +160,16 @@ export default function signPayload(
   }
 }
 
-// If we are trading within the same blockchain origin we only need 1 signature,
-// neo_gas, nos_neo, etc..
-// Otherwise we are trading cross chain, hence need signatures for both blockchains,
-// neo_eth, eth_btc, etc..
+/**
+ * Signs blockchain data. Returns an array of signatures. Needed for operations
+ * such as order placement.
+ *
+ * If the operation occurs within the same blockchain origin, 1 signature is
+ * returned. For example, 1 signature is returned when trading NEO for GAS.
+ *
+ * If the operation is cross-chain, 2 signatures are returned. For example, two
+ * signatures are returned for a BTC-ETH trade.
+ */
 export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKind): ReadonlyArray<BlockchainSignature> {
   // if this is a movement we don't want to do all the stuff below
   if (payloadAndKind.kind === SigningPayloadID.addMovementPayload) {
@@ -191,6 +216,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
   return sigs
 }
 
+/**
+ * @TODO Add documentation.
+ */
 export function determineSignatureNonceTuplesNeeded(config: Config, blockchainData: BlockchainData): ChainNoncePair[] {
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
 
@@ -219,6 +247,9 @@ export function determineSignatureNonceTuplesNeeded(config: Config, blockchainDa
   return _.uniqWith(needed, _.isEqual)
 }
 
+/**
+ * @TODO Add documentation.
+ */
 export function addRawBlockchainOrderData(config: Config, payloadAndKind: PayloadAndKind): object {
   const blockchainData = inferBlockchainData(payloadAndKind)
   const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config, blockchainData)
@@ -243,6 +274,9 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
   return rawData
 }
 
+/*
+ * @TODO Add documentation.
+ */
 export function signStateListAndRecycledOrders(config: Config, payload: any): SignStatesRequestPayload {
   return {
     client_signed_states: signStateList(config, payload.states),
@@ -251,6 +285,9 @@ export function signStateListAndRecycledOrders(config: Config, payload: any): Si
   }
 }
 
+/*
+ * @TODO Add documentation.
+ */
 export function signRecycledOrdersForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
   if (payload.recycled_orders !== undefined) {
     return signStateList(config, payload.recycled_orders as ClientSignedState[])
@@ -258,6 +295,9 @@ export function signRecycledOrdersForAddMovement(config: Config, payload: AddMov
   return []
 }
 
+/*
+ * @TODO Add documentation.
+ */
 export function signStateList(config: Config, items: ClientSignedState[]): ClientSignedState[] {
   const result: ClientSignedState[] = items.map((item: ClientSignedState) => {
     switch (item.blockchain.toLowerCase()) {
@@ -274,6 +314,9 @@ export function signStateList(config: Config, items: ClientSignedState[]): Clien
   return result
 }
 
+/*
+ * @TODO Add documentation.
+ */
 export function alterOrderPayloadForGraphql(payload: any): any {
   // for order nonce_from/nonce_to, this is actually tracked from within the payload blockchain signatures object
   // its also possibly a list of nonces for each!
