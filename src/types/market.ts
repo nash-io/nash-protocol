@@ -22,7 +22,7 @@ export default interface Market {
    * Represents the smallest increment by which an order price can increase for
    * the given market's `aUnit`, or base currency.
    */
-  readonly minTradeIncrementA: number
+  readonly minTradeIncrement: number
   /**
    * Represents the smallest increment by which an order price can increase for
    * the given market's `bUnit`, or quote currency.

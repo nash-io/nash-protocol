@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v2.1.26...v3.0.0) (2019-10-15)
+
+
+### Bug Fixes
+
+* `minTradeIncrementA` => `minTradeIncrement` ([7d0a77f](https://gitlab.com/nash-io/frontend/nash-protocol/commit/7d0a77f)), closes [#50](https://gitlab.com/nash-io/frontend/nash-protocol/issues/50)
+
+
+### Features
+
+* Add account order subscription payload ([c2ae3c7](https://gitlab.com/nash-io/frontend/nash-protocol/commit/c2ae3c7))
+
+
+### BREAKING CHANGES
+
+* When initializing, `minTradeIncrement` should be passed
+instead of `minTradeIncrementA`.
+
+
+
 <a name="2.2.2"></a>
 ## [2.2.2](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v2.1.26...v2.2.2) (2019-09-30)
 

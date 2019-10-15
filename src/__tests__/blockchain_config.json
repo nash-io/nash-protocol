@@ -30,73 +30,73 @@
     "eth_gas": {
       "minTickSize": 4,
       "minTradeSize": 8,
-      "minTradeIncrementA": 8,
+      "minTradeIncrement": 8,
       "minTradeIncrementB": 8
     },
     "eth_neo": {
       "minTickSize": 3,
       "minTradeSize": 8,
-      "minTradeIncrementA": 8,
+      "minTradeIncrement": 8,
       "minTradeIncrementB": 8
     },
     "eth_usdc": {
       "minTickSize": 2,
       "minTradeSize": 5,
-      "minTradeIncrementA": 5,
+      "minTradeIncrement": 5,
       "minTradeIncrementB": 5
     },
     "gas_eth": {
       "minTickSize": 8,
       "minTradeSize": 4,
-      "minTradeIncrementA": 4,
+      "minTradeIncrement": 4,
       "minTradeIncrementB": 4
     },
     "gas_neo": {
       "minTickSize": 3,
       "minTradeSize": 6,
-      "minTradeIncrementA": 4,
+      "minTradeIncrement": 4,
       "minTradeIncrementB": 4
     },
     "neo_eth": {
       "minTickSize": 8,
       "minTradeSize": 3,
-      "minTradeIncrementA": 3,
+      "minTradeIncrement": 3,
       "minTradeIncrementB": 3
     },
     "neo_gas": {
       "minTickSize": 4,
       "minTradeSize": 3,
-      "minTradeIncrementA": 3,
+      "minTradeIncrement": 3,
       "minTradeIncrementB": 3
     },
     "neo_nos": {
       "minTickSize": 6,
       "minTradeSize": 3,
-      "minTradeIncrementA": 3,
+      "minTradeIncrement": 3,
       "minTradeIncrementB": 3
     },
     "neo_usdc": {
       "minTickSize": 4,
       "minTradeSize": 3,
-      "minTradeIncrementA": 3,
+      "minTradeIncrement": 3,
       "minTradeIncrementB": 3
     },
     "nos_neo": {
       "minTickSize": 3,
       "minTradeSize": 6,
-      "minTradeIncrementA": 6,
+      "minTradeIncrement": 6,
       "minTradeIncrementB": 6
     },
     "usdc_eth": {
       "minTickSize": 5,
       "minTradeSize": 2,
-      "minTradeIncrementA": 2,
+      "minTradeIncrement": 2,
       "minTradeIncrementB": 2
     },
     "usdc_neo": {
       "minTickSize": 3,
       "minTradeSize": 4,
-      "minTradeIncrementA": 4,
+      "minTradeIncrement": 4,
       "minTradeIncrementB": 4
     }
   },

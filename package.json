@@ -1,6 +1,6 @@
 {
   "name": "@neon-exchange/nash-protocol",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -68,7 +68,7 @@
     "jest": "23.6.0",
     "nyc": "13.1.0",
     "prettier": "1.15.2",
-    "standard-version": "4.4.0",
+    "standard-version": "7.0.0",
     "ts-jest": "23.10.5",
     "tslint": "5.11.0",
     "tslint-config-prettier": "1.16.0",

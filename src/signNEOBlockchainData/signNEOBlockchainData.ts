@@ -30,7 +30,7 @@ export function buildNEOOrderSignatureData(
 
   let assetFrom = unitA
   let assetTo = unitB
-  const amountPrecision = config.marketData[blockchainData.marketName].minTradeIncrementA
+  const amountPrecision = config.marketData[blockchainData.marketName].minTradeIncrement
   if (blockchainData.buyOrSell === BuyOrSellBuy) {
     assetFrom = unitB
     assetTo = unitA
