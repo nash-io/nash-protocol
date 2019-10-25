@@ -406,3 +406,31 @@ export function createGetAssetsNoncesParams(assets: string[]): PayloadAndKind {
     payload
   }
 }
+
+export function createGetAccountAddressParams(currency: string): PayloadAndKind {
+  const payload = {
+    currency,
+    timestamp: createTimestamp()
+  }
+
+  return {
+    kind: SigningPayloadID.getAccountAddressPayload,
+    payload
+  }
+}
+
+export function createSendBlockchainRawTransactionParams(
+  blockchain: string,
+  transactionPayload: string
+): PayloadAndKind {
+  const payload = {
+    blockchain,
+    timestamp: createTimestamp(),
+    transactionPayload
+  }
+
+  return {
+    kind: SigningPayloadID.sendBlockchainRawTransactionPayload,
+    payload
+  }
+}
