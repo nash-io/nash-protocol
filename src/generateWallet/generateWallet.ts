@@ -119,7 +119,12 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
 }
 
 const bitcoinAddressFromPublicKey = (publicKey: Buffer, net: string): string => {
-  return Bitcoin.payments.p2pkh({ network: bitcoinNetworkFromString(net), pubkey: publicKey }).address!
+  const network = bitcoinNetworkFromString(net)
+
+  return Bitcoin.payments.p2sh({
+    network,
+    redeem: Bitcoin.payments.p2wpkh({ pubkey: publicKey })
+  }).address as string
 }
 
 const bitcoinNetworkFromString = (net: string | undefined): Bitcoin.Network => {
