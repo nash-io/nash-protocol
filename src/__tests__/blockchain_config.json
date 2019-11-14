@@ -24,6 +24,11 @@
       "blockchain": "eth",
       "hash": "aed88173df2578fad078c48a33f0040364989fa8",
       "precision": 18
+    },
+    "link": {
+      "blockchain": "eth",
+      "hash": "514910771AF9CA656AF840DFF83E8264ECF986CA",
+      "precision": 18
     }
   },
   "marketData": {

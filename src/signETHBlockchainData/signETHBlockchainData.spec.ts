@@ -50,6 +50,29 @@ test('sign eth deposit movement', async () => {
   })
 })
 
+test('sign link deposit movement', async () => {
+  const data = sigTestVectors.movements.b
+
+  const signingPayload = createAddMovementParams(
+    data.address,
+    { amount: '1.32450000', currency: 'link' },
+    MovementTypeDeposit,
+    data.nonce,
+    data.timestamp
+  )
+
+  const rawData = buildETHMovementSignatureData(config, signingPayload).toUpperCase()
+  const sig = signETHBlockchainData(config.wallets.eth.privateKey, rawData)
+  expect(sig.blockchain).toBe('ETH')
+
+  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+
+  const expectedCanonicalString =
+    'add_movement,{"address":"fa39fddde46cea3060b91f80abed8672f77c5bea","nonce":5432876,"quantity":{"amount":"1.32450000","currency":"link"},"timestamp":1565323885016,"type":"deposit"}'
+  expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+  expect(payloadRes.blockchainMovement!.asset).toBe('0005')
+})
+
 test('sign usdc withdraw movement', async () => {
   const data = sigTestVectors.movements.d
   const payload = {
