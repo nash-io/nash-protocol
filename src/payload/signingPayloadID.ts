@@ -38,13 +38,16 @@ export enum SigningPayloadID {
   getAssetsNoncesPayload = 27,
 
   getAccountAddressPayload = 28,
-  sendBlockchainRawTransactionPayload = 29
+  sendBlockchainRawTransactionPayload = 29,
+
+  listTradePayload = 30
 }
 
 export const PayloadIDToName: Record<SigningPayloadID, string> = {
   [SigningPayloadID.listOrderPayload]: 'list_account_orders',
   [SigningPayloadID.updatedAccountOrders]: 'subscribe_to_account_orders',
   [SigningPayloadID.cancelOrderPayload]: 'cancel_order',
+  [SigningPayloadID.listTradePayload]: 'list_account_trades',
   [SigningPayloadID.listAccountBalancePayload]: 'list_account_balances',
   [SigningPayloadID.getAccountVolumesPayload]: 'get_account_volumes',
   [SigningPayloadID.listMovementsPayload]: 'list_movements',

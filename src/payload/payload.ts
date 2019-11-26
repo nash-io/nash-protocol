@@ -82,6 +82,30 @@ export function createListAccountOrdersParams(
   }
 }
 
+/**
+ *
+ * @param before
+ * @param limit
+ * @param marketName
+ */
+export function createListAccountTradesParams(
+  before?: string,
+  limit?: number,
+  marketName?: string,
+): PayloadAndKind {
+  const payload = {
+    before,
+    limit,
+    market_name: marketName,
+    timestamp: createTimestamp()
+  }
+
+  return {
+    kind: SigningPayloadID.listTradePayload,
+    payload
+  }
+}
+
 export function createCancelOrderParams(id: string, marketName: string): PayloadAndKind {
   const payload = {
     marketName,
