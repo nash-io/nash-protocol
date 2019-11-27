@@ -5,7 +5,6 @@ import { MovementTypeWithdrawal, MovementTypeDeposit } from './payload'
  */
 export enum SigningPayloadID {
   listOrderPayload = 0,
-  updatedAccountOrders = 0.1,
   cancelOrderPayload = 1,
   listAccountBalancePayload = 2,
   getAccountVolumesPayload = 3,
@@ -40,7 +39,9 @@ export enum SigningPayloadID {
   getAccountAddressPayload = 28,
   sendBlockchainRawTransactionPayload = 29,
 
-  listTradePayload = 30
+  listTradePayload = 30,
+  updatedAccountOrders = 31,
+  updatedAccountTrades = 32
 }
 
 export const PayloadIDToName: Record<SigningPayloadID, string> = {
@@ -48,6 +49,7 @@ export const PayloadIDToName: Record<SigningPayloadID, string> = {
   [SigningPayloadID.updatedAccountOrders]: 'subscribe_to_account_orders',
   [SigningPayloadID.cancelOrderPayload]: 'cancel_order',
   [SigningPayloadID.listTradePayload]: 'list_account_trades',
+  [SigningPayloadID.updatedAccountTrades]: 'subscribe_to_account_trades',
   [SigningPayloadID.listAccountBalancePayload]: 'list_account_balances',
   [SigningPayloadID.getAccountVolumesPayload]: 'get_account_volumes',
   [SigningPayloadID.listMovementsPayload]: 'list_movements',
