@@ -81,7 +81,8 @@ export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice:
     return limitPrice.amount
   } else if (limitPrice.currency_b === assetFrom) {
     const reciprocal = 1 / limitPrice.amount
-    return reciprocal.toString()
+    const stringifiedWithExtraDigit = reciprocal.toFixed(9)
+    return stringifiedWithExtraDigit.slice(0, -1)
   }
 
   throw Error(
