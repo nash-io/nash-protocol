@@ -16,4 +16,8 @@ test('unit rate conversion', async () => {
   expect(result).toBe(price.amount)
   result = getLimitPrice('eth_neo', BuyOrSellBuy, price)
   expect(result).toBe('781.25000000')
+
+  price = { amount: '0.001249', currency_a: 'eth', currency_b: 'neo' }
+  result = getLimitPrice('eth_neo', BuyOrSellBuy, price)
+  expect(result).toBe('800.64051240')
 })

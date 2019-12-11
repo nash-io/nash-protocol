@@ -5,6 +5,8 @@ import { normalizeAmount, toLittleEndianHex } from '../currency'
 import reverseHexString from '../reverseHexString'
 import BigNumber from 'bignumber.js'
 
+const BN = BigNumber.clone({ DECIMAL_PLACES: 16, ROUNDING_MODE: BigNumber.ROUND_FLOOR })
+
 // infers the blockchain specific data we need for the given payload. Some payloads
 // have different fields, hence need different approach to retrieve the data we need.
 export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainData {
@@ -80,9 +82,9 @@ export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice:
   if (limitPrice.currency_a === assetFrom) {
     return limitPrice.amount
   } else if (limitPrice.currency_b === assetFrom) {
-    const reciprocal = 1 / limitPrice.amount
-    const stringifiedWithExtraDigit = reciprocal.toFixed(9)
-    return stringifiedWithExtraDigit.slice(0, -1)
+    const amount = new BN(limitPrice.amount)
+    const reciprocal = new BN(1).div(amount)
+    return reciprocal.toFormat(8)
   }
 
   throw Error(
