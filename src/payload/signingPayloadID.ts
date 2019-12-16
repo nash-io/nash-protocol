@@ -41,7 +41,10 @@ export enum SigningPayloadID {
 
   listTradePayload = 30,
   updatedAccountOrders = 31,
-  updatedAccountTrades = 32
+  updatedAccountTrades = 32,
+  createContactPayload = 33,
+  updateContactPayload = 34,
+  searchContactsPayload = 35
 }
 
 export const PayloadIDToName: Record<SigningPayloadID, string> = {
@@ -75,7 +78,10 @@ export const PayloadIDToName: Record<SigningPayloadID, string> = {
   [SigningPayloadID.getOrdersForMovementPayload]: 'get_orders_for_movement',
   [SigningPayloadID.getAssetsNoncesPayload]: 'get_assets_nonces',
   [SigningPayloadID.getAccountAddressPayload]: 'get_account_address',
-  [SigningPayloadID.sendBlockchainRawTransactionPayload]: 'send_blockchain_raw_transaction'
+  [SigningPayloadID.sendBlockchainRawTransactionPayload]: 'send_blockchain_raw_transaction',
+  [SigningPayloadID.createContactPayload]: 'create_contact',
+  [SigningPayloadID.updateContactPayload]: 'update_contact',
+  [SigningPayloadID.searchContactsPayload]: 'search_contacts'
 }
 
 export function kindToName(kind: SigningPayloadID): string {
