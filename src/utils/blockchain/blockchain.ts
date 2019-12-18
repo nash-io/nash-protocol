@@ -4,6 +4,10 @@ import getNEOScriptHash from '../getNEOScriptHash'
 import { normalizeAmount, toLittleEndianHex } from '../currency'
 import reverseHexString from '../reverseHexString'
 import BigNumber from 'bignumber.js'
+import * as EC from 'elliptic'
+
+// only do this once
+export const ellipticContext = new EC.ec('secp256k1')
 
 const BN = BigNumber.clone({ DECIMAL_PLACES: 16, ROUNDING_MODE: BigNumber.ROUND_FLOOR })
 
@@ -68,6 +72,8 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
         userPubKey: config.wallets.eth.address,
         userSig: payload.blockchainSignatures[0].signature
       }
+    case 'btc':
+      throw new Error('BTC Movement not implemented')
     default:
       throw new Error(`invalid blockchain: ${assets[unit].blockchain}`)
   }

@@ -40,6 +40,12 @@ import {
   signETHBlockchainData
 } from '../signETHBlockchainData'
 
+import {
+  signBTCBlockchainData,
+  buildBTCOrderSignatureData,
+  buildBTCMovementSignatureData
+} from '../signBTCBlockchainData'
+
 const curve = new EC('secp256k1')
 
 const ORDER_NONCE_IGNORE = 4294967295
@@ -185,6 +191,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
       case 'eth':
         const ethData = buildETHMovementSignatureData(config, payloadAndKind)
         return [signETHBlockchainData(config.wallets.eth.privateKey, ethData)]
+      case 'btc':
+        const btcData = buildBTCMovementSignatureData(config, payloadAndKind)
+        return [signBTCBlockchainData(config.wallets.btc.privateKey, btcData)]
     }
   }
 
@@ -212,6 +221,16 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
           nonceTo: chainNoncePair.nonceTo,
           publicKey: config.wallets.eth.publicKey.toLowerCase()
         }
+      case 'btc':
+        const btcData = buildBTCOrderSignatureData(config, payloadAndKind, chainNoncePair)
+        const btcSignature = signBTCBlockchainData(config.wallets.btc.privateKey, btcData)
+        return {
+          ...btcSignature,
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
+          publicKey: config.wallets.btc.publicKey.toLowerCase()
+        }
+
       default:
         throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
     }
@@ -270,6 +289,11 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
           payload: payloadAndKind.payload,
           raw: buildETHOrderSignatureData(config, payloadAndKind, chainNoncePair)
         }
+      case 'btc':
+        return {
+          payload: payloadAndKind.payload,
+          raw: buildBTCOrderSignatureData(config, payloadAndKind, chainNoncePair)
+        }
       default:
         throw new Error(`invalid chain ${chainNoncePair.chain}`)
     }
@@ -310,6 +334,9 @@ export function signStateList(config: Config, items: ClientSignedState[]): Clien
         return item
       case 'eth':
         item.signature = signETHBlockchainData(config.wallets.eth.privateKey, item.message).signature
+        return item
+      case 'btc':
+        item.signature = signBTCBlockchainData(config.wallets.btc.privateKey, item.message).signature
         return item
       default:
         throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)

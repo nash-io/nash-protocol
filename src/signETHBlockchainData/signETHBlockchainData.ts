@@ -1,14 +1,10 @@
 import { SmartBuffer } from 'smart-buffer'
-import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID } from '../utils/blockchain'
+import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID, ellipticContext } from '../utils/blockchain'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } from '../payload'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
 import { Config, BlockchainSignature, ChainNoncePair } from '../types'
 import createKeccakHash from 'keccak'
-import * as EC from 'elliptic'
-
-// only do this once
-const ellipticContext = new EC.ec('secp256k1')
 
 // Signing for Ethereum needs a little more work to be done.
 // 1. Compute a KEKKAC256 hash of the data.
