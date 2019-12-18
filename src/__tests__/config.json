@@ -118,6 +118,12 @@
       "privateKey": "0b7561f1c775ef4715accd21aac8629bcda2e6eb4e434c0d55c917bd7c297ac6",
       "publicKey": "04be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46390ebb4dab62e8b01352f37308dbff1512615856bffd3c752db95737d3bc93a4",
       "address": "55D16CA38dFB219141Ab6617B2872B978aF84702"
+    },
+    "btc": {
+      "index": 0,
+      "privateKey": "3a36746814d81d30f8a5d66ca85657f5455a73e34cb085465279bc989a30b337",
+      "publicKey": "02a15776a6856857d13d7d8f2e4b1f45e0fca58dbeb132ab9b2dcbbb13102ab693",
+      "address": "37yLXh95xYWzLebPRiU8NoJhuNEMsZtNKs"
     }
   }
 }

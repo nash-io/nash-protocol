@@ -88,11 +88,7 @@ export function createListAccountOrdersParams(
  * @param limit
  * @param marketName
  */
-export function createListAccountTradesParams(
-  before?: string,
-  limit?: number,
-  marketName?: string,
-): PayloadAndKind {
+export function createListAccountTradesParams(before?: string, limit?: number, marketName?: string): PayloadAndKind {
   const payload = {
     before,
     limit,

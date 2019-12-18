@@ -187,5 +187,29 @@
         "eth": "e0b4e31781887a3639f24a0dee44356118f9ccc65158e7e06ef90581c7833be620ac6c6ff8906d3d0f87563c442944140b0da5ffb60d2cbfc8017a58d969bfc401"
       }
     }
+  },
+  "messages": {
+    "btc": [
+      {
+        "message": "Test",
+        "signature": "IDyLXNNImI5dYklppfTt32jm7RR08108pKJt7/Bs3EZoThvlZY3aGWHUn523/vOlyVOvmXtZElBjwBJhb64oD0k="
+      },
+      {
+        "message": "Hello this is my awesome message",
+        "signature": "HzBK3nmIHlr6oHuww2ruAHIHyJMjO3MEEauBLNeUk0zAIptmjyuHHSiuS2QDaReTXt9HyqR/2ICvQu8hSbeGpvw="
+      },
+      {
+        "message": "HzBK3nmIHlr6oHuww2ruAHIHyJMjO3",
+        "signature": "IGnf+O8pUQmJvM3aNQbUyj9K6BiI8NrIF+40MTPi45Mqenoi376fA/3zIbdgF+RgeEBsxenqz6aK+NonG8SrnDQ="
+      },
+      {
+        "message": "The Christmas when it was all about decorating the house, trimming the tree, wrapping presents, hanging up stockings, going caroling, leaving milk and cookies for Santa, reading Twas the Night Before Christmas, opening presents in the morning, playing with new toys, having family dinner together.",
+        "signature": "H2LFj6bFxMeHO1mWGKfsqjXxYVldBR01QN3e7otCHmwzd9lKXZ7uXG5uGOKoorDnhhHvB4PmdHg4ABKg0j8hbck="
+      },
+      {
+        "message": "helloblahs90908[098[098snttnhsnthsntheaeb[23098gc09843/lrcstnahauercghaerchisnthasneurlc8gauercgalreucgiu9r8a89u7g9a8thaoednthdaouenthdacuengcadfucrgdaiueocrngdaeucgdaorieucgdarcegudbmlahblahbsthaoesnnthsnth.rchaoerlchjnstbmsanetosnthuaeaueo423ouaidxedxa",
+        "signature": "IDIHnDMsxrpT0QB538crJE8BCxoc/SE2h2OWObFeAgIVKln0mtFFDKdFv/11zeYgcibuvgLjmYgtBL5gavrYD+c="
+      }
+    ]
   }
 }
