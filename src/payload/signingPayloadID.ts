@@ -41,7 +41,7 @@ export enum SigningPayloadID {
 
   listTradePayload = 30,
   updatedAccountOrders = 31,
-  updatedAccountTrades = 32,
+  newAccountTrades = 32,
   createContactPayload = 33,
   updateContactPayload = 34,
   searchContactsPayload = 35
@@ -52,7 +52,7 @@ export const PayloadIDToName: Record<SigningPayloadID, string> = {
   [SigningPayloadID.updatedAccountOrders]: 'subscribe_to_account_orders',
   [SigningPayloadID.cancelOrderPayload]: 'cancel_order',
   [SigningPayloadID.listTradePayload]: 'list_account_trades',
-  [SigningPayloadID.updatedAccountTrades]: 'subscribe_to_account_trades',
+  [SigningPayloadID.newAccountTrades]: 'subscribe_to_account_trades',
   [SigningPayloadID.listAccountBalancePayload]: 'list_account_balances',
   [SigningPayloadID.getAccountVolumesPayload]: 'get_account_volumes',
   [SigningPayloadID.listMovementsPayload]: 'list_movements',
