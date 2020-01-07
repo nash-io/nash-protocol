@@ -30,13 +30,15 @@ export function signBTC(privateKey: string, data: Buffer, toBase64: boolean = fa
   const kp = ellipticContext.keyFromPrivate(privateKey)
 
   const sig = kp.sign(data)
-  const v = sig.recoveryParam === 0 ? '1f' : '20'
+  let v = sig.recoveryParam === 0 ? '00' : '01'
   const r = sig.r.toString('hex', 64)
   const s = sig.s.toString('hex', 64)
-  let signature: string = `${v}${r}${s}`
+  let signature: string = `${r}${s}${v}`
 
   if (toBase64) {
-    signature = Buffer.from(signature, 'hex').toString('base64')
+    v = sig.recoveryParam === 0 ? '1f' : '20'
+    const vrs = `${v}${r}${s}`
+    signature = Buffer.from(vrs, 'hex').toString('base64')
   }
 
   return {
@@ -65,11 +67,11 @@ export function encodeVariableInteger(length: number): string {
   if (length < 0xfd) {
     return length.toString(16).padStart(2, '0')
   } else if (length < 0xffff) {
-    total = new Buffer(2)
+    total = Buffer.alloc(2)
     total.writeUInt16LE(length, 0)
     return `fd${total.toString('hex')}`
   } else if (length < 0xffffffff) {
-    total = new Buffer(4)
+    total = Buffer.alloc(4)
     total.writeUInt32LE(length, 0)
     return `fe${total.toString('hex')}`
   }
