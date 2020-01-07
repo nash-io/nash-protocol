@@ -192,23 +192,28 @@
     "btc": [
       {
         "message": "Test",
-        "signature": "IDyLXNNImI5dYklppfTt32jm7RR08108pKJt7/Bs3EZoThvlZY3aGWHUn523/vOlyVOvmXtZElBjwBJhb64oD0k="
+        "base64Signature": "IDyLXNNImI5dYklppfTt32jm7RR08108pKJt7/Bs3EZoThvlZY3aGWHUn523/vOlyVOvmXtZElBjwBJhb64oD0k=",
+        "signature": "65d6406499df216d66311b60c13afe03030b1425e4c49256d9d2ed611d3293afb5947470e570cec6f8d37c6e1ca815c97c0e9f7a095aaadaddb696d485fc554401"
       },
       {
         "message": "Hello this is my awesome message",
-        "signature": "HzBK3nmIHlr6oHuww2ruAHIHyJMjO3MEEauBLNeUk0zAIptmjyuHHSiuS2QDaReTXt9HyqR/2ICvQu8hSbeGpvw="
+        "base64Signature": "HzBK3nmIHlr6oHuww2ruAHIHyJMjO3MEEauBLNeUk0zAIptmjyuHHSiuS2QDaReTXt9HyqR/2ICvQu8hSbeGpvw=",
+        "signature": "df37e8588eaf25f964c0348ea2cb8ab208c26b4b0d6080f28a8c0cb9c75b37c1f90280533174bf7c714233e30617ea41562964d94ce3be35903ada4457f5437b01"
       },
       {
         "message": "HzBK3nmIHlr6oHuww2ruAHIHyJMjO3",
-        "signature": "IGnf+O8pUQmJvM3aNQbUyj9K6BiI8NrIF+40MTPi45Mqenoi376fA/3zIbdgF+RgeEBsxenqz6aK+NonG8SrnDQ="
+        "base64Signature": "IGnf+O8pUQmJvM3aNQbUyj9K6BiI8NrIF+40MTPi45Mqenoi376fA/3zIbdgF+RgeEBsxenqz6aK+NonG8SrnDQ=",
+        "signature": "0a0060f2c1289c5d2c1ae67823a6bf29ad679f19524c1dde4d379142cf6e37b1b810621d9393d36ced3e8ad6e6e8ac07723ed5fb22db7989c04cb35535176aa300"
       },
       {
         "message": "The Christmas when it was all about decorating the house, trimming the tree, wrapping presents, hanging up stockings, going caroling, leaving milk and cookies for Santa, reading Twas the Night Before Christmas, opening presents in the morning, playing with new toys, having family dinner together.",
-        "signature": "H2LFj6bFxMeHO1mWGKfsqjXxYVldBR01QN3e7otCHmwzd9lKXZ7uXG5uGOKoorDnhhHvB4PmdHg4ABKg0j8hbck="
+        "base64Signature": "H2LFj6bFxMeHO1mWGKfsqjXxYVldBR01QN3e7otCHmwzd9lKXZ7uXG5uGOKoorDnhhHvB4PmdHg4ABKg0j8hbck=",
+        "signature": "c19d6b680fd6f1e2f44e8da6269a99a200e0b6ec528cd3ea43f4a93aed9b81a888f89c99b4ed34989fcd1c0773188fe07a76cac0300ef740f2c3a4f09ed2b0ae01"
       },
       {
         "message": "helloblahs90908[098[098snttnhsnthsntheaeb[23098gc09843/lrcstnahauercghaerchisnthasneurlc8gauercgalreucgiu9r8a89u7g9a8thaoednthdaouenthdacuengcadfucrgdaiueocrngdaeucgdaorieucgdarcegudbmlahblahbsthaoesnnthsnth.rchaoerlchjnstbmsanetosnthuaeaueo423ouaidxedxa",
-        "signature": "IDIHnDMsxrpT0QB538crJE8BCxoc/SE2h2OWObFeAgIVKln0mtFFDKdFv/11zeYgcibuvgLjmYgtBL5gavrYD+c="
+        "base64Signature": "IDIHnDMsxrpT0QB538crJE8BCxoc/SE2h2OWObFeAgIVKln0mtFFDKdFv/11zeYgcibuvgLjmYgtBL5gavrYD+c=",
+        "signature": "b0644ef8336783b5f0f997cfd86770ecc9afb41432bc656ced66e5cf9a7fddc2a21310bd3e1a7d1fa85f15996f5f77e111c4b964d0afba1b3b4c65f2b2c3689500"
       }
     ]
   }
