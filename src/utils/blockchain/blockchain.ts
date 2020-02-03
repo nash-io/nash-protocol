@@ -146,6 +146,10 @@ export function getETHAssetID(asset: string): string {
       return '0004'
     case 'link':
       return '0005'
+    case 'qnt':
+      return '0006'
+    case 'rlc':
+      return '0007'
     default:
       return 'ffff'
   }
