@@ -1,10 +1,23 @@
 export interface ComputePresigParams {
-  apiKey: string
+  apiKey: APIKeyResult
+  fillPoolUrl: string
   messageHash: string
 }
 
 export interface FillRPoolParams {
   fillPoolUrl: string
+}
+
+export interface APIKeyResult {
+  client_secret_share: string
+  paillier_pk: {
+    n: string
+  }
+  server_secret_share_encrypted: string
+}
+
+export interface PublicKeyFromSecretKeyParams {
+  secret: string
 }
 
 export interface CreateApiKeyParams {
@@ -18,7 +31,19 @@ export interface Presignature {
   r: string
 }
 
-export interface CreateApiKeyResult {
-  publicKey: string
-  apiKey: string
+export enum BIP44 {
+  BTC = "m/44'/0'/0'/0/0",
+  ETH = "m/44'/60'/0'/0/0",
+  NEO = "m/44'/888'/0'/0/0"
+}
+
+export interface ChildKey {
+  client_secret_share: string
+  server_secret_share_encrypted: string
+}
+export interface APIKey {
+  paillier_pk: {
+    n: string
+  }
+  child_keys: Record<BIP44, ChildKey>
 }

@@ -3,11 +3,13 @@ import { fillRPoolIfNeeded } from './fillRPool'
 import { ComputePresigParams, Presignature } from '../types/MPC'
 
 export async function computePresig(params: ComputePresigParams): Promise<Presignature> {
-  await fillRPoolIfNeeded()
+  await fillRPoolIfNeeded({
+    fillPoolUrl: params.fillPoolUrl
+  })
   const MPCWallet = await MPCWalletModulePromise
 
   const [comutePresigOk, presigOrErrorMessage, r] = JSON.parse(
-    MPCWallet.compute_presig(params.apiKey, params.messageHash)
+    MPCWallet.compute_presig(JSON.stringify(params.apiKey), params.messageHash)
   ) as [boolean, string, string]
   if (comutePresigOk === false) {
     throw new Error('Error computing presig: ' + presigOrErrorMessage)

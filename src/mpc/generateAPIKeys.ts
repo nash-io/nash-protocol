@@ -1,65 +1,35 @@
-import { MPCWalletModulePromise } from './wasmModule'
-import { postAndGetBodyAsJSON } from './utils'
-import { fillRPoolIfNeeded } from './fillRPool'
-import { CreateApiKeyResult, CreateApiKeyParams } from '../types/MPC'
+import { createAPIKey } from './createAPIKey'
+import { CreateApiKeyParams, BIP44, APIKey } from '../types/MPC'
 
-// Do we need to cache this key?
-let paillierPK: false | string = false
+// Generates API keys based on https://www.notion.so/nashio/RFC-API-key-representation-cf619be1c8b045f9a5f2596261c8039b
+export async function generateAPIKeys(params: CreateApiKeyParams): Promise<APIKey> {
+  const btc = await createAPIKey(params)
+  const eth = await createAPIKey(params)
+  const neo = await createAPIKey(params)
 
-export async function createAPIKey({
-  secret,
-  fillPoolUrl,
-  generateProofUrl
-}: CreateApiKeyParams): Promise<CreateApiKeyResult> {
-  await fillRPoolIfNeeded({ fillPoolUrl })
-  const MPCwallet = await MPCWalletModulePromise
-  let apikeycreator = ''
-  const [publicKeyFromSecretKeySuccess, publicKeyResult] = JSON.parse(MPCwallet.publickey_from_secretkey(secret)) as [
-    boolean,
-    string
-  ]
-  if (publicKeyFromSecretKeySuccess === false) {
-    throw new Error('Error deriving public key from secret key.')
-  }
-  const publicKey = JSON.stringify(publicKeyResult)
-
-  // paillier key not verified yet.
-  if (paillierPK === false) {
-    const [initSuccess, apiKeyCreatorOrError1] = JSON.parse(MPCwallet.init_apikeycreator(secret)) as [boolean, string]
-    if (initSuccess === false) {
-      throw new Error('ERROR: initalization failed. ' + apiKeyCreatorOrError1)
-    } else {
-      apikeycreator = JSON.stringify(apiKeyCreatorOrError1)
-      const response = await postAndGetBodyAsJSON(generateProofUrl, {})
-      const correctKeyProof = JSON.stringify(response.correct_key_proof)
-      paillierPK = JSON.stringify(response.paillier_pk)
-
-      const [verifyPaillierSuccess, apiKeyCreatorOrError2] = JSON.parse(
-        MPCwallet.verify_paillier(apikeycreator, paillierPK, correctKeyProof)
-      ) as [boolean, string]
-      if (verifyPaillierSuccess === false) {
-        throw new Error('ERROR: paillier key verification failed. ' + apiKeyCreatorOrError2)
-      } else {
-        apikeycreator = JSON.stringify(apiKeyCreatorOrError2)
+  return {
+    child_keys: {
+      [BIP44.BTC]: {
+        client_secret_share: btc.client_secret_share,
+        server_secret_share_encrypted: btc.server_secret_share_encrypted
+      },
+      [BIP44.ETH]: {
+        client_secret_share: eth.client_secret_share,
+        server_secret_share_encrypted: eth.server_secret_share_encrypted
+      },
+      [BIP44.NEO]: {
+        client_secret_share: neo.client_secret_share,
+        server_secret_share_encrypted: neo.server_secret_share_encrypted
       }
-    }
-    // paillier key already verified; skip verification
-  } else {
-    const [initApiKeyCreatorSuccess, initApiKeyWithCreatorStr] = JSON.parse(
-      MPCwallet.init_apikeycreator_with_verified_paillier(secret, paillierPK)
-    ) as [boolean, string]
-    if (initApiKeyCreatorSuccess === false) {
-      throw new Error('ERROR: (fast) initalization failed. ' + initApiKeyWithCreatorStr)
-    } else {
-      apikeycreator = JSON.stringify(initApiKeyWithCreatorStr)
-    }
+    },
+    paillier_pk: btc.paillier_pk
   }
+}
 
-  const [createKeySuccess, apiKeyOrError] = JSON.parse(MPCwallet.create_api_key(apikeycreator)) as [boolean, string]
-  if (createKeySuccess === false) {
-    throw new Error('ERROR: paillier key not verified. ' + apiKeyOrError)
-  } else {
-    const apiKey = JSON.stringify(apiKeyOrError)
-    return { apiKey, publicKey }
-  }
+export function encodeApiKeys(key: APIKey): string {
+  return Buffer.from(JSON.stringify(key), 'utf-8').toString('base64')
+}
+
+export function decodeAPIKeys(encoded: string): APIKey {
+  return JSON.parse(Buffer.from(encoded, 'base64').toString('utf-8'))
 }
