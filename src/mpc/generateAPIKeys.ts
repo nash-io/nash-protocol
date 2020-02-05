@@ -1,12 +1,19 @@
 import { createAPIKey } from './createAPIKey'
 import { CreateApiKeyParams, BIP44, APIKey } from '../types/MPC'
+import secretKeyToMnemonic from '../secretKeyToMnemonic'
+import bufferize from '../bufferize'
+import mnemonicToMasterSeed from '../mnemonicToMasterSeed'
+import { generateNashPayloadSigningKey } from '../generateWallet'
 
 // Generates API keys based on https://www.notion.so/nashio/RFC-API-key-representation-cf619be1c8b045f9a5f2596261c8039b
 export async function generateAPIKeys(params: CreateApiKeyParams): Promise<APIKey> {
   const btc = await createAPIKey(params)
   const eth = await createAPIKey(params)
   const neo = await createAPIKey(params)
-  const gqlauth = await createAPIKey(params)
+
+  const secretBuff = bufferize(params.secret)
+  const masterSeed = mnemonicToMasterSeed(secretKeyToMnemonic(secretBuff))
+  const payloadSigningKey = generateNashPayloadSigningKey(masterSeed, 1)
 
   return {
     child_keys: {
@@ -21,13 +28,11 @@ export async function generateAPIKeys(params: CreateApiKeyParams): Promise<APIKe
       [BIP44.NEO]: {
         client_secret_share: neo.client_secret_share,
         server_secret_share_encrypted: neo.server_secret_share_encrypted
-      },
-      [BIP44.GQLAUTH]: {
-        client_secret_share: gqlauth.client_secret_share,
-        server_secret_share_encrypted: gqlauth.server_secret_share_encrypted
       }
     },
-    paillier_pk: btc.paillier_pk
+    paillier_pk: btc.paillier_pk,
+    payload_signing_key: payloadSigningKey.privateKey,
+    version: 0
   }
 }
 
