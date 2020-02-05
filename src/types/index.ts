@@ -3,7 +3,7 @@ export { default as HKDFKeys } from './HKDFKeys'
 export { default as Market } from './market'
 export { default as Wallet } from './wallet'
 export { default as Asset } from './asset'
-export { default as Config } from './config'
+export { default as Config, PresignConfig } from './config'
 export { default as BlockchainData, ChainNoncePair } from './blockchainData'
 export { default as InitParams } from './initParams'
 

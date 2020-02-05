@@ -10,7 +10,8 @@ import toLower from 'lodash/fp/toLower'
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
-
+import { APIKey, BIP44 } from '../types/MPC'
+import { computePresig } from '../mpc/computePresig'
 import {
   kindToName,
   needBlockchainMovement,
@@ -19,7 +20,15 @@ import {
   isStateSigning,
   isOrderPayload
 } from '../payload/signingPayloadID'
-import { Config, PayloadSignature, BlockchainSignature, BlockchainData, ChainNoncePair } from '../types'
+import {
+  Config,
+  PresignConfig,
+  PayloadSignature,
+  PayloadPreSignature,
+  BlockchainSignature,
+  BlockchainData,
+  ChainNoncePair
+} from '../types'
 import {
   PayloadAndKind,
   ClientSignedState,
@@ -163,6 +172,52 @@ export default function signPayload(
     canonicalString: message,
     payload,
     signature: stringify(bufferize(sig.toDER()))
+  }
+}
+
+export async function preSignPayload(
+  apiKey: APIKey,
+  payloadAndKind: PayloadAndKind,
+  config: PresignConfig
+): Promise<PayloadPreSignature> {
+  const blockchainRaw: any = undefined
+  const kind = payloadAndKind.kind
+  const payload = payloadAndKind.payload
+  const payloadName = kindToName(kind)
+  const message = `${payloadName},${canonicalizePayload(kind, payload)}`
+  const messageHash = SHA256(message).toString(hexEncoding)
+  const presig = await computePresig({
+    apiKey: {
+      paillier_pk: apiKey.paillier_pk,
+      ...apiKey.child_keys[BIP44.GQLAUTH]
+    },
+    fillPoolUrl: config.fillPoolUrl,
+    messageHash
+  })
+
+  if (needBlockchainSignature(kind)) {
+    if (config == null) {
+      throw new Error('blockchain signatures needs a Config object')
+    }
+    throw new Error('needBlockchainSignature not implemented')
+  }
+
+  if (needBlockchainMovement(kind)) {
+    if (config == null) {
+      throw new Error('blockchain movement needs a Config object')
+    }
+    throw new Error('needBlockchainMovement not implemented')
+  }
+
+  if (isStateSigning(kind)) {
+    throw new Error('isStateSigning not implemented')
+  }
+
+  return {
+    blockchainRaw,
+    canonicalString: message,
+    payload,
+    signature: presig
   }
 }
 

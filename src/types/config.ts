@@ -35,3 +35,18 @@ export default interface Config {
    */
   readonly payloadSigningKey: Wallet
 }
+
+export interface PresignConfig {
+  /**
+   * URL to the fill rpool endpoint
+   */
+  readonly fillPoolUrl: string
+  /**
+   * Transparently forwarded from `InitParams` for convenience.
+   */
+  readonly assetData: { readonly [key: string]: Asset }
+  /**
+   * Transparently forwarded from `InitParams` for convenience.
+   */
+  readonly marketData: { readonly [key: string]: Market }
+}

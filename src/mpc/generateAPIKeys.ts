@@ -6,6 +6,7 @@ export async function generateAPIKeys(params: CreateApiKeyParams): Promise<APIKe
   const btc = await createAPIKey(params)
   const eth = await createAPIKey(params)
   const neo = await createAPIKey(params)
+  const gqlauth = await createAPIKey(params)
 
   return {
     child_keys: {
@@ -20,6 +21,10 @@ export async function generateAPIKeys(params: CreateApiKeyParams): Promise<APIKe
       [BIP44.NEO]: {
         client_secret_share: neo.client_secret_share,
         server_secret_share_encrypted: neo.server_secret_share_encrypted
+      },
+      [BIP44.GQLAUTH]: {
+        client_secret_share: gqlauth.client_secret_share,
+        server_secret_share_encrypted: gqlauth.server_secret_share_encrypted
       }
     },
     paillier_pk: btc.paillier_pk
