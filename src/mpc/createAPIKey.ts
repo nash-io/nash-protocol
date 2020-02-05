@@ -1,16 +1,12 @@
 import { MPCWalletModulePromise } from './wasmModule'
 import { postAndGetBodyAsJSON } from './utils'
 import { fillRPoolIfNeeded } from './fillRPool'
-import { CreateApiKeyParams, APIKeyResult } from '../types/MPC'
+import { CreateApiKeyParams, SignKey } from '../types/MPC'
 
 // Do we need to cache this key?
 const paillierPKs = new Map<string, Promise<string>>()
 
-export async function createAPIKey({
-  secret,
-  fillPoolUrl,
-  generateProofUrl
-}: CreateApiKeyParams): Promise<APIKeyResult> {
+export async function createAPIKey({ secret, fillPoolUrl, generateProofUrl }: CreateApiKeyParams): Promise<SignKey> {
   await fillRPoolIfNeeded({ fillPoolUrl })
   const MPCwallet = await MPCWalletModulePromise
   let apikeycreator = ''
@@ -57,10 +53,10 @@ export async function createAPIKey({
 
   const [createKeySuccess, apiKeyOrError] = JSON.parse(MPCwallet.create_api_key(apikeycreator)) as
     | [false, string]
-    | [true, APIKeyResult]
+    | [true, SignKey]
   if (createKeySuccess === false) {
     throw new Error('ERROR: paillier key not verified. ' + apiKeyOrError)
   } else {
-    return apiKeyOrError as APIKeyResult
+    return apiKeyOrError as SignKey
   }
 }
