@@ -4,7 +4,7 @@ import { ComputePresigParams, Presignature } from '../types/MPC'
 
 export async function computePresig(params: ComputePresigParams): Promise<Presignature> {
   await fillRPoolIfNeeded({
-    fillPoolUrl: params.fillPoolUrl
+    fillPoolFn: params.fillPoolFn
   })
   const MPCWallet = await MPCWalletModulePromise
 

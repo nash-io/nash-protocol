@@ -1,13 +1,12 @@
 import { MPCWalletModulePromise } from './wasmModule'
-import { postAndGetBodyAsJSON } from './utils'
 import { fillRPoolIfNeeded } from './fillRPool'
 import { CreateApiKeyParams, SignKey } from '../types/MPC'
 
 // Do we need to cache this key?
 const paillierPKs = new Map<string, Promise<string>>()
 
-export async function createAPIKey({ secret, fillPoolUrl, generateProofUrl }: CreateApiKeyParams): Promise<SignKey> {
-  await fillRPoolIfNeeded({ fillPoolUrl })
+export async function createAPIKey({ secret, fillPoolFn, generateProofFn }: CreateApiKeyParams): Promise<SignKey> {
+  await fillRPoolIfNeeded({ fillPoolFn })
   const MPCwallet = await MPCWalletModulePromise
   let apikeycreator = ''
 
@@ -25,7 +24,7 @@ export async function createAPIKey({ secret, fillPoolUrl, generateProofUrl }: Cr
       throw new Error('ERROR: initalization failed. ' + apiKeyCreatorOrError1)
     } else {
       apikeycreator = JSON.stringify(apiKeyCreatorOrError1)
-      const response = await postAndGetBodyAsJSON(generateProofUrl, {})
+      const response = await generateProofFn({})
       const correctKeyProof = JSON.stringify(response.correct_key_proof)
       const paillierPK = JSON.stringify(response.paillier_pk)
       resolver(paillierPK)
