@@ -53,16 +53,15 @@ describe('mpc', () => {
       fillPoolFn,
       messageHash
     })
-
     // Lets verify that the presig is valid
-    const signature = await postAndGetBodyAsJSON(COMPLETE_SIGNATURE_URL, {
+    const signature = (await postAndGetBodyAsJSON(COMPLETE_SIGNATURE_URL, {
       presig: JSON.stringify(presig.presig),
       r: JSON.stringify(presig.r)
-    })
+    })) as { signature: { r: string; s: string }; recovery_bit: boolean }
 
     const MPCWallet = await MPCWalletModulePromise
     const [verifyOk] = JSON.parse(
-      MPCWallet.verify(JSON.stringify(signature), JSON.stringify(publicKey), messageHash)
+      MPCWallet.verify(JSON.stringify(signature.signature), JSON.stringify(publicKey), messageHash)
     ) as [boolean, string]
     expect(verifyOk).toBe(true)
   })
