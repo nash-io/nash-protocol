@@ -55,6 +55,7 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
   const { payload, kind } = payloadAndKind
   const unit = payload.quantity.currency
   const prefix = kindToOrderPrefix(kind, payload)
+  const bnAmount: BigNumber = new BigNumber(normalizeAmount(payload.quantity.amount, 8))
 
   switch (assets[unit].blockchain) {
     case 'neo':
@@ -69,7 +70,6 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
         userSig: payload.blockchainSignatures[0].signature
       }
     case 'eth':
-      const bnAmount: BigNumber = new BigNumber(normalizeAmount(payload.quantity.amount, 8))
       return {
         address: config.wallets.eth.address,
         amount: bnAmount.toFixed(0),
@@ -80,7 +80,15 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
         userSig: payload.blockchainSignatures[0].signature
       }
     case 'btc':
-      throw new Error('BTC Movement not implemented')
+      return {
+        address: config.wallets.btc.address,
+        amount: bnAmount.toFixed(0),
+        asset: '00',
+        nonce: convertEthNonce(payload.nonce),
+        prefix,
+        userPubKey: config.wallets.btc.address,
+        userSig: ''
+      }
     default:
       throw new Error(`invalid blockchain: ${assets[unit].blockchain}`)
   }

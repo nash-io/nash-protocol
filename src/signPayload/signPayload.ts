@@ -25,8 +25,8 @@ import {
   ClientSignedState,
   SignStatesRequestPayload,
   AddMovementPayload,
-  AddMovementRequestPayload,
-  BuyOrSellBuy
+  BuyOrSellBuy,
+  TransactionDigest
 } from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
 import {
@@ -79,6 +79,7 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
     case SigningPayloadID.addMovementPayload:
       const newPayload: AddMovementPayload = { ...payload }
       delete newPayload.recycled_orders
+      delete newPayload.digests
       return canonicalString(newPayload)
     case SigningPayloadID.listOrderPayload:
       const newOrderPayload: any = { ...payload }
@@ -143,17 +144,16 @@ export default function signPayload(
       throw new Error('blockchain movement needs a Config object')
     }
 
-    ;(payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
-      config as Config,
-      payload as AddMovementPayload
-    )
-    delete (payload as AddMovementPayload).recycled_orders
+    const addMovementPayload = payload as AddMovementPayload
+    const addMovementPayloadRequest = { ...payload }
+    addMovementPayloadRequest.resigned_orders = signRecycledOrdersForAddMovement(config, addMovementPayload)
+    addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(config, payload)
     const movement = getBlockchainMovement(config, { kind, payload })
     delete (payload as any).blockchainSignatures
     return {
       blockchainMovement: movement,
       canonicalString: message,
-      payload,
+      payload: addMovementPayloadRequest,
       signature: stringify(bufferize(sig.toDER())).toLowerCase()
     }
   }
@@ -319,6 +319,24 @@ export function signStateListAndRecycledOrders(config: Config, payload: any): Si
 export function signRecycledOrdersForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
   if (payload.recycled_orders !== undefined) {
     return signStateList(config, payload.recycled_orders as ClientSignedState[])
+  }
+  return []
+}
+
+/*
+ * @TODO Add documentation.
+ */
+export function signTransactionDigestsForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
+  if (payload.digests !== undefined) {
+    const result: ClientSignedState[] = payload.digests.map((item: TransactionDigest) => {
+      const signedTransactionElement: ClientSignedState = {
+        blockchain: 'btc',
+        message: item.digest,
+        signature: signBTCBlockchainData(config.wallets.btc.privateKey, item.digest).signature
+      }
+      return signedTransactionElement
+    })
+    return result
   }
   return []
 }

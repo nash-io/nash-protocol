@@ -53,12 +53,12 @@ export function buildBTCOrderSignatureData(
   chainNoncePair: ChainNoncePair
 ): string {
   console.info('Build BTC Order Signature Data:', config, payloadAndKind, chainNoncePair)
-  throw new Error('Not Implemented')
+  return ''
 }
 
 export function buildBTCMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
   console.info('build btc movement data: ', config, payloadAndKind)
-  throw new Error('Not Implemented')
+  return ''
 }
 
 export function encodeVariableInteger(length: number): string {

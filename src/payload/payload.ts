@@ -35,12 +35,18 @@ export interface ClientSignedState {
   signature?: string
 }
 
+export interface TransactionDigest {
+  digest: string
+}
+
 export interface AddMovementPayload {
+  digests?: TransactionDigest[]
   recycled_orders?: ClientSignedState[]
 }
 
 export interface AddMovementRequestPayload {
   resigned_orders: ClientSignedState[]
+  signed_transaction_elements: ClientSignedState[]
 }
 
 /**
@@ -334,17 +340,39 @@ export function createPlaceStopMarketOrderParams(
   }
 }
 
-export function createAddMovementParams(
+export function createPrepareMovementParams(
   address: string,
   quantity: object,
   type: string,
-  nonce?: number,
   timestamp?: number
 ): PayloadAndKind {
   const payload = {
     address,
-    nonce: nonce || createTimestamp32(),
     quantity,
+    timestamp: timestamp || createTimestamp(),
+    type
+  }
+  return {
+    kind: SigningPayloadID.prepareMovementPayload,
+    payload
+  }
+}
+
+export function createAddMovementParams(
+  address: string,
+  quantity: object,
+  type: string,
+  nonce: number,
+  timestamp?: number,
+  recycledOrders?: ClientSignedState[],
+  digests?: TransactionDigest[]
+): PayloadAndKind {
+  const payload = {
+    address,
+    digests: digests || [],
+    nonce,
+    quantity,
+    recycled_orders: recycledOrders || [],
     timestamp: timestamp || createTimestamp(),
     type
   }
