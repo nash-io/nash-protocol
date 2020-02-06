@@ -193,6 +193,9 @@ export async function preSignPayload(
       throw new Error('blockchain signatures needs a Config object')
     }
     throw new Error('needBlockchainSignature not implemented')
+    if (isOrderPayload(kind)) {
+      throw new Error('isOrderPayload not implemented')
+    }
   }
 
   if (needBlockchainMovement(kind)) {
