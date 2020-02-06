@@ -44,12 +44,13 @@ export function get_rpool_size(): string;
 */
 export function compute_presig(api_key_str: string, msg_hash_str: string): string;
 /**
-* @param {string} signature_str 
+* @param {string} r_str 
+* @param {string} s_str 
 * @param {string} pubkey_str 
 * @param {string} msg_hash_str 
 * @returns {string} 
 */
-export function verify(signature_str: string, pubkey_str: string, msg_hash_str: string): string;
+export function verify(r_str: string, s_str: string, pubkey_str: string, msg_hash_str: string): string;
 /**
 * @param {string} secret_key_str 
 * @returns {string} 

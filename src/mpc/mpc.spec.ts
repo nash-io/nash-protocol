@@ -58,10 +58,9 @@ describe('mpc', () => {
       presig: JSON.stringify(presig.presig),
       r: JSON.stringify(presig.r)
     })) as { signature: { r: string; s: string }; recovery_bit: boolean }
-
     const MPCWallet = await MPCWalletModulePromise
     const [verifyOk] = JSON.parse(
-      MPCWallet.verify(JSON.stringify(signature.signature), JSON.stringify(publicKey), messageHash)
+      MPCWallet.verify(signature.signature.r, signature.signature.s, JSON.stringify(publicKey), messageHash)
     ) as [boolean, string]
     expect(verifyOk).toBe(true)
   })

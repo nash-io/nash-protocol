@@ -151,14 +151,15 @@ module.exports.compute_presig = function(api_key_str, msg_hash_str) {
 };
 
 /**
-* @param {string} signature_str
+* @param {string} r_str
+* @param {string} s_str
 * @param {string} pubkey_str
 * @param {string} msg_hash_str
 * @returns {string}
 */
-module.exports.verify = function(signature_str, pubkey_str, msg_hash_str) {
+module.exports.verify = function(r_str, s_str, pubkey_str, msg_hash_str) {
     const retptr = 8;
-    const ret = wasm.verify(retptr, passStringToWasm(signature_str), WASM_VECTOR_LEN, passStringToWasm(pubkey_str), WASM_VECTOR_LEN, passStringToWasm(msg_hash_str), WASM_VECTOR_LEN);
+    const ret = wasm.verify(retptr, passStringToWasm(r_str), WASM_VECTOR_LEN, passStringToWasm(s_str), WASM_VECTOR_LEN, passStringToWasm(pubkey_str), WASM_VECTOR_LEN, passStringToWasm(msg_hash_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -200,10 +201,6 @@ function takeObject(idx) {
     return ret;
 }
 
-function getArrayU8FromWasm(ptr, len) {
-    return getUint8Memory().subarray(ptr / 1, ptr / 1 + len);
-}
-
 function addHeapObject(obj) {
     if (heap_next === heap.length) heap.push(heap.length + 1);
     const idx = heap_next;
@@ -213,16 +210,12 @@ function addHeapObject(obj) {
     return idx;
 }
 
+function getArrayU8FromWasm(ptr, len) {
+    return getUint8Memory().subarray(ptr / 1, ptr / 1 + len);
+}
+
 module.exports.__wbindgen_object_drop_ref = function(arg0) {
     takeObject(arg0);
-};
-
-module.exports.__wbg_randomFillSync_1b52c8482374c55b = function(arg0, arg1, arg2) {
-    getObject(arg0).randomFillSync(getArrayU8FromWasm(arg1, arg2));
-};
-
-module.exports.__wbg_getRandomValues_1ef11e888e5228e9 = function(arg0, arg1, arg2) {
-    getObject(arg0).getRandomValues(getArrayU8FromWasm(arg1, arg2));
 };
 
 module.exports.__wbg_new_3a746f2619705add = function(arg0, arg1) {
@@ -263,6 +256,14 @@ module.exports.__wbg_getRandomValues_1b4ba144162a5c9e = function(arg0) {
 module.exports.__wbg_require_6461b1e9a0d7c34a = function(arg0, arg1) {
     const ret = require(getStringFromWasm(arg0, arg1));
     return addHeapObject(ret);
+};
+
+module.exports.__wbg_randomFillSync_1b52c8482374c55b = function(arg0, arg1, arg2) {
+    getObject(arg0).randomFillSync(getArrayU8FromWasm(arg1, arg2));
+};
+
+module.exports.__wbg_getRandomValues_1ef11e888e5228e9 = function(arg0, arg1, arg2) {
+    getObject(arg0).getRandomValues(getArrayU8FromWasm(arg1, arg2));
 };
 wasm = require('./mpc_wallet_client_bg');
 
