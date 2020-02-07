@@ -1,4 +1,3 @@
-import { MPCWalletModulePromise } from './wasmModule'
 import { fillRPoolIfNeeded } from './fillRPool'
 import { CreateApiKeyParams, SignKey } from '../types/MPC'
 
@@ -7,7 +6,7 @@ const paillierPKs = new Map<string, Promise<string>>()
 
 export async function createAPIKey({ secret, fillPoolFn, generateProofFn }: CreateApiKeyParams): Promise<SignKey> {
   await fillRPoolIfNeeded({ fillPoolFn })
-  const MPCwallet = await MPCWalletModulePromise
+  const MPCWallet = await import('../wasm')
   let apikeycreator = ''
 
   // paillier key not verified yet.
@@ -19,7 +18,7 @@ export async function createAPIKey({ secret, fillPoolFn, generateProofFn }: Crea
         resolver = r
       })
     )
-    const [initSuccess, apiKeyCreatorOrError1] = JSON.parse(MPCwallet.init_apikeycreator(secret)) as [boolean, string]
+    const [initSuccess, apiKeyCreatorOrError1] = JSON.parse(MPCWallet.init_apikeycreator(secret)) as [boolean, string]
     if (initSuccess === false) {
       throw new Error('ERROR: initalization failed. ' + apiKeyCreatorOrError1)
     } else {
@@ -29,7 +28,7 @@ export async function createAPIKey({ secret, fillPoolFn, generateProofFn }: Crea
       const paillierPK = JSON.stringify(response.paillier_pk)
       resolver(paillierPK)
       const [verifyPaillierSuccess, apiKeyCreatorOrError2] = JSON.parse(
-        MPCwallet.verify_paillier(apikeycreator, paillierPK, correctKeyProof)
+        MPCWallet.verify_paillier(apikeycreator, paillierPK, correctKeyProof)
       ) as [boolean, string]
       if (verifyPaillierSuccess === false) {
         throw new Error('ERROR: paillier key verification failed. ' + apiKeyCreatorOrError2)
@@ -41,7 +40,7 @@ export async function createAPIKey({ secret, fillPoolFn, generateProofFn }: Crea
   } else {
     const previousPaillierPK = await paillierPKs.get(secret)!
     const [initApiKeyCreatorSuccess, initApiKeyWithCreatorStr] = JSON.parse(
-      MPCwallet.init_apikeycreator_with_verified_paillier(secret, previousPaillierPK)
+      MPCWallet.init_apikeycreator_with_verified_paillier(secret, previousPaillierPK)
     ) as [boolean, string]
     if (initApiKeyCreatorSuccess === false) {
       throw new Error('ERROR: (fast) initalization failed. ' + initApiKeyWithCreatorStr)
@@ -50,7 +49,7 @@ export async function createAPIKey({ secret, fillPoolFn, generateProofFn }: Crea
     }
   }
 
-  const [createKeySuccess, apiKeyOrError] = JSON.parse(MPCwallet.create_api_key(apikeycreator)) as
+  const [createKeySuccess, apiKeyOrError] = JSON.parse(MPCWallet.create_api_key(apikeycreator)) as
     | [false, string]
     | [true, SignKey]
   if (createKeySuccess === false) {
