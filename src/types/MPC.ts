@@ -39,6 +39,14 @@ export interface CreateApiKeyParams {
   fillPoolFn: FillPoolFn
 }
 
+export interface GenerateApiKeysParams {
+  walletIndices: { readonly [key: string]: number }
+  secret: string
+  net: string
+  generateProofFn: GenerateProofFn
+  fillPoolFn: FillPoolFn
+}
+
 export interface Presignature {
   presig: string
   r: string
@@ -52,6 +60,7 @@ export enum BIP44 {
 
 export interface ChildKey {
   client_secret_share: string
+  public_address: string
   server_secret_share_encrypted: string
 }
 export interface APIKey {

@@ -6,7 +6,6 @@ import { publicKeyFromSecretKey } from './publicKeyFromSecretKey'
 import { fillRPool } from './fillRPool'
 
 import { FillPoolFn, GenerateProofFn } from '../types/MPC'
-import { MPCWalletModulePromise } from './wasmModule'
 
 const postAndGetBodyAsJSON = async (url: string, obj: object): Promise<any> => {
   const resp = await fetch(url, {
@@ -58,7 +57,7 @@ describe('mpc', () => {
       presig: JSON.stringify(presig.presig),
       r: JSON.stringify(presig.r)
     })) as { signature: { r: string; s: string }; recovery_bit: boolean }
-    const MPCWallet = await MPCWalletModulePromise
+    const MPCWallet = await import('../wasm')
     const [verifyOk] = JSON.parse(
       MPCWallet.verify(signature.signature.r, signature.signature.s, JSON.stringify(publicKey), messageHash)
     ) as [boolean, string]

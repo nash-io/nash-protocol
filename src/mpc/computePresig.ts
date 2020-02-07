@@ -1,4 +1,3 @@
-import { MPCWalletModulePromise } from './wasmModule'
 import { fillRPoolIfNeeded } from './fillRPool'
 import { ComputePresigParams, Presignature } from '../types/MPC'
 
@@ -6,7 +5,7 @@ export async function computePresig(params: ComputePresigParams): Promise<Presig
   await fillRPoolIfNeeded({
     fillPoolFn: params.fillPoolFn
   })
-  const MPCWallet = await MPCWalletModulePromise
+  const MPCWallet = await import('../wasm')
 
   const [comutePresigOk, presigOrErrorMessage, r] = JSON.parse(
     MPCWallet.compute_presig(JSON.stringify(params.apiKey), params.messageHash)
