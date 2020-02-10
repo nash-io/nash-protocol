@@ -47,6 +47,7 @@ describe('mpc', () => {
       generateProofFn,
       secret
     })
+
     const presig = await computePresig({
       apiKey,
       fillPoolFn,
@@ -56,10 +57,10 @@ describe('mpc', () => {
     const signature = (await postAndGetBodyAsJSON(COMPLETE_SIGNATURE_URL, {
       presig: JSON.stringify(presig.presig),
       r: JSON.stringify(presig.r)
-    })) as { signature: { r: string; s: string }; recovery_bit: boolean }
+    })) as { r: string; s: string }
     const MPCWallet = await import('../wasm')
     const [verifyOk] = JSON.parse(
-      MPCWallet.verify(signature.signature.r, signature.signature.s, JSON.stringify(publicKey), messageHash)
+      MPCWallet.verify(signature.r, signature.s, JSON.stringify(publicKey), messageHash)
     ) as [boolean, string]
     expect(verifyOk).toBe(true)
   })

@@ -62,6 +62,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
       }
     },
     paillier_pk: btc.paillier_pk,
+    payload_public_key: payloadSigningKey.publicKey,
     payload_signing_key: payloadSigningKey.privateKey,
     version: 0
   }

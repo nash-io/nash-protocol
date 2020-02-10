@@ -69,4 +69,5 @@ export interface APIKey {
   paillier_pk: PallierPK
   child_keys: Record<BIP44, ChildKey>
   payload_signing_key: string
+  payload_public_key: string
 }
