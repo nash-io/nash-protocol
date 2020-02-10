@@ -6,5 +6,6 @@ export { default as Asset } from './asset'
 export { default as Config, PresignConfig } from './config'
 export { default as BlockchainData, ChainNoncePair } from './blockchainData'
 export { default as InitParams } from './initParams'
-
+export * from './MPC'
+export { EllipticCurvePoint } from './EllipticCurvePoint'
 export * from './signature'

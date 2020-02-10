@@ -45,16 +45,19 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
       [BIP44.BTC]: {
         client_secret_share: btc.client_secret_share,
         public_address: wallets.btc.address,
+        public_key: wallets.btc.publicKey,
         server_secret_share_encrypted: btc.server_secret_share_encrypted
       },
       [BIP44.ETH]: {
         client_secret_share: eth.client_secret_share,
         public_address: toChecksumAddress(wallets.eth.address),
+        public_key: wallets.eth.publicKey,
         server_secret_share_encrypted: eth.server_secret_share_encrypted
       },
       [BIP44.NEO]: {
         client_secret_share: neo.client_secret_share,
         public_address: wallets.neo.address,
+        public_key: wallets.neo.publicKey,
         server_secret_share_encrypted: neo.server_secret_share_encrypted
       }
     },
