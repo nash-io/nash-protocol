@@ -7,6 +7,7 @@ import { Presignature } from './MPC'
 export interface BlockchainSignature {
   readonly blockchain: string
   readonly signature: string
+  readonly r?: string
   readonly publicKey?: string
   nonceTo?: number
   nonceFrom?: number
