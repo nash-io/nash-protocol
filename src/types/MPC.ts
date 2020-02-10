@@ -61,6 +61,7 @@ export enum BIP44 {
 export interface ChildKey {
   client_secret_share: string
   public_address: string
+  public_key: string
   server_secret_share_encrypted: string
 }
 export interface APIKey {
