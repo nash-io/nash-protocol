@@ -149,7 +149,7 @@ export function getETHAssetID(asset: string): string {
     case 'qnt':
       return '0006'
     case 'rlc':
-      return '0007'
+      return '000a'
     default:
       return 'ffff'
   }
