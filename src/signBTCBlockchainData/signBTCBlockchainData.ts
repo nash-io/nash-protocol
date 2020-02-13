@@ -1,5 +1,6 @@
 import { PayloadAndKind } from '../payload'
 import * as Bitcoin from 'bitcoinjs-lib'
+import { BlockchainSignature } from '../types'
 import { ellipticContext } from '../utils/blockchain'
 import { computePresig } from '../mpc/computePresig'
 import { Config, Blockchain, BIP44, APIKey, PresignConfig, ChainNoncePair } from '../types'
@@ -8,7 +9,11 @@ export function signBTC(privateKey: string, message: string): BlockchainSignatur
   const data = Buffer.from(message, 'hex')
   const kp = ellipticContext.keyFromPrivate(privateKey)
 
+<<<<<<< HEAD
   const sig = kp.sign(data, { canonical: true, pers: null })
+=======
+  const sig = kp.sign(data)
+>>>>>>> Add functionality for prepare movement/sign tx digests
   const v = sig.recoveryParam === 0 ? '00' : '01'
   const r = sig.r.toString('hex', 64)
   const s = sig.s.toString('hex', 64)

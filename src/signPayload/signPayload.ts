@@ -50,16 +50,12 @@ import {
   signETHBlockchainData
 } from '../signETHBlockchainData'
 
-<<<<<<< HEAD
-import { signBTC } from '../signBTCBlockchainData/signBTCBlockchainData'
-=======
 import {
-  signBTCBlockchainData,
   buildBTCOrderSignatureData,
   buildBTCMovementSignatureData,
-  preSignBTCBlockchainData
+  signBTC,
+  preSignBTC
 } from '../signBTCBlockchainData'
->>>>>>> add support for prepareMovement
 
 const curve = new EC('secp256k1')
 
@@ -234,13 +230,10 @@ export async function preSignPayload(
     if (config == null) {
       throw new Error('blockchain movement needs a Config object')
     }
-<<<<<<< HEAD
-    ;(payload as AddMovementRequestPayload).resigned_orders = await presignRecycledOrdersForAddMovement(
-=======
+
     const addMovementPayload = payload as AddMovementPayload
     const addMovementPayloadRequest = { ...payload }
     addMovementPayloadRequest.resigned_orders = await presignRecycledOrdersForAddMovement(
->>>>>>> add support for prepareMovement
       apiKey,
       config,
       addMovementPayload
@@ -633,8 +626,6 @@ export async function preSignStateListAndRecycledOrders(
     timestamp: payload.timestamp
   }
 }
-<<<<<<< HEAD
-
 /*
  * @TODO Add documentation.
  */
@@ -645,24 +636,6 @@ export function signTransactionDigestsForAddMovement(config: Config, payload: Ad
         blockchain: 'BTC',
         message: item.digest,
         signature: signBTC(config.wallets.btc.privateKey, item.digest).signature
-      }
-      return signedTransactionElement
-    })
-    return result
-  }
-  return []
-=======
-
-/*
- * @TODO Add documentation.
- */
-export function signTransactionDigestsForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
-  if (payload.digests !== undefined) {
-    const result: ClientSignedState[] = payload.digests.map((item: TransactionDigest) => {
-      const signedTransactionElement: ClientSignedState = {
-        blockchain: 'btc',
-        message: item.digest,
-        signature: signBTCBlockchainData(config.wallets.btc.privateKey, item.digest).signature
       }
       return signedTransactionElement
     })
@@ -681,7 +654,7 @@ export async function presignTransactionDigestsForAddMovement(
   }
   const result: ClientSignedState[] = []
   for (const item of payload.digests) {
-    const sig = await preSignBTCBlockchainData(apiKey, config, item.digest)
+    const sig = await preSignBTC(apiKey, config, item.digest)
     result.push({
       blockchain: 'btc',
       message: item.digest,
@@ -690,7 +663,6 @@ export async function presignTransactionDigestsForAddMovement(
     })
   }
   return result
->>>>>>> add support for prepareMovement
 }
 
 /*
@@ -736,7 +708,7 @@ export async function presignStateList(
         result.push(item)
         break
       case 'btc':
-        const btcSig = await preSignBTCBlockchainData(apiKey, config, item.message)
+        const btcSig = await preSignBTC(apiKey, config, item.message)
         item.signature = btcSig.signature
         item.r = btcSig.r
         result.push(item)
