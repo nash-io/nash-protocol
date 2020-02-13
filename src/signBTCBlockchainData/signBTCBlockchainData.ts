@@ -5,7 +5,7 @@ export function signBTC(privateKey: string, message: string): BlockchainSignatur
   const data = Buffer.from(message, 'hex')
   const kp = ellipticContext.keyFromPrivate(privateKey)
 
-  const sig = kp.sign(data)
+  const sig = kp.sign(data, { canonical: true, pers: null })
   const v = sig.recoveryParam === 0 ? '00' : '01'
   const r = sig.r.toString('hex', 64)
   const s = sig.s.toString('hex', 64)
