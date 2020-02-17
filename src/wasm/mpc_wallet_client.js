@@ -1,6 +1,25 @@
 let wasm;
 const { TextDecoder } = require(String.raw`util`);
 
+let WASM_VECTOR_LEN = 0;
+
+let cachegetNodeBufferMemory = null;
+function getNodeBufferMemory() {
+    if (cachegetNodeBufferMemory === null || cachegetNodeBufferMemory.buffer !== wasm.memory.buffer) {
+        cachegetNodeBufferMemory = Buffer.from(wasm.memory.buffer);
+    }
+    return cachegetNodeBufferMemory;
+}
+
+function passStringToWasm(arg) {
+
+    const len = Buffer.byteLength(arg);
+    const ptr = wasm.__wbindgen_malloc(len);
+    getNodeBufferMemory().write(arg, ptr, len);
+    WASM_VECTOR_LEN = len;
+    return ptr;
+}
+
 let cachegetInt32Memory = null;
 function getInt32Memory() {
     if (cachegetInt32Memory === null || cachegetInt32Memory.buffer !== wasm.memory.buffer) {
@@ -26,42 +45,25 @@ function getStringFromWasm(ptr, len) {
 }
 /**
 * @param {number} n
+* @param {string} curve_str
 * @returns {string}
 */
-module.exports.dh_init = function(n) {
+module.exports.dh_init = function(n, curve_str) {
     const retptr = 8;
-    const ret = wasm.dh_init(retptr, n);
+    const ret = wasm.dh_init(retptr, n, passStringToWasm(curve_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
     return v0;
 };
 
-let WASM_VECTOR_LEN = 0;
-
-let cachegetNodeBufferMemory = null;
-function getNodeBufferMemory() {
-    if (cachegetNodeBufferMemory === null || cachegetNodeBufferMemory.buffer !== wasm.memory.buffer) {
-        cachegetNodeBufferMemory = Buffer.from(wasm.memory.buffer);
-    }
-    return cachegetNodeBufferMemory;
-}
-
-function passStringToWasm(arg) {
-
-    const len = Buffer.byteLength(arg);
-    const ptr = wasm.__wbindgen_malloc(len);
-    getNodeBufferMemory().write(arg, ptr, len);
-    WASM_VECTOR_LEN = len;
-    return ptr;
-}
 /**
 * @param {string} secret_key_str
 * @returns {string}
 */
-module.exports.init_apikeycreator = function(secret_key_str) {
+module.exports.init_api_childkey_creator = function(secret_key_str) {
     const retptr = 8;
-    const ret = wasm.init_apikeycreator(retptr, passStringToWasm(secret_key_str), WASM_VECTOR_LEN);
+    const ret = wasm.init_api_childkey_creator(retptr, passStringToWasm(secret_key_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -73,9 +75,9 @@ module.exports.init_apikeycreator = function(secret_key_str) {
 * @param {string} paillier_pk_str
 * @returns {string}
 */
-module.exports.init_apikeycreator_with_verified_paillier = function(secret_key_str, paillier_pk_str) {
+module.exports.init_api_childkey_creator_with_verified_paillier = function(secret_key_str, paillier_pk_str) {
     const retptr = 8;
-    const ret = wasm.init_apikeycreator_with_verified_paillier(retptr, passStringToWasm(secret_key_str), WASM_VECTOR_LEN, passStringToWasm(paillier_pk_str), WASM_VECTOR_LEN);
+    const ret = wasm.init_api_childkey_creator_with_verified_paillier(retptr, passStringToWasm(secret_key_str), WASM_VECTOR_LEN, passStringToWasm(paillier_pk_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -83,14 +85,14 @@ module.exports.init_apikeycreator_with_verified_paillier = function(secret_key_s
 };
 
 /**
-* @param {string} apikeycreator_str
+* @param {string} api_childkey_creator_str
 * @param {string} paillier_pk_str
 * @param {string} correct_key_proof_str
 * @returns {string}
 */
-module.exports.verify_paillier = function(apikeycreator_str, paillier_pk_str, correct_key_proof_str) {
+module.exports.verify_paillier = function(api_childkey_creator_str, paillier_pk_str, correct_key_proof_str) {
     const retptr = 8;
-    const ret = wasm.verify_paillier(retptr, passStringToWasm(apikeycreator_str), WASM_VECTOR_LEN, passStringToWasm(paillier_pk_str), WASM_VECTOR_LEN, passStringToWasm(correct_key_proof_str), WASM_VECTOR_LEN);
+    const ret = wasm.verify_paillier(retptr, passStringToWasm(api_childkey_creator_str), WASM_VECTOR_LEN, passStringToWasm(paillier_pk_str), WASM_VECTOR_LEN, passStringToWasm(correct_key_proof_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -98,12 +100,13 @@ module.exports.verify_paillier = function(apikeycreator_str, paillier_pk_str, co
 };
 
 /**
-* @param {string} apikeycreator_str
+* @param {string} api_childkey_creator_str
+* @param {string} curve_str
 * @returns {string}
 */
-module.exports.create_api_key = function(apikeycreator_str) {
+module.exports.create_api_childkey = function(api_childkey_creator_str, curve_str) {
     const retptr = 8;
-    const ret = wasm.create_api_key(retptr, passStringToWasm(apikeycreator_str), WASM_VECTOR_LEN);
+    const ret = wasm.create_api_childkey(retptr, passStringToWasm(api_childkey_creator_str), WASM_VECTOR_LEN, passStringToWasm(curve_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -113,11 +116,12 @@ module.exports.create_api_key = function(apikeycreator_str) {
 /**
 * @param {string} client_dh_secrets_str
 * @param {string} server_dh_publics_str
+* @param {string} curve_str
 * @returns {string}
 */
-module.exports.fill_rpool = function(client_dh_secrets_str, server_dh_publics_str) {
+module.exports.fill_rpool = function(client_dh_secrets_str, server_dh_publics_str, curve_str) {
     const retptr = 8;
-    const ret = wasm.fill_rpool(retptr, passStringToWasm(client_dh_secrets_str), WASM_VECTOR_LEN, passStringToWasm(server_dh_publics_str), WASM_VECTOR_LEN);
+    const ret = wasm.fill_rpool(retptr, passStringToWasm(client_dh_secrets_str), WASM_VECTOR_LEN, passStringToWasm(server_dh_publics_str), WASM_VECTOR_LEN, passStringToWasm(curve_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -125,11 +129,12 @@ module.exports.fill_rpool = function(client_dh_secrets_str, server_dh_publics_st
 };
 
 /**
+* @param {string} curve_str
 * @returns {string}
 */
-module.exports.get_rpool_size = function() {
+module.exports.get_rpool_size = function(curve_str) {
     const retptr = 8;
-    const ret = wasm.get_rpool_size(retptr);
+    const ret = wasm.get_rpool_size(retptr, passStringToWasm(curve_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -137,13 +142,14 @@ module.exports.get_rpool_size = function() {
 };
 
 /**
-* @param {string} api_key_str
+* @param {string} api_childkey_str
 * @param {string} msg_hash_str
+* @param {string} curve_str
 * @returns {string}
 */
-module.exports.compute_presig = function(api_key_str, msg_hash_str) {
+module.exports.compute_presig = function(api_childkey_str, msg_hash_str, curve_str) {
     const retptr = 8;
-    const ret = wasm.compute_presig(retptr, passStringToWasm(api_key_str), WASM_VECTOR_LEN, passStringToWasm(msg_hash_str), WASM_VECTOR_LEN);
+    const ret = wasm.compute_presig(retptr, passStringToWasm(api_childkey_str), WASM_VECTOR_LEN, passStringToWasm(msg_hash_str), WASM_VECTOR_LEN, passStringToWasm(curve_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -155,11 +161,12 @@ module.exports.compute_presig = function(api_key_str, msg_hash_str) {
 * @param {string} s_str
 * @param {string} pubkey_str
 * @param {string} msg_hash_str
+* @param {string} curve_str
 * @returns {string}
 */
-module.exports.verify = function(r_str, s_str, pubkey_str, msg_hash_str) {
+module.exports.verify = function(r_str, s_str, pubkey_str, msg_hash_str, curve_str) {
     const retptr = 8;
-    const ret = wasm.verify(retptr, passStringToWasm(r_str), WASM_VECTOR_LEN, passStringToWasm(s_str), WASM_VECTOR_LEN, passStringToWasm(pubkey_str), WASM_VECTOR_LEN, passStringToWasm(msg_hash_str), WASM_VECTOR_LEN);
+    const ret = wasm.verify(retptr, passStringToWasm(r_str), WASM_VECTOR_LEN, passStringToWasm(s_str), WASM_VECTOR_LEN, passStringToWasm(pubkey_str), WASM_VECTOR_LEN, passStringToWasm(msg_hash_str), WASM_VECTOR_LEN, passStringToWasm(curve_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
@@ -168,11 +175,12 @@ module.exports.verify = function(r_str, s_str, pubkey_str, msg_hash_str) {
 
 /**
 * @param {string} secret_key_str
+* @param {string} curve_str
 * @returns {string}
 */
-module.exports.publickey_from_secretkey = function(secret_key_str) {
+module.exports.publickey_from_secretkey = function(secret_key_str, curve_str) {
     const retptr = 8;
-    const ret = wasm.publickey_from_secretkey(retptr, passStringToWasm(secret_key_str), WASM_VECTOR_LEN);
+    const ret = wasm.publickey_from_secretkey(retptr, passStringToWasm(secret_key_str), WASM_VECTOR_LEN, passStringToWasm(curve_str), WASM_VECTOR_LEN);
     const memi32 = getInt32Memory();
     const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
     wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);

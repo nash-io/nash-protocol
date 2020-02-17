@@ -86,7 +86,6 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
   if (key.privateKey === undefined) {
     throw new Error('private key not properly derived')
   }
-
   switch (coinType) {
     case CoinType.NEO:
       const account = Neon.create.account(key.privateKey.toString('hex'))

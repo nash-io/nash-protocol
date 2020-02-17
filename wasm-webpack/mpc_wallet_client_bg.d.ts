@@ -1,15 +1,15 @@
 /* tslint:disable */
 export const memory: WebAssembly.Memory;
-export function dh_init(a: number, b: number): void;
-export function init_apikeycreator(a: number, b: number, c: number): void;
-export function init_apikeycreator_with_verified_paillier(a: number, b: number, c: number, d: number, e: number): void;
+export function dh_init(a: number, b: number, c: number, d: number): void;
+export function init_api_childkey_creator(a: number, b: number, c: number): void;
+export function init_api_childkey_creator_with_verified_paillier(a: number, b: number, c: number, d: number, e: number): void;
 export function verify_paillier(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
-export function create_api_key(a: number, b: number, c: number): void;
-export function fill_rpool(a: number, b: number, c: number, d: number, e: number): void;
-export function get_rpool_size(a: number): void;
-export function compute_presig(a: number, b: number, c: number, d: number, e: number): void;
-export function verify(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number): void;
-export function publickey_from_secretkey(a: number, b: number, c: number): void;
+export function create_api_childkey(a: number, b: number, c: number, d: number, e: number): void;
+export function fill_rpool(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
+export function get_rpool_size(a: number, b: number, c: number): void;
+export function compute_presig(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
+export function verify(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number): void;
+export function publickey_from_secretkey(a: number, b: number, c: number, d: number, e: number): void;
 export function rustsecp256k1_v0_1_1_ec_pubkey_serialize(a: number, b: number, c: number, d: number, e: number): number;
 export function rustsecp256k1_v0_1_1_ec_pubkey_parse(a: number, b: number, c: number, d: number): number;
 export function rustsecp256k1_v0_1_1_ec_seckey_verify(a: number, b: number): number;
