@@ -1,5 +1,11 @@
 import { EllipticCurvePoint } from './EllipticCurvePoint'
 
+/**
+ * Secp256k1 for BTC, ETH
+ * Secp256r1 for NEO
+ */
+export type Curve = 'Secp256k1' | 'Secp256r1'
+
 export interface PallierPK {
   n: string
 }
@@ -11,16 +17,24 @@ export interface Proof {
   paillier_pk: PallierPK
 }
 
-export type FillPoolFn = (arg: { client_dh_publics: EllipticCurvePoint[] }) => Promise<EllipticCurvePoint[]>
+export type FillPoolFn = (
+  arg: { curve: Curve; client_dh_publics: EllipticCurvePoint[] }
+) => Promise<EllipticCurvePoint[]>
 export type GenerateProofFn = (arg: {}) => Promise<Proof>
 export interface ComputePresigParams {
   apiKey: SignKey
+  curve: Curve
   fillPoolFn: FillPoolFn
   messageHash: string
 }
 
 export interface FillRPoolParams {
   fillPoolFn: FillPoolFn
+  curve: Curve
+}
+
+export interface CreatePallierPKParams {
+  generateProofFn: GenerateProofFn
 }
 
 export interface SignKey {
@@ -31,10 +45,12 @@ export interface SignKey {
 
 export interface PublicKeyFromSecretKeyParams {
   secret: string
+  curve: Curve
 }
 
 export interface CreateApiKeyParams {
   secret: string
+  curve: Curve
   generateProofFn: GenerateProofFn
   fillPoolFn: FillPoolFn
 }
@@ -60,7 +76,7 @@ export enum BIP44 {
 
 export interface ChildKey {
   client_secret_share: string
-  public_address: string
+  address: string
   public_key: string
   server_secret_share_encrypted: string
 }

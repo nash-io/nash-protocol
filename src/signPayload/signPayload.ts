@@ -130,8 +130,8 @@ export default function signPayload(
   const payloadName = kindToName(kind)
   const message = `${payloadName},${canonicalizePayload(kind, payload)}`
   const keypair = curve.keyFromPrivate(privateKey)
-
-  const sig = keypair.sign(SHA256(message).toString(hexEncoding), {
+  const canonicalStringHex = SHA256(message).toString(hexEncoding)
+  const sig = keypair.sign(canonicalStringHex, {
     canonical: true,
     pers: null
   })
@@ -249,7 +249,7 @@ export async function presignBlockchainData(
       case 'neo':
         throw new Error('Not implemented')
       case 'eth':
-        const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].public_key, payloadAndKind)
+        const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
         const sig = await presignETHBlockchainData(apiKey, config, ethData)
         return [sig]
       case 'btc':
@@ -264,9 +264,8 @@ export async function presignBlockchainData(
         case 'neo':
           throw new Error('Not implemented')
         case 'eth':
-          const ethWalletPublicKey = apiKey.child_keys[BIP44.ETH].public_key
           const ethData = buildETHOrderSignatureData(
-            ethWalletPublicKey,
+            apiKey.child_keys[BIP44.ETH].address,
             config.marketData,
             payloadAndKind,
             chainNoncePair
@@ -276,7 +275,7 @@ export async function presignBlockchainData(
             ...ethSignature,
             nonceFrom: chainNoncePair.nonceFrom,
             nonceTo: chainNoncePair.nonceTo,
-            publicKey: ethWalletPublicKey
+            publicKey: apiKey.child_keys[BIP44.ETH].public_key
           }
         case 'btc':
           throw new Error('Not implemented')
@@ -446,7 +445,7 @@ export function addRawPresignBlockchainOrderData(
         return {
           payload: payloadAndKind.payload,
           raw: buildETHOrderSignatureData(
-            apiKey.child_keys[BIP44.ETH].public_address,
+            apiKey.child_keys[BIP44.ETH].address,
             config.marketData,
             payloadAndKind,
             chainNoncePair
