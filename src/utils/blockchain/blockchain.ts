@@ -11,6 +11,13 @@ export const ellipticContext = new EC.ec('secp256k1')
 
 const BN = BigNumber.clone({ DECIMAL_PLACES: 16, ROUNDING_MODE: BigNumber.ROUND_FLOOR })
 
+const bigNumberFormat = {
+  decimalSeparator: '.',
+  groupSeparator: '',
+  groupSize: 50,
+  prefix: ''
+}
+
 // infers the blockchain specific data we need for the given payload. Some payloads
 // have different fields, hence need different approach to retrieve the data we need.
 export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainData {
@@ -90,7 +97,7 @@ export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice:
   } else if (limitPrice.currency_b === assetFrom) {
     const amount = new BN(limitPrice.amount)
     const reciprocal = new BN(1).div(amount)
-    return reciprocal.toFormat(8)
+    return reciprocal.toFormat(8, bigNumberFormat)
   }
 
   throw Error(
