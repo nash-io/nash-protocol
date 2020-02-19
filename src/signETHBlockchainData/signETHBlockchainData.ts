@@ -4,7 +4,7 @@ import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } from '../payload'
 import { computePresig } from '../mpc/computePresig'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
-import { Config, BIP44, APIKey, PresignConfig, BlockchainSignature, ChainNoncePair } from '../types'
+import { Config, Blockchain, BIP44, BlockchainSignature, APIKey, PresignConfig, ChainNoncePair } from '../types'
 import createKeccakHash from 'keccak'
 
 const createHashedMessage = (data: string): Buffer => {
@@ -41,13 +41,6 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
   }
 }
 
-const addLeadingZero = (str: string): string => {
-  if (str.length % 2 === 0) {
-    return str
-  }
-  return '0' + str
-}
-
 export async function presignETHBlockchainData(
   apiKey: APIKey,
   config: PresignConfig,
@@ -60,16 +53,17 @@ export async function presignETHBlockchainData(
     apiKey: {
       client_secret_share: ethChildKey.client_secret_share,
       paillier_pk: apiKey.paillier_pk,
+      public_key: ethChildKey.public_key,
       server_secret_share_encrypted: ethChildKey.server_secret_share_encrypted
     },
-    curve: 'Secp256k1',
+    blockchain: Blockchain.ETH,
     fillPoolFn: config.fillPoolFn,
     messageHash: finalHash
   })
   return {
     blockchain: 'ETH',
-    r: addLeadingZero(r),
-    signature: addLeadingZero(presig)
+    r,
+    signature: presig
   }
 }
 
@@ -102,7 +96,7 @@ export function buildETHOrderSignatureData(
   buffer.writeString(convertEthNonce(chainNoncePair.nonceTo))
 
   // normalize + to big endian
-  const amount = normalizeAmount(blockchainData.amount, -Math.log10(amountPrecision))
+  const amount = normalizeAmount(blockchainData.amount, amountPrecision)
   buffer.writeString(toBigEndianHex(amount))
 
   let orderRate: string = maxOrderRate

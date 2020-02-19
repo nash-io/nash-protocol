@@ -1,10 +1,22 @@
 import { EllipticCurvePoint } from './EllipticCurvePoint'
 
+export enum Blockchain {
+  BTC = 'BTC',
+  ETH = 'ETH',
+  NEO = 'NEO'
+}
+
 /**
  * Secp256k1 for BTC, ETH
  * Secp256r1 for NEO
  */
 export type Curve = 'Secp256k1' | 'Secp256r1'
+
+export const BlockchainCurve: Record<Blockchain, Curve> = {
+  [Blockchain.BTC]: 'Secp256k1',
+  [Blockchain.ETH]: 'Secp256k1',
+  [Blockchain.NEO]: 'Secp256r1'
+}
 
 export interface PallierPK {
   n: string
@@ -18,19 +30,20 @@ export interface Proof {
 }
 
 export type FillPoolFn = (
-  arg: { curve: Curve; client_dh_publics: EllipticCurvePoint[] }
+  arg: { blockchain: Blockchain; client_dh_publics: EllipticCurvePoint[] }
 ) => Promise<EllipticCurvePoint[]>
 export type GenerateProofFn = (arg: {}) => Promise<Proof>
+
 export interface ComputePresigParams {
   apiKey: SignKey
-  curve: Curve
+  blockchain: Blockchain
   fillPoolFn: FillPoolFn
   messageHash: string
 }
 
 export interface FillRPoolParams {
   fillPoolFn: FillPoolFn
-  curve: Curve
+  blockchain: Blockchain
 }
 
 export interface CreatePallierPKParams {
@@ -40,6 +53,7 @@ export interface CreatePallierPKParams {
 export interface SignKey {
   client_secret_share: string
   paillier_pk: PallierPK
+  public_key: string
   server_secret_share_encrypted: string
 }
 
@@ -52,7 +66,6 @@ export interface CreateApiKeyParams {
   secret: string
   curve: Curve
   generateProofFn: GenerateProofFn
-  fillPoolFn: FillPoolFn
 }
 
 export interface GenerateApiKeysParams {
@@ -60,7 +73,6 @@ export interface GenerateApiKeysParams {
   secret: string
   net: string
   generateProofFn: GenerateProofFn
-  fillPoolFn: FillPoolFn
 }
 
 export interface Presignature {

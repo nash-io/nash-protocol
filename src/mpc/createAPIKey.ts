@@ -1,16 +1,9 @@
-import { fillRPoolIfNeeded } from './fillRPool'
 import { CreateApiKeyParams, SignKey } from '../types/MPC'
 
 // Do we need to cache this key?
 const paillierPKs = new Map<string, Promise<string>>()
 
-export async function createAPIKey({
-  curve,
-  secret,
-  fillPoolFn,
-  generateProofFn
-}: CreateApiKeyParams): Promise<SignKey> {
-  await fillRPoolIfNeeded({ fillPoolFn, curve })
+export async function createAPIKey({ curve, secret, generateProofFn }: CreateApiKeyParams): Promise<SignKey> {
   const MPCWallet = await import('../wasm')
   let apikeycreator = ''
 

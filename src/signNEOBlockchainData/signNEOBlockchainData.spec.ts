@@ -22,7 +22,12 @@ test('sign NEO deposit movement', async () => {
 
   const signingPayload = { kind: SigningPayloadID.addMovementPayload, payload }
 
-  const rawData = buildNEOMovementSignatureData(config, signingPayload).toUpperCase()
+  const rawData = buildNEOMovementSignatureData(
+    config.wallets.neo.address,
+    config.wallets.neo.publicKey,
+    config.assetData,
+    signingPayload
+  ).toUpperCase()
   expect(rawData).toBe(data.raw.neo)
   const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
   expect(sig.blockchain).toBe('NEO')
@@ -58,7 +63,12 @@ test('sign GAS withdrawal movement', async () => {
 
   const signingPayload = { kind: SigningPayloadID.addMovementPayload, payload }
 
-  const rawData = buildNEOMovementSignatureData(config, signingPayload).toUpperCase()
+  const rawData = buildNEOMovementSignatureData(
+    config.wallets.neo.address,
+    config.wallets.neo.publicKey,
+    config.assetData,
+    signingPayload
+  ).toUpperCase()
   expect(rawData).toBe(data.raw.neo)
   const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
   expect(sig.blockchain).toBe('NEO')
@@ -95,11 +105,18 @@ test('sign NEO_GAS blockchain market order data', async () => {
 
   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
 
-  const rawData = buildNEOOrderSignatureData(config, signingPayload, {
-    chain: 'neo',
-    nonceFrom: data.nonceFrom,
-    nonceTo: data.nonceTo
-  }).toUpperCase()
+  const rawData = buildNEOOrderSignatureData(
+    config.wallets.neo.address,
+    config.wallets.neo.publicKey,
+    config.assetData,
+    config.marketData,
+    signingPayload,
+    {
+      chain: 'neo',
+      nonceFrom: data.nonceFrom,
+      nonceTo: data.nonceTo
+    }
+  ).toUpperCase()
   expect(rawData).toBe(data.raw.neo)
   const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
   expect(sig.blockchain).toBe('NEO')

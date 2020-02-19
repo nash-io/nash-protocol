@@ -135,11 +135,18 @@ test('sign ETH/NEO blockchain market order data', async () => {
     nonceFrom: data.nonceFrom,
     nonceTo: data.nonceTo
   }).toUpperCase()
-  const rawDataNeo = buildNEOOrderSignatureData(config, signingPayload, {
-    chain: 'neo',
-    nonceFrom: data.nonceFrom,
-    nonceTo: data.nonceTo
-  }).toUpperCase()
+  const rawDataNeo = buildNEOOrderSignatureData(
+    config.wallets.neo.address,
+    config.wallets.neo.publicKey,
+    config.assetData,
+    config.marketData,
+    signingPayload,
+    {
+      chain: 'neo',
+      nonceFrom: data.nonceFrom,
+      nonceTo: data.nonceTo
+    }
+  ).toUpperCase()
   expect(rawDataEth).toBe(data.raw.eth)
   expect(rawDataNeo).toBe(data.raw.neo)
 
@@ -184,11 +191,18 @@ test('sign ETH_GAS blockchain limit order data', async () => {
     nonceFrom: data.nonceFrom,
     nonceTo: data.nonceTo
   }).toUpperCase()
-  const rawDataNeo = buildNEOOrderSignatureData(config, signingPayload, {
-    chain: 'neo',
-    nonceFrom: data.nonceFrom,
-    nonceTo: data.nonceTo
-  }).toUpperCase()
+  const rawDataNeo = buildNEOOrderSignatureData(
+    config.wallets.neo.address,
+    config.wallets.neo.publicKey,
+    config.assetData,
+    config.marketData,
+    signingPayload,
+    {
+      chain: 'neo',
+      nonceFrom: data.nonceFrom,
+      nonceTo: data.nonceTo
+    }
+  ).toUpperCase()
   expect(rawDataEth).toBe(data.raw.eth)
   expect(rawDataNeo).toBe(data.raw.neo)
 
