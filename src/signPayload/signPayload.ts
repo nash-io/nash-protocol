@@ -364,7 +364,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
         )
         return [signNEOBlockchainData(config.wallets.neo.privateKey, neoData)]
       case 'eth':
-        const ethData = buildETHMovementSignatureData(config.wallets.eth.publicKey, payloadAndKind)
+        const ethData = buildETHMovementSignatureData(config.wallets.eth.address, payloadAndKind)
         return [signETHBlockchainData(config.wallets.eth.privateKey, ethData)]
       case 'btc':
         return []
