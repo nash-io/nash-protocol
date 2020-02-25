@@ -10,7 +10,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "copy:wasm": "cp -r src/wasm build/main && cp -r wasm-webpack build/module/wasm",
+    "copy:wasm": "cp -r build/main/native build/main/wasm && cp src/native/index_osx.node build/main/wasm  && cp -r wasm-webpack build/module/wasm",
     "build": "yarn clean && yarn build:main && yarn build:module && yarn copy:wasm",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",

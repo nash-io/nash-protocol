@@ -28,7 +28,6 @@ const createHashedMessage = (data: string): Buffer => {
 export function signETHBlockchainData(privateKey: string, data: string): BlockchainSignature {
   const kp = ellipticContext.keyFromPrivate(privateKey)
   const finalHash = createHashedMessage(data)
-
   const sig = kp.sign(finalHash)
   const v = sig.recoveryParam === 0 ? '00' : '01'
   const r = sig.r.toString('hex', 64)
