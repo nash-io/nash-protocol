@@ -1,4 +1,5 @@
 /* tslint:disable */
+/* eslint-disable */
 /**
 * @param {number} n 
 * @param {string} curve_str 

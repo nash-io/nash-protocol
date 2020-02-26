@@ -306,47 +306,48 @@ export async function presignBlockchainData(
   }
   const blockchainData = inferBlockchainData(payloadAndKind)
   const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
-  const sigs = await Promise.all(
-    signatureNeeded.map(async chainNoncePair => {
-      switch (chainNoncePair.chain) {
-        case 'neo':
-          const neoData = buildNEOOrderSignatureData(
-            apiKey.child_keys[BIP44.NEO].address,
-            apiKey.child_keys[BIP44.NEO].public_key,
-            config.assetData,
-            config.marketData,
-            payloadAndKind,
-            chainNoncePair
-          )
-          const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
-          return {
-            ...neoSignature,
-            nonceFrom: chainNoncePair.nonceFrom,
-            nonceTo: chainNoncePair.nonceTo,
-            publicKey: apiKey.child_keys[BIP44.NEO].public_key.toLowerCase()
-          }
-        case 'eth':
-          const ethData = buildETHOrderSignatureData(
-            apiKey.child_keys[BIP44.ETH].address,
-            config.marketData,
-            payloadAndKind,
-            chainNoncePair
-          )
-          const ethSignature = await presignETHBlockchainData(apiKey, config, ethData)
-          return {
-            ...ethSignature,
-            nonceFrom: chainNoncePair.nonceFrom,
-            nonceTo: chainNoncePair.nonceTo,
-            publicKey: apiKey.child_keys[BIP44.ETH].public_key
-          }
-        case 'btc':
-          throw new Error('Not implemented')
+  const sigs: BlockchainSignature[] = []
+  for (const chainNoncePair of signatureNeeded) {
+    switch (chainNoncePair.chain) {
+      case 'neo':
+        const neoData = buildNEOOrderSignatureData(
+          apiKey.child_keys[BIP44.NEO].address,
+          apiKey.child_keys[BIP44.NEO].public_key,
+          config.assetData,
+          config.marketData,
+          payloadAndKind,
+          chainNoncePair
+        )
+        const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
+        sigs.push({
+          ...neoSignature,
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
+          publicKey: apiKey.child_keys[BIP44.NEO].public_key.toLowerCase()
+        })
+        break
+      case 'eth':
+        const ethData = buildETHOrderSignatureData(
+          apiKey.child_keys[BIP44.ETH].address,
+          config.marketData,
+          payloadAndKind,
+          chainNoncePair
+        )
+        const ethSignature = await presignETHBlockchainData(apiKey, config, ethData)
+        sigs.push({
+          ...ethSignature,
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
+          publicKey: apiKey.child_keys[BIP44.ETH].public_key
+        })
+        break
+      case 'btc':
+        throw new Error('Not implemented')
 
-        default:
-          throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
-      }
-    })
-  )
+      default:
+        throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
+    }
+  }
 
   return sigs
 }
@@ -611,20 +612,21 @@ export async function presignStateList(
   config: PresignConfig,
   items: ClientSignedState[]
 ): Promise<ClientSignedState[]> {
-  const result: ClientSignedState[] = await Promise.all(
-    items.map(async (item: ClientSignedState) => {
-      switch (item.blockchain.toLowerCase()) {
-        case 'neo':
-          item.signature = (await presignNEOBlockchainData(apiKey, config, item.message)).signature
-          return item
-        case 'eth':
-          item.signature = (await presignETHBlockchainData(apiKey, config, item.message)).signature
-          return item
-        default:
-          throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)
-      }
-    })
-  )
+  const result: ClientSignedState[] = []
+  for (const item of items) {
+    switch (item.blockchain.toLowerCase()) {
+      case 'neo':
+        item.signature = (await presignNEOBlockchainData(apiKey, config, item.message)).signature
+        result.push(item)
+        break
+      case 'eth':
+        item.signature = (await presignETHBlockchainData(apiKey, config, item.message)).signature
+        result.push(item)
+        break
+      default:
+        throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)
+    }
+  }
   return result
 }
 

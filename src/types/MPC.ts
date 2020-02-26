@@ -1,5 +1,3 @@
-import { EllipticCurvePoint } from './EllipticCurvePoint'
-
 export enum Blockchain {
   BTC = 'BTC',
   ETH = 'ETH',
@@ -29,9 +27,7 @@ export interface Proof {
   paillier_pk: PallierPK
 }
 
-export type FillPoolFn = (
-  arg: { blockchain: Blockchain; client_dh_publics: EllipticCurvePoint[] }
-) => Promise<EllipticCurvePoint[]>
+export type FillPoolFn = (arg: { blockchain: Blockchain; client_dh_publics: string[] }) => Promise<string[]>
 export type GenerateProofFn = (arg: {}) => Promise<Proof>
 
 export interface ComputePresigParams {
