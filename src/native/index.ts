@@ -11,6 +11,16 @@ const loadNodeFile = (): NodeFileInterface => {
   const platform = os.platform()
 
   switch (platform) {
+    // case 'aix':
+    // case 'android':
+    // case 'darwin':
+    // case 'freebsd':
+    // case 'linux':
+    // case 'openbsd':
+    // case 'sunos':
+    // case 'win32':
+    // case 'cygwin':
+    // case 'netbsd':
     case 'darwin':
       return require('./index_osx.node')
     default:
@@ -19,13 +29,10 @@ const loadNodeFile = (): NodeFileInterface => {
 }
 
 const MpcWallet = loadNodeFile()
-console.log('using .node')
 export function dh_init(size: string, curve: string): string {
-  console.log(size, curve)
   return MpcWallet.dh_init(parseInt(size, 10), JSON.parse(curve))
 }
 export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, curve: string): string {
-  console.log(clientDHSecrets, serverDHPublics, curve)
   return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, JSON.parse(curve))
 }
 export function get_rpool_size(curve: string): string {
