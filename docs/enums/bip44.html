@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AddMovementRequestPayload | Nash Protocol</title>
+	<title>BIP44 | Nash Protocol</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2375,11 +2375,17 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
-		<li class="current tsd-kind-interface">
-			<a href="addmovementrequestpayload.html" class="tsd-kind-icon">Add<wbr>Movement<wbr>Request<wbr>Payload</a>
+		<li class="current tsd-kind-enum">
+			<a href="bip44.html" class="tsd-kind-icon">BIP44</a>
 			<ul>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a>
+				<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+					<a href="bip44.html#btc" class="tsd-kind-icon">BTC</a>
+				</li>
+				<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+					<a href="bip44.html#eth" class="tsd-kind-icon">ETH</a>
+				</li>
+				<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+					<a href="bip44.html#neo" class="tsd-kind-icon">NEO</a>
 				</li>
 			</ul>
 		</li>
@@ -2387,36 +2393,50 @@ img {
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
-		<section class="tsd-panel tsd-hierarchy">
-			<h3>Hierarchy</h3>
-			<ul class="tsd-hierarchy">
-				<li>
-					<span class="target">AddMovementRequestPayload</span>
-				</li>
-			</ul>
-		</section>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
 					<section class="tsd-index-section ">
-						<h3>Properties</h3>
+						<h3>Enumeration members</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a></li>
+							<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="bip44.html#btc" class="tsd-kind-icon">BTC</a></li>
+							<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="bip44.html#eth" class="tsd-kind-icon">ETH</a></li>
+							<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="bip44.html#neo" class="tsd-kind-icon">NEO</a></li>
 						</ul>
 					</section>
 				</div>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
-			<h2>Properties</h2>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="resigned_orders" class="tsd-anchor"></a>
-				<h3>resigned_<wbr>orders</h3>
-				<div class="tsd-signature tsd-kind-icon">resigned_<wbr>orders<span class="tsd-signature-symbol">:</span> <a href="clientsignedstate.html" class="tsd-signature-type">ClientSignedState</a><span class="tsd-signature-symbol">[]</span></div>
+			<h2>Enumeration members</h2>
+			<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+				<a name="btc" class="tsd-anchor"></a>
+				<h3>BTC</h3>
+				<div class="tsd-signature tsd-kind-icon">BTC<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;m/44&#x27;/0&#x27;/0&#x27;/0/0&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in payload/payload.ts:44</li>
+						<li>Defined in types/MPC.ts:80</li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+				<a name="eth" class="tsd-anchor"></a>
+				<h3>ETH</h3>
+				<div class="tsd-signature tsd-kind-icon">ETH<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;m/44&#x27;/60&#x27;/0&#x27;/0/0&quot;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:81</li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+				<a name="neo" class="tsd-anchor"></a>
+				<h3>NEO</h3>
+				<div class="tsd-signature tsd-kind-icon">NEO<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;m/44&#x27;/888&#x27;/0&#x27;/0/0&quot;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:82</li>
 					</ul>
 				</aside>
 			</section>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AddMovementRequestPayload | Nash Protocol</title>
+	<title>Proof | Nash Protocol</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2376,10 +2376,13 @@ img {
 <nav class="tsd-navigation secondary">
 	<ul>
 		<li class="current tsd-kind-interface">
-			<a href="addmovementrequestpayload.html" class="tsd-kind-icon">Add<wbr>Movement<wbr>Request<wbr>Payload</a>
+			<a href="proof.html" class="tsd-kind-icon">Proof</a>
 			<ul>
 				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a>
+					<a href="proof.html#correct_key_proof" class="tsd-kind-icon">correct_<wbr>key_<wbr>proof</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="proof.html#paillier_pk" class="tsd-kind-icon">paillier_<wbr>pk</a>
 				</li>
 			</ul>
 		</li>
@@ -2391,7 +2394,7 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">AddMovementRequestPayload</span>
+					<span class="target">Proof</span>
 				</li>
 			</ul>
 		</section>
@@ -2402,7 +2405,8 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="proof.html#correct_key_proof" class="tsd-kind-icon">correct_<wbr>key_<wbr>proof</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="proof.html#paillier_pk" class="tsd-kind-icon">paillier_<wbr>pk</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2411,12 +2415,27 @@ img {
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="resigned_orders" class="tsd-anchor"></a>
-				<h3>resigned_<wbr>orders</h3>
-				<div class="tsd-signature tsd-kind-icon">resigned_<wbr>orders<span class="tsd-signature-symbol">:</span> <a href="clientsignedstate.html" class="tsd-signature-type">ClientSignedState</a><span class="tsd-signature-symbol">[]</span></div>
+				<a name="correct_key_proof" class="tsd-anchor"></a>
+				<h3>correct_<wbr>key_<wbr>proof</h3>
+				<div class="tsd-signature tsd-kind-icon">correct_<wbr>key_<wbr>proof<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in payload/payload.ts:44</li>
+						<li>Defined in types/MPC.ts:24</li>
+					</ul>
+				</aside>
+				<div class="tsd-type-declaration">
+					<h4>Type declaration</h4>
+					<ul class="tsd-parameters">
+					</ul>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="paillier_pk" class="tsd-anchor"></a>
+				<h3>paillier_<wbr>pk</h3>
+				<div class="tsd-signature tsd-kind-icon">paillier_<wbr>pk<span class="tsd-signature-symbol">:</span> <a href="pallierpk.html" class="tsd-signature-type">PallierPK</a></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:27</li>
 					</ul>
 				</aside>
 			</section>

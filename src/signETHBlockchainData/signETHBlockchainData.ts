@@ -46,7 +46,6 @@ export async function presignETHBlockchainData(
   data: string
 ): Promise<BlockchainSignature> {
   const finalHash = createHashedMessage(data).toString('hex')
-
   const ethChildKey = apiKey.child_keys[BIP44.ETH]
   const { r, presig } = await computePresig({
     apiKey: {
@@ -128,6 +127,5 @@ export function buildETHMovementSignatureData(address: string, payloadAndKind: P
   buffer.writeString(convertEthNonce(payloadAndKind.payload.nonce))
 
   buffer.writeString(address)
-
   return buffer.toString('utf8').toUpperCase()
 }

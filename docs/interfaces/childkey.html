@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AddMovementRequestPayload | Nash Protocol</title>
+	<title>ChildKey | Nash Protocol</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2376,10 +2376,19 @@ img {
 <nav class="tsd-navigation secondary">
 	<ul>
 		<li class="current tsd-kind-interface">
-			<a href="addmovementrequestpayload.html" class="tsd-kind-icon">Add<wbr>Movement<wbr>Request<wbr>Payload</a>
+			<a href="childkey.html" class="tsd-kind-icon">Child<wbr>Key</a>
 			<ul>
 				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a>
+					<a href="childkey.html#address" class="tsd-kind-icon">address</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="childkey.html#client_secret_share" class="tsd-kind-icon">client_<wbr>secret_<wbr>share</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="childkey.html#public_key" class="tsd-kind-icon">public_<wbr>key</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="childkey.html#server_secret_share_encrypted" class="tsd-kind-icon">server_<wbr>secret_<wbr>share_<wbr>encrypted</a>
 				</li>
 			</ul>
 		</li>
@@ -2391,7 +2400,7 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">AddMovementRequestPayload</span>
+					<span class="target">ChildKey</span>
 				</li>
 			</ul>
 		</section>
@@ -2402,7 +2411,10 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="childkey.html#address" class="tsd-kind-icon">address</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="childkey.html#client_secret_share" class="tsd-kind-icon">client_<wbr>secret_<wbr>share</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="childkey.html#public_key" class="tsd-kind-icon">public_<wbr>key</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="childkey.html#server_secret_share_encrypted" class="tsd-kind-icon">server_<wbr>secret_<wbr>share_<wbr>encrypted</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2411,12 +2423,42 @@ img {
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="resigned_orders" class="tsd-anchor"></a>
-				<h3>resigned_<wbr>orders</h3>
-				<div class="tsd-signature tsd-kind-icon">resigned_<wbr>orders<span class="tsd-signature-symbol">:</span> <a href="clientsignedstate.html" class="tsd-signature-type">ClientSignedState</a><span class="tsd-signature-symbol">[]</span></div>
+				<a name="address" class="tsd-anchor"></a>
+				<h3>address</h3>
+				<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in payload/payload.ts:44</li>
+						<li>Defined in types/MPC.ts:87</li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="client_secret_share" class="tsd-anchor"></a>
+				<h3>client_<wbr>secret_<wbr>share</h3>
+				<div class="tsd-signature tsd-kind-icon">client_<wbr>secret_<wbr>share<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:86</li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="public_key" class="tsd-anchor"></a>
+				<h3>public_<wbr>key</h3>
+				<div class="tsd-signature tsd-kind-icon">public_<wbr>key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:88</li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="server_secret_share_encrypted" class="tsd-anchor"></a>
+				<h3>server_<wbr>secret_<wbr>share_<wbr>encrypted</h3>
+				<div class="tsd-signature tsd-kind-icon">server_<wbr>secret_<wbr>share_<wbr>encrypted<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:89</li>
 					</ul>
 				</aside>
 			</section>
