@@ -77,6 +77,7 @@ export function getBlockchainMovement(
         asset: getNEOAssetHash(assets[unit]),
         nonce: toLittleEndianHex(payload.nonce),
         prefix,
+        r: payload.blockchainSignatures[0].r,
         userPubKey: wallets.neo.publicKey,
         userSig: payload.blockchainSignatures[0].signature
       }
@@ -88,6 +89,7 @@ export function getBlockchainMovement(
         asset: getETHAssetID(unit),
         nonce: convertEthNonce(payload.nonce),
         prefix,
+        r: payload.blockchainSignatures[0].r,
         userPubKey: wallets.eth.address,
         userSig: payload.blockchainSignatures[0].signature
       }

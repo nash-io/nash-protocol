@@ -72,4 +72,5 @@ export interface BlockchainMovement {
   nonce: string
   userPubKey: string
   userSig?: string
+  r?: string
 }

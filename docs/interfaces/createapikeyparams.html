@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AddMovementRequestPayload | Nash Protocol</title>
+	<title>CreateApiKeyParams | Nash Protocol</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2376,10 +2376,16 @@ img {
 <nav class="tsd-navigation secondary">
 	<ul>
 		<li class="current tsd-kind-interface">
-			<a href="addmovementrequestpayload.html" class="tsd-kind-icon">Add<wbr>Movement<wbr>Request<wbr>Payload</a>
+			<a href="createapikeyparams.html" class="tsd-kind-icon">Create<wbr>Api<wbr>Key<wbr>Params</a>
 			<ul>
 				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a>
+					<a href="createapikeyparams.html#curve" class="tsd-kind-icon">curve</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="createapikeyparams.html#generateprooffn" class="tsd-kind-icon">generate<wbr>Proof<wbr>Fn</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="createapikeyparams.html#secret" class="tsd-kind-icon">secret</a>
 				</li>
 			</ul>
 		</li>
@@ -2391,7 +2397,7 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">AddMovementRequestPayload</span>
+					<span class="target">CreateApiKeyParams</span>
 				</li>
 			</ul>
 		</section>
@@ -2402,7 +2408,9 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="addmovementrequestpayload.html#resigned_orders" class="tsd-kind-icon">resigned_<wbr>orders</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="createapikeyparams.html#curve" class="tsd-kind-icon">curve</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="createapikeyparams.html#generateprooffn" class="tsd-kind-icon">generate<wbr>Proof<wbr>Fn</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="createapikeyparams.html#secret" class="tsd-kind-icon">secret</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2411,12 +2419,32 @@ img {
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="resigned_orders" class="tsd-anchor"></a>
-				<h3>resigned_<wbr>orders</h3>
-				<div class="tsd-signature tsd-kind-icon">resigned_<wbr>orders<span class="tsd-signature-symbol">:</span> <a href="clientsignedstate.html" class="tsd-signature-type">ClientSignedState</a><span class="tsd-signature-symbol">[]</span></div>
+				<a name="curve" class="tsd-anchor"></a>
+				<h3>curve</h3>
+				<div class="tsd-signature tsd-kind-icon">curve<span class="tsd-signature-symbol">:</span> <a href="../index.html#curve" class="tsd-signature-type">Curve</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in payload/payload.ts:44</li>
+						<li>Defined in types/MPC.ts:63</li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="generateprooffn" class="tsd-anchor"></a>
+				<h3>generate<wbr>Proof<wbr>Fn</h3>
+				<div class="tsd-signature tsd-kind-icon">generate<wbr>Proof<wbr>Fn<span class="tsd-signature-symbol">:</span> <a href="../index.html#generateprooffn" class="tsd-signature-type">GenerateProofFn</a></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:64</li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="secret" class="tsd-anchor"></a>
+				<h3>secret</h3>
+				<div class="tsd-signature tsd-kind-icon">secret<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in types/MPC.ts:62</li>
 					</ul>
 				</aside>
 			</section>

@@ -250,6 +250,7 @@ export async function preSignPayload(
     delete (payload as any).blockchainSignatures
     return {
       blockchainMovement: movement,
+      blockchainRaw: buildMovementSignatureData(apiKey, config, { payload, kind }),
       canonicalString: message,
       payload,
       signature: stringify(bufferize(sig.toDER())).toLowerCase()
@@ -265,6 +266,26 @@ export async function preSignPayload(
     canonicalString: message,
     payload,
     signature: stringify(bufferize(sig.toDER()))
+  }
+}
+
+function buildMovementSignatureData(apiKey: APIKey, config: PresignConfig, payloadAndKind: PayloadAndKind): string {
+  const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
+  switch (blockchain) {
+    case 'neo':
+      const neoData = buildNEOMovementSignatureData(
+        apiKey.child_keys[BIP44.NEO].address,
+        apiKey.child_keys[BIP44.NEO].public_key,
+        config.assetData,
+        payloadAndKind
+      )
+      return neoData
+    case 'eth':
+      const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
+      return ethData
+    case 'btc':
+    default:
+      throw new Error('Not implemented')
   }
 }
 
@@ -615,12 +636,16 @@ export async function presignStateList(
   const result: ClientSignedState[] = []
   for (const item of items) {
     switch (item.blockchain.toLowerCase()) {
-      case 'neo':
-        item.signature = (await presignNEOBlockchainData(apiKey, config, item.message)).signature
+      case 'eth':
+        const neoSig = await presignETHBlockchainData(apiKey, config, item.message)
+        item.signature = neoSig.signature
+        item.r = neoSig.r
         result.push(item)
         break
-      case 'eth':
-        item.signature = (await presignETHBlockchainData(apiKey, config, item.message)).signature
+      case 'neo':
+        const ethSig = await presignNEOBlockchainData(apiKey, config, item.message)
+        item.signature = ethSig.signature
+        item.r = ethSig.r
         result.push(item)
         break
       default:
