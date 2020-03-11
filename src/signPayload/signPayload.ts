@@ -153,7 +153,7 @@ export default function signPayload(
       throw new Error('blockchain movement needs a Config object')
     }
 
-    ;(payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
+    ; (payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
       config as Config,
       payload as AddMovementPayload
     )
@@ -227,7 +227,7 @@ export async function preSignPayload(
     if (config == null) {
       throw new Error('blockchain movement needs a Config object')
     }
-    ;(payload as AddMovementRequestPayload).resigned_orders = await presignRecycledOrdersForAddMovement(
+    ; (payload as AddMovementRequestPayload).resigned_orders = await presignRecycledOrdersForAddMovement(
       apiKey,
       config,
       payload as AddMovementPayload
@@ -258,7 +258,7 @@ export async function preSignPayload(
   }
 
   if (isStateSigning(kind)) {
-    payload = await presignRecycledOrdersForAddMovement(apiKey, config, payload)
+    payload = await preSignStateListAndRecycledOrders(apiKey, config, payload)
   }
 
   return {
@@ -604,6 +604,19 @@ export function presignRecycledOrdersForAddMovement(
     return presignStateList(apiKey, config, payload.recycled_orders as ClientSignedState[])
   }
   return Promise.resolve([])
+}
+
+export async function preSignStateListAndRecycledOrders(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payload: any
+): Promise<SignStatesRequestPayload> {
+  return {
+    client_signed_states: await presignStateList(apiKey, config, payload.states as ClientSignedState[]),
+    signed_recycled_orders: await presignStateList(apiKey, config, payload.recycled_orders as ClientSignedState[]),
+    timestamp: payload.timestamp
+  }
+
 }
 
 /*
