@@ -154,8 +154,17 @@ export default function signPayload(
     const addMovementPayloadRequest = { ...payload }
     addMovementPayloadRequest.resigned_orders = signRecycledOrdersForAddMovement(config, addMovementPayload)
     addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(config, payload)
-    const movement = getBlockchainMovement(config, { kind, payload })
+    const movement = getBlockchainMovement(
+      {
+        eth: config.wallets.eth,
+        neo: config.wallets.neo
+      },
+      config.assetData,
+      { kind, payload },
+      { kind, payload }
+    )
     delete (addMovementPayloadRequest as any).blockchainSignatures
+
     return {
       blockchainMovement: movement,
       canonicalString: message,
@@ -247,7 +256,7 @@ export async function preSignPayload(
   }
 
   if (isStateSigning(kind)) {
-    payload = await presignRecycledOrdersForAddMovement(apiKey, config, payload)
+    payload = await preSignStateListAndRecycledOrders(apiKey, config, payload)
   }
 
   return {
@@ -591,6 +600,18 @@ export function presignRecycledOrdersForAddMovement(
     return presignStateList(apiKey, config, payload.recycled_orders as ClientSignedState[])
   }
   return Promise.resolve([])
+}
+
+export async function preSignStateListAndRecycledOrders(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payload: any
+): Promise<SignStatesRequestPayload> {
+  return {
+    client_signed_states: await presignStateList(apiKey, config, payload.states as ClientSignedState[]),
+    signed_recycled_orders: await presignStateList(apiKey, config, payload.recycled_orders as ClientSignedState[]),
+    timestamp: payload.timestamp
+  }
 }
 
 /*
