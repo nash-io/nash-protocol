@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [3.1.1](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v3.0.30...v3.1.1) (2020-02-13)
 
+### [0.3.1](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v3.0.32...v0.3.1) (2020-03-13)
+
 ### [0.2.3](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v0.2.1...v0.2.3) (2020-03-02)
 
 ### [0.2.1](https://gitlab.com/nash-io/frontend/nash-protocol/compare/v3.0.32...v0.2.1) (2020-03-02)
