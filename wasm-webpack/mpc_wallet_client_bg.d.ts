@@ -19,6 +19,9 @@ export function compute_presig(a: number, b: number, c: number, d: number, e: nu
 export function verify(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number): void;
 export function rustsecp256k1_v0_1_1_ec_pubkey_combine(a: number, b: number, c: number, d: number): number;
 export function publickey_from_secretkey(a: number, b: number, c: number, d: number, e: number): void;
+export function sign(a: number, b: number, c: number, d: number, e: number): void;
+export function rustsecp256k1_v0_1_1_ecdsa_sign(a: number, b: number, c: number, d: number, e: number, f: number): number;
+export function rustsecp256k1_v0_1_1_ecdsa_signature_serialize_compact(a: number, b: number, c: number): number;
 export function rustsecp256k1_v0_1_1_context_create(a: number): number;
 export function rustsecp256k1_v0_1_1_context_destroy(a: number): void;
 export function rustsecp256k1_v0_1_1_default_illegal_callback_fn(a: number, b: number): void;
@@ -30,10 +33,8 @@ export function rustsecp256k1_v0_1_1_context_set_error_callback(a: number, b: nu
 export function rustsecp256k1_v0_1_1_ecdsa_signature_parse_der(a: number, b: number, c: number, d: number): number;
 export function rustsecp256k1_v0_1_1_ecdsa_signature_parse_compact(a: number, b: number, c: number): number;
 export function rustsecp256k1_v0_1_1_ecdsa_signature_serialize_der(a: number, b: number, c: number, d: number): number;
-export function rustsecp256k1_v0_1_1_ecdsa_signature_serialize_compact(a: number, b: number, c: number): number;
 export function rustsecp256k1_v0_1_1_ecdsa_signature_normalize(a: number, b: number, c: number): number;
 export function rustsecp256k1_v0_1_1_ecdsa_verify(a: number, b: number, c: number, d: number): number;
-export function rustsecp256k1_v0_1_1_ecdsa_sign(a: number, b: number, c: number, d: number, e: number, f: number): number;
 export function rustsecp256k1_v0_1_1_ec_pubkey_create(a: number, b: number, c: number): number;
 export function rustsecp256k1_v0_1_1_ec_privkey_negate(a: number, b: number): number;
 export function rustsecp256k1_v0_1_1_ec_pubkey_negate(a: number, b: number): number;

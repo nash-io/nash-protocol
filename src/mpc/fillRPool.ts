@@ -4,7 +4,7 @@ const RPOOL_SIZE = 50
 const MIN_RPOOL_SIZE = 5
 
 export async function fillRPool({ fillPoolFn, blockchain }: FillRPoolParams): Promise<void> {
-  const MPCWallet = await import('../wasm')
+  const MPCWallet = await import('../mpc-lib')
   const curveStr = JSON.stringify(BlockchainCurve[blockchain])
   const [initDHSuccess, clientDHSecrets, clientDHPublics] = JSON.parse(MPCWallet.dh_init(RPOOL_SIZE, curveStr)) as [
     boolean,
@@ -28,7 +28,7 @@ export async function fillRPool({ fillPoolFn, blockchain }: FillRPoolParams): Pr
 }
 
 export async function fillRPoolIfNeeded(fillPoolParams: FillRPoolParams): Promise<void> {
-  const MPCWallet = await import('../wasm')
+  const MPCWallet = await import('../mpc-lib')
   const curveStr = JSON.stringify(BlockchainCurve[fillPoolParams.blockchain])
   while (true) {
     const [getRPoolSizeSuccess, msgOrSize] = JSON.parse(MPCWallet.get_rpool_size(curveStr)) as [

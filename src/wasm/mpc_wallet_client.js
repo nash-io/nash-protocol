@@ -275,6 +275,26 @@ module.exports.publickey_from_secretkey = function(secret_key_str, curve_str) {
     }
 };
 
+/**
+* @param {string} secret_key_str
+* @param {string} msg_hash_str
+* @returns {string}
+*/
+module.exports.sign = function(secret_key_str, msg_hash_str) {
+    try {
+        var ptr0 = passStringToWasm0(secret_key_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(msg_hash_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.sign(8, ptr0, len0, ptr1, len1);
+        var r0 = getInt32Memory0()[8 / 4 + 0];
+        var r1 = getInt32Memory0()[8 / 4 + 1];
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_free(r0, r1);
+    }
+};
+
 function addHeapObject(obj) {
     if (heap_next === heap.length) heap.push(heap.length + 1);
     const idx = heap_next;

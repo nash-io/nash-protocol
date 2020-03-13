@@ -63,7 +63,7 @@
 //       presig: presig.presig,
 //       r: presig.r
 //     })) as { r: string; s: string }
-//     const MPCWallet = await import('../wasm')
+//     const MPCWallet = await import('../mpc-lib')
 //     const [verifyOk] = JSON.parse(
 //       MPCWallet.verify(signature.r, signature.s, JSON.stringify(publicKey), messageHash, JSON.stringify(curve))
 //     ) as [boolean, string]
