@@ -64,3 +64,9 @@ export function verify(r_str: string, s_str: string, pubkey_str: string, msg_has
 * @returns {string} 
 */
 export function publickey_from_secretkey(secret_key_str: string, curve_str: string): string;
+/**
+* @param {string} secret_key_str 
+* @param {string} msg_hash_str 
+* @returns {string} 
+*/
+export function sign(secret_key_str: string, msg_hash_str: string): string;

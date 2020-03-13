@@ -6,7 +6,7 @@ export async function computePresig(params: ComputePresigParams): Promise<Presig
     blockchain: params.blockchain,
     fillPoolFn: params.fillPoolFn
   })
-  const MPCWallet = await import('../wasm')
+  const MPCWallet = await import('../mpc-lib')
   const [comutePresigOk, presigOrErrorMessage, r] = JSON.parse(
     MPCWallet.compute_presig(
       JSON.stringify(params.apiKey),

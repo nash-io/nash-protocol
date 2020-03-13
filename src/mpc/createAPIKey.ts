@@ -4,7 +4,7 @@ import { CreateApiKeyParams, SignKey } from '../types/MPC'
 const paillierPKs = new Map<string, Promise<string>>()
 
 export async function createAPIKey({ curve, secret, generateProofFn }: CreateApiKeyParams): Promise<SignKey> {
-  const MPCWallet = await import('../wasm')
+  const MPCWallet = await import('../mpc-lib')
   let apikeycreator = ''
 
   // paillier key not verified yet.
