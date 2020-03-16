@@ -1,12 +1,12 @@
 {
-  "name": "mpc-wallet-client",
-  "version": "0.5.0",
+  "name": "mpc-wallet-wasm",
+  "version": "1.0.0",
   "files": [
-    "mpc_wallet_client_bg.wasm",
-    "mpc_wallet_client.js",
-    "mpc_wallet_client_bg.js",
-    "mpc_wallet_client.d.ts"
+    "mpc_wallet_wasm_bg.wasm",
+    "mpc_wallet_wasm.js",
+    "mpc_wallet_wasm_bg.js",
+    "mpc_wallet_wasm.d.ts"
   ],
-  "main": "mpc_wallet_client.js",
-  "types": "mpc_wallet_client.d.ts"
+  "main": "mpc_wallet_wasm.js",
+  "types": "mpc_wallet_wasm.d.ts"
 }
