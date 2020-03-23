@@ -160,7 +160,6 @@ export default function signPayload(
         neo: config.wallets.neo
       },
       config.assetData,
-      { kind, payload },
       { kind, payload }
     )
     delete (addMovementPayloadRequest as any).blockchainSignatures

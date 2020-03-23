@@ -1,1 +1,1 @@
-export { buildBTCMovementSignatureData, buildBTCOrderSignatureData, preSignBTC, signBTC } from './signBTCBlockchainData'
+export { preSignBTC, signBTC } from './signBTCBlockchainData'
