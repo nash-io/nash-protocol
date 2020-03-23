@@ -1,6 +1,4 @@
 import { PayloadAndKind } from '../payload'
-import * as Bitcoin from 'bitcoinjs-lib'
-import { BlockchainSignature } from '../types'
 import { ellipticContext } from '../utils/blockchain'
 import { computePresig } from '../mpc/computePresig'
 import { Config, Blockchain, BIP44, APIKey, PresignConfig, ChainNoncePair } from '../types'
@@ -25,32 +23,10 @@ export function signBTC(privateKey: string, message: string): BlockchainSignatur
   }
 }
 
-export function preSignBTCMessage(apiKey: APIKey, config: PresignConfig, data: string): Promise<BlockchainSignature> {
-  // the message prefix is hex version of "\x18Bitcoin Signed Message:\n"
-  const prefix = '18426974636f696e205369676e6564204d6573736167653a0a'
-
-  const dataLength = encodeVariableInteger(data.length)
-  const payload = prefix + dataLength + Buffer.from(data).toString('hex')
-
-  const btcHash = Bitcoin.crypto.hash256(Buffer.from(payload, 'hex'))
-
-  return preSignBTC(apiKey, config, btcHash, true)
-}
-
-export function preSignBTCBlockchainData(
-  apiKey: APIKey,
-  config: PresignConfig,
-  data: string
-): Promise<BlockchainSignature> {
-  const hash = Bitcoin.crypto.hash160(Buffer.from(data))
-
-  return preSignBTC(apiKey, config, hash, false)
-}
-
 export async function preSignBTC(
   apiKey: APIKey,
   config: PresignConfig,
-  data: Buffer,
+  data: string,
   toBase64: boolean = false
 ): Promise<BlockchainSignature> {
   const btcChildKey = apiKey.child_keys[BIP44.BTC]
@@ -63,7 +39,7 @@ export async function preSignBTC(
     },
     blockchain: Blockchain.BTC,
     fillPoolFn: config.fillPoolFn,
-    messageHash: data.toString('hex')
+    messageHash: data
   })
   if (toBase64) {
     return {
@@ -107,4 +83,5 @@ export function encodeVariableInteger(length: number): string {
     total.writeUInt32LE(length, 0)
     return `fe${total.toString('hex')}`
   }
+  throw new Error('Invalid length ' + length)
 }

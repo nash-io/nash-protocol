@@ -50,12 +50,7 @@ import {
   signETHBlockchainData
 } from '../signETHBlockchainData'
 
-import {
-  buildBTCOrderSignatureData,
-  buildBTCMovementSignatureData,
-  signBTC,
-  preSignBTC
-} from '../signBTCBlockchainData'
+import { signBTC, preSignBTC } from '../signBTCBlockchainData'
 
 const curve = new EC('secp256k1')
 
@@ -154,13 +149,13 @@ export default function signPayload(
     if (config === undefined) {
       throw new Error('blockchain movement needs a Config object')
     }
-
     const addMovementPayload = payload as AddMovementPayload
     const addMovementPayloadRequest = { ...payload }
     addMovementPayloadRequest.resigned_orders = signRecycledOrdersForAddMovement(config, addMovementPayload)
     addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(config, payload)
     const movement = getBlockchainMovement(
       {
+        btc: config.wallets.btc,
         eth: config.wallets.eth,
         neo: config.wallets.neo
       },
@@ -246,6 +241,10 @@ export async function preSignPayload(
 
     const movement = getBlockchainMovement(
       {
+        btc: {
+          address: apiKey.child_keys[BIP44.BTC].address,
+          publicKey: apiKey.child_keys[BIP44.BTC].public_key
+        },
         eth: {
           address: apiKey.child_keys[BIP44.ETH].address,
           publicKey: apiKey.child_keys[BIP44.ETH].public_key
@@ -258,12 +257,13 @@ export async function preSignPayload(
       config.assetData,
       { kind, payload }
     )
-    delete (payload as any).blockchainSignatures
+    delete addMovementPayloadRequest.blockchainSignatures
+
     return {
       blockchainMovement: movement,
       blockchainRaw: buildMovementSignatureData(apiKey, config, { payload, kind }),
       canonicalString: message,
-      payload,
+      payload: addMovementPayloadRequest,
       signature: stringify(bufferize(sig.toDER())).toLowerCase()
     }
   }
@@ -295,6 +295,7 @@ function buildMovementSignatureData(apiKey: APIKey, config: PresignConfig, paylo
       const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
       return ethData
     case 'btc':
+      return ''
     default:
       throw new Error('Not implemented')
   }
@@ -333,7 +334,9 @@ export async function presignBlockchainData(
         const ethSig = await presignETHBlockchainData(apiKey, config, ethData)
         return [ethSig]
       case 'btc':
-        throw new Error('Not implemented')
+        return []
+      default:
+        throw new Error('Unsupported blockchain')
     }
   }
   const blockchainData = inferBlockchainData(payloadAndKind)
@@ -374,7 +377,14 @@ export async function presignBlockchainData(
         })
         break
       case 'btc':
-        throw new Error('Not implemented')
+        sigs.push({
+          blockchain: 'BTC',
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
+          publicKey: apiKey.child_keys[BIP44.BTC].public_key.toLowerCase(),
+          signature: ''
+        })
+        break
 
       default:
         throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
@@ -656,7 +666,7 @@ export async function presignTransactionDigestsForAddMovement(
   for (const item of payload.digests) {
     const sig = await preSignBTC(apiKey, config, item.digest)
     result.push({
-      blockchain: 'btc',
+      blockchain: 'BTC',
       message: item.digest,
       r: sig.r,
       signature: sig.signature

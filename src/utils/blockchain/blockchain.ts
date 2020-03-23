@@ -60,6 +60,10 @@ export function getBlockchainMovement(
       publicKey: string
       address: string
     }
+    btc: {
+      publicKey: string
+      address: string
+    }
   },
   assets: Config['assetData'],
   payloadAndKind: PayloadAndKind
@@ -95,12 +99,12 @@ export function getBlockchainMovement(
       }
     case 'btc':
       return {
-        address: config.wallets.btc.address,
+        address: wallets.btc.address,
         amount: bnAmount.toFixed(0),
         asset: '00',
         nonce: convertEthNonce(payload.nonce),
         prefix,
-        userPubKey: config.wallets.btc.address,
+        userPubKey: wallets.btc.address,
         userSig: ''
       }
     default:
