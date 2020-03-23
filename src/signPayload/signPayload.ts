@@ -25,8 +25,8 @@ import {
   ClientSignedState,
   SignStatesRequestPayload,
   AddMovementPayload,
-  AddMovementRequestPayload,
-  BuyOrSellBuy
+  BuyOrSellBuy,
+  TransactionDigest
 } from '../payload'
 import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
 import {
@@ -40,11 +40,7 @@ import {
   signETHBlockchainData
 } from '../signETHBlockchainData'
 
-import {
-  signBTCBlockchainData,
-  buildBTCOrderSignatureData,
-  buildBTCMovementSignatureData
-} from '../signBTCBlockchainData'
+import { signBTC } from '../signBTCBlockchainData/signBTCBlockchainData'
 
 const curve = new EC('secp256k1')
 
@@ -79,6 +75,7 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
     case SigningPayloadID.addMovementPayload:
       const newPayload: AddMovementPayload = { ...payload }
       delete newPayload.recycled_orders
+      delete newPayload.digests
       return canonicalString(newPayload)
     case SigningPayloadID.listOrderPayload:
       const newOrderPayload: any = { ...payload }
@@ -143,17 +140,16 @@ export default function signPayload(
       throw new Error('blockchain movement needs a Config object')
     }
 
-    ;(payload as AddMovementRequestPayload).resigned_orders = signRecycledOrdersForAddMovement(
-      config as Config,
-      payload as AddMovementPayload
-    )
-    delete (payload as AddMovementPayload).recycled_orders
+    const addMovementPayload = payload as AddMovementPayload
+    const addMovementPayloadRequest = { ...payload }
+    addMovementPayloadRequest.resigned_orders = signRecycledOrdersForAddMovement(config, addMovementPayload)
+    addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(config, payload)
     const movement = getBlockchainMovement(config, { kind, payload })
-    delete (payload as any).blockchainSignatures
+    delete (addMovementPayloadRequest as any).blockchainSignatures
     return {
       blockchainMovement: movement,
       canonicalString: message,
-      payload,
+      payload: addMovementPayloadRequest,
       signature: stringify(bufferize(sig.toDER())).toLowerCase()
     }
   }
@@ -192,8 +188,7 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
         const ethData = buildETHMovementSignatureData(config, payloadAndKind)
         return [signETHBlockchainData(config.wallets.eth.privateKey, ethData)]
       case 'btc':
-        const btcData = buildBTCMovementSignatureData(config, payloadAndKind)
-        return [signBTCBlockchainData(config.wallets.btc.privateKey, btcData)]
+        return []
     }
   }
 
@@ -222,13 +217,12 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
           publicKey: config.wallets.eth.publicKey.toLowerCase()
         }
       case 'btc':
-        const btcData = buildBTCOrderSignatureData(config, payloadAndKind, chainNoncePair)
-        const btcSignature = signBTCBlockchainData(config.wallets.btc.privateKey, btcData)
         return {
-          ...btcSignature,
+          blockchain: 'BTC',
           nonceFrom: chainNoncePair.nonceFrom,
           nonceTo: chainNoncePair.nonceTo,
-          publicKey: config.wallets.btc.publicKey.toLowerCase()
+          publicKey: config.wallets.btc.publicKey.toLowerCase(),
+          signature: ''
         }
 
       default:
@@ -292,7 +286,7 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
       case 'btc':
         return {
           payload: payloadAndKind.payload,
-          raw: buildBTCOrderSignatureData(config, payloadAndKind, chainNoncePair)
+          raw: ''
         }
       default:
         throw new Error(`invalid chain ${chainNoncePair.chain}`)
@@ -326,6 +320,24 @@ export function signRecycledOrdersForAddMovement(config: Config, payload: AddMov
 /*
  * @TODO Add documentation.
  */
+export function signTransactionDigestsForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
+  if (payload.digests !== undefined) {
+    const result: ClientSignedState[] = payload.digests.map((item: TransactionDigest) => {
+      const signedTransactionElement: ClientSignedState = {
+        blockchain: 'BTC',
+        message: item.digest,
+        signature: signBTC(config.wallets.btc.privateKey, item.digest).signature
+      }
+      return signedTransactionElement
+    })
+    return result
+  }
+  return []
+}
+
+/*
+ * @TODO Add documentation.
+ */
 export function signStateList(config: Config, items: ClientSignedState[]): ClientSignedState[] {
   const result: ClientSignedState[] = items.map((item: ClientSignedState) => {
     switch (item.blockchain.toLowerCase()) {
@@ -336,7 +348,7 @@ export function signStateList(config: Config, items: ClientSignedState[]): Clien
         item.signature = signETHBlockchainData(config.wallets.eth.privateKey, item.message).signature
         return item
       case 'btc':
-        item.signature = signBTCBlockchainData(config.wallets.btc.privateKey, item.message).signature
+        item.signature = signBTC(config.wallets.btc.privateKey, item.message).signature
         return item
       default:
         throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)
