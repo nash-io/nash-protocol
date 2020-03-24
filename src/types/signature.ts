@@ -1,3 +1,4 @@
+import { Presignature } from './MPC'
 /**
  * The output from payload signing for blockchain operations.
  *
@@ -6,6 +7,7 @@
 export interface BlockchainSignature {
   readonly blockchain: string
   readonly signature: string
+  readonly r?: string
   readonly publicKey?: string
   nonceTo?: number
   nonceFrom?: number
@@ -41,6 +43,24 @@ export interface PayloadSignature {
   readonly blockchainRaw?: any
 }
 
+export interface PayloadPreSignature {
+  /**
+   * The payload being signed with optional embedded blockchain signatures.
+   *
+   * At a bare minimum, a `timestamp` is required. For operations involving
+   * blockchain, a `blockchain_signatures` array is also required.
+   *
+   * @TODO Better instructions needed for how to use blockchain signatures.
+   *
+   * @property `timestamp` Current timestamp in milliseconds.
+   * @property `blockchain_signatures` An array of blockchain signatures.
+   */
+  readonly payload: Record<string, any>
+  readonly signature: Presignature
+  readonly canonicalString?: string
+  readonly blockchainRaw?: any
+}
+
 /**
  * @TODO add documentation.
  */
@@ -52,4 +72,5 @@ export interface BlockchainMovement {
   nonce: string
   userPubKey: string
   userSig?: string
+  r?: string
 }

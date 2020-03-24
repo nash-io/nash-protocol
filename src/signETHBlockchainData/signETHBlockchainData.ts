@@ -2,9 +2,23 @@ import { SmartBuffer } from 'smart-buffer'
 import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID, ellipticContext } from '../utils/blockchain'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
 import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } from '../payload'
+import { computePresig } from '../mpc/computePresig'
 import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
-import { Config, BlockchainSignature, ChainNoncePair } from '../types'
+import { Config, Blockchain, BIP44, BlockchainSignature, APIKey, PresignConfig, ChainNoncePair } from '../types'
 import createKeccakHash from 'keccak'
+
+const createHashedMessage = (data: string): Buffer => {
+  const initialHash = createKeccakHash('keccak256')
+    .update(data, 'hex')
+    .digest()
+
+  const msgPrefix = Buffer.from('19457468657265756d205369676e6564204d6573736167653a0a3332', 'hex')
+  const finalMsg = Buffer.concat([msgPrefix, initialHash])
+
+  return createKeccakHash('keccak256')
+    .update(finalMsg)
+    .digest()
+}
 
 // Signing for Ethereum needs a little more work to be done.
 // 1. Compute a KEKKAC256 hash of the data.
@@ -13,17 +27,7 @@ import createKeccakHash from 'keccak'
 // 4. Sign that hash with the private key.
 export function signETHBlockchainData(privateKey: string, data: string): BlockchainSignature {
   const kp = ellipticContext.keyFromPrivate(privateKey)
-  const initialHash = createKeccakHash('keccak256')
-    .update(data, 'hex')
-    .digest()
-
-  const msgPrefix = Buffer.from('19457468657265756d205369676e6564204d6573736167653a0a3332', 'hex')
-  const finalMsg = Buffer.concat([msgPrefix, initialHash])
-
-  const finalHash = createKeccakHash('keccak256')
-    .update(finalMsg)
-    .digest()
-
+  const finalHash = createHashedMessage(data)
   const sig = kp.sign(finalHash)
   const v = sig.recoveryParam === 0 ? '00' : '01'
   const r = sig.r.toString('hex', 64)
@@ -36,19 +40,44 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
   }
 }
 
+export async function presignETHBlockchainData(
+  apiKey: APIKey,
+  config: PresignConfig,
+  data: string
+): Promise<BlockchainSignature> {
+  const finalHash = createHashedMessage(data).toString('hex')
+  const ethChildKey = apiKey.child_keys[BIP44.ETH]
+  const { r, presig } = await computePresig({
+    apiKey: {
+      client_secret_share: ethChildKey.client_secret_share,
+      paillier_pk: apiKey.paillier_pk,
+      public_key: ethChildKey.public_key,
+      server_secret_share_encrypted: ethChildKey.server_secret_share_encrypted
+    },
+    blockchain: Blockchain.ETH,
+    fillPoolFn: config.fillPoolFn,
+    messageHash: finalHash
+  })
+  return {
+    blockchain: 'ETH',
+    r,
+    signature: presig
+  }
+}
+
 export function buildETHOrderSignatureData(
-  config: Config,
+  address: string,
+  marketData: Config['marketData'],
   payloadAndKind: PayloadAndKind,
   chainNoncePair: ChainNoncePair
 ): string {
   const { kind } = payloadAndKind
   const blockchainData = inferBlockchainData(payloadAndKind)
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-  const address = config.wallets.eth.address
 
   let assetFrom = unitA
   let assetTo = unitB
-  const amountPrecision = config.marketData[blockchainData.marketName].minTradeIncrement
+  const amountPrecision = marketData[blockchainData.marketName].minTradeIncrement
 
   if (blockchainData.buyOrSell === BuyOrSellBuy) {
     assetFrom = unitB
@@ -58,7 +87,6 @@ export function buildETHOrderSignatureData(
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind))
   buffer.writeString(address)
-
   buffer.writeString(getETHAssetID(assetFrom))
   buffer.writeString(getETHAssetID(assetTo))
 
@@ -84,9 +112,8 @@ export function buildETHOrderSignatureData(
   return buffer.toString('utf8').toUpperCase()
 }
 
-export function buildETHMovementSignatureData(config: Config, payloadAndKind: PayloadAndKind): string {
+export function buildETHMovementSignatureData(address: string, payloadAndKind: PayloadAndKind): string {
   const { unitA } = getUnitPairs(payloadAndKind.payload.quantity.currency)
-  const address = config.wallets.eth.address
 
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(payloadAndKind.kind, payloadAndKind.payload)) // prefix
@@ -100,6 +127,5 @@ export function buildETHMovementSignatureData(config: Config, payloadAndKind: Pa
   buffer.writeString(convertEthNonce(payloadAndKind.payload.nonce))
 
   buffer.writeString(address)
-
   return buffer.toString('utf8').toUpperCase()
 }

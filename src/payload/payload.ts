@@ -33,6 +33,7 @@ export interface ClientSignedState {
   blockchain: string
   message: string
   signature?: string
+  r?: string
 }
 
 export interface TransactionDigest {

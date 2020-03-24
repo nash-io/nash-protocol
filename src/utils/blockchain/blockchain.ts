@@ -50,8 +50,24 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
   }
 }
 
-export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAndKind): BlockchainMovement {
-  const assets = config.assetData
+export function getBlockchainMovement(
+  wallets: {
+    eth: {
+      publicKey: string
+      address: string
+    }
+    neo: {
+      publicKey: string
+      address: string
+    }
+    btc: {
+      publicKey: string
+      address: string
+    }
+  },
+  assets: Config['assetData'],
+  payloadAndKind: PayloadAndKind
+): BlockchainMovement {
   const { payload, kind } = payloadAndKind
   const unit = payload.quantity.currency
   const prefix = kindToOrderPrefix(kind, payload)
@@ -59,34 +75,36 @@ export function getBlockchainMovement(config: Config, payloadAndKind: PayloadAnd
 
   switch (assets[unit].blockchain) {
     case 'neo':
-      const scriptHash = getNEOScriptHash(config.wallets.neo.address)
+      const scriptHash = getNEOScriptHash(wallets.neo.address)
       return {
         address: reverseHexString(scriptHash),
         amount: toLittleEndianHex(normalizeAmount(payload.quantity.amount, 8)),
         asset: getNEOAssetHash(assets[unit]),
         nonce: toLittleEndianHex(payload.nonce),
         prefix,
-        userPubKey: config.wallets.neo.publicKey,
+        r: payload.blockchainSignatures[0].r,
+        userPubKey: wallets.neo.publicKey,
         userSig: payload.blockchainSignatures[0].signature
       }
     case 'eth':
       return {
-        address: config.wallets.eth.address,
+        address: wallets.eth.address,
         amount: bnAmount.toFixed(0),
         asset: getETHAssetID(unit),
         nonce: convertEthNonce(payload.nonce),
         prefix,
-        userPubKey: config.wallets.eth.address,
+        r: payload.blockchainSignatures[0].r,
+        userPubKey: wallets.eth.address,
         userSig: payload.blockchainSignatures[0].signature
       }
     case 'btc':
       return {
-        address: config.wallets.btc.address,
+        address: wallets.btc.address,
         amount: bnAmount.toFixed(0),
         asset: '00',
         nonce: convertEthNonce(payload.nonce),
         prefix,
-        userPubKey: config.wallets.btc.address,
+        userPubKey: wallets.btc.address,
         userSig: ''
       }
     default:

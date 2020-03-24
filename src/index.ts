@@ -5,11 +5,23 @@ export { default as getHKDFKeysFromPassword } from './getHKDFKeysFromPassword'
 export { default as getSecretKey } from './getSecretKey'
 export { default as mnemonicToMasterSeed } from './mnemonicToMasterSeed'
 export { default as mnemonicToSecretKey } from './mnemonicToSecretKey'
+export { computePresig } from './mpc/computePresig'
+export { fillRPool } from './mpc/fillRPool'
+export { fillRPoolIfNeeded } from './mpc/fillRPool'
+export { generateAPIKeys } from './mpc/generateAPIKeys'
+export { createAPIKey } from './mpc/createAPIKey'
+export { publicKeyFromSecretKey } from './mpc/publicKeyFromSecretKey'
 export { default as regenerateMnemonic } from './regenerateMnemonic'
 export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
 export { default as validateMnemonic } from './validateMnemonic'
 export { default as initialize } from './initialize'
-export { SigningPayloadID, default as signPayload, canonicalString, canonicalizePayload } from './signPayload'
+export {
+  SigningPayloadID,
+  default as signPayload,
+  canonicalString,
+  canonicalizePayload,
+  preSignPayload
+} from './signPayload'
 export * from './payload'
 
 // Internal API

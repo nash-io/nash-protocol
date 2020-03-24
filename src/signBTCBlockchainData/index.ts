@@ -1,1 +1,1 @@
-export { signBTC } from './signBTCBlockchainData'
+export { preSignBTC, signBTC } from './signBTCBlockchainData'

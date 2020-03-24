@@ -10,7 +10,7 @@ import toLower from 'lodash/fp/toLower'
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
-
+import { APIKey } from '../types/MPC'
 import {
   kindToName,
   needBlockchainMovement,
@@ -19,7 +19,15 @@ import {
   isStateSigning,
   isOrderPayload
 } from '../payload/signingPayloadID'
-import { Config, PayloadSignature, BlockchainSignature, BlockchainData, ChainNoncePair } from '../types'
+import {
+  Config,
+  BIP44,
+  PresignConfig,
+  PayloadSignature,
+  BlockchainSignature,
+  BlockchainData,
+  ChainNoncePair
+} from '../types'
 import {
   PayloadAndKind,
   ClientSignedState,
@@ -32,15 +40,17 @@ import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../uti
 import {
   buildNEOOrderSignatureData,
   buildNEOMovementSignatureData,
+  presignNEOBlockchainData,
   signNEOBlockchainData
 } from '../signNEOBlockchainData'
 import {
+  presignETHBlockchainData,
   buildETHMovementSignatureData,
   buildETHOrderSignatureData,
   signETHBlockchainData
 } from '../signETHBlockchainData'
 
-import { signBTC } from '../signBTCBlockchainData/signBTCBlockchainData'
+import { signBTC, preSignBTC } from '../signBTCBlockchainData'
 
 const curve = new EC('secp256k1')
 
@@ -118,8 +128,8 @@ export default function signPayload(
   const payloadName = kindToName(kind)
   const message = `${payloadName},${canonicalizePayload(kind, payload)}`
   const keypair = curve.keyFromPrivate(privateKey)
-
-  const sig = keypair.sign(SHA256(message).toString(hexEncoding), {
+  const canonicalStringHex = SHA256(message).toString(hexEncoding)
+  const sig = keypair.sign(canonicalStringHex, {
     canonical: true,
     pers: null
   })
@@ -139,13 +149,21 @@ export default function signPayload(
     if (config === undefined) {
       throw new Error('blockchain movement needs a Config object')
     }
-
     const addMovementPayload = payload as AddMovementPayload
     const addMovementPayloadRequest = { ...payload }
     addMovementPayloadRequest.resigned_orders = signRecycledOrdersForAddMovement(config, addMovementPayload)
     addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(config, payload)
-    const movement = getBlockchainMovement(config, { kind, payload })
+    const movement = getBlockchainMovement(
+      {
+        btc: config.wallets.btc,
+        eth: config.wallets.eth,
+        neo: config.wallets.neo
+      },
+      config.assetData,
+      { kind, payload }
+    )
     delete (addMovementPayloadRequest as any).blockchainSignatures
+
     return {
       blockchainMovement: movement,
       canonicalString: message,
@@ -167,6 +185,215 @@ export default function signPayload(
 }
 
 /**
+ * Presigns a payload using a apikey.
+ * @param  {APIKey}                    apiKey         [description]
+ * @param  {PayloadAndKind}            payloadAndKind [description]
+ * @param  {PresignConfig}             config         [description]
+ * @return {Promise<PayloadSignature>}                [description]
+ */
+export async function preSignPayload(
+  apiKey: APIKey,
+  payloadAndKind: PayloadAndKind,
+  config: PresignConfig
+): Promise<PayloadSignature> {
+  let blockchainRaw: any
+  const kind = payloadAndKind.kind
+  let payload = payloadAndKind.payload
+  const payloadName = kindToName(kind)
+  const message = `${payloadName},${canonicalizePayload(kind, payload)}`
+  const messageHash = SHA256(message).toString(hexEncoding)
+  const keypair = curve.keyFromPrivate(apiKey.payload_signing_key)
+
+  const sig = keypair.sign(messageHash, {
+    canonical: true,
+    pers: null
+  })
+
+  if (needBlockchainSignature(kind)) {
+    if (config == null) {
+      throw new Error('blockchain signatures needs a Config object')
+    }
+    payload.blockchainSignatures = await presignBlockchainData(apiKey, config, { payload, kind })
+    if (isOrderPayload(kind)) {
+      blockchainRaw = addRawPresignBlockchainOrderData(apiKey, config, { payload, kind })
+      payload = alterOrderPayloadForGraphql(payload)
+    }
+  }
+
+  if (needBlockchainMovement(kind)) {
+    if (config == null) {
+      throw new Error('blockchain movement needs a Config object')
+    }
+
+    const addMovementPayload = payload as AddMovementPayload
+    const addMovementPayloadRequest = { ...payload }
+    addMovementPayloadRequest.resigned_orders = await presignRecycledOrdersForAddMovement(
+      apiKey,
+      config,
+      addMovementPayload
+    )
+    addMovementPayloadRequest.signed_transaction_elements = await presignTransactionDigestsForAddMovement(
+      apiKey,
+      config,
+      payload
+    )
+
+    const movement = getBlockchainMovement(
+      {
+        btc: {
+          address: apiKey.child_keys[BIP44.BTC].address,
+          publicKey: apiKey.child_keys[BIP44.BTC].public_key
+        },
+        eth: {
+          address: apiKey.child_keys[BIP44.ETH].address,
+          publicKey: apiKey.child_keys[BIP44.ETH].public_key
+        },
+        neo: {
+          address: apiKey.child_keys[BIP44.NEO].address,
+          publicKey: apiKey.child_keys[BIP44.NEO].public_key
+        }
+      },
+      config.assetData,
+      { kind, payload }
+    )
+    delete addMovementPayloadRequest.blockchainSignatures
+
+    return {
+      blockchainMovement: movement,
+      blockchainRaw: buildMovementSignatureData(apiKey, config, { payload, kind }),
+      canonicalString: message,
+      payload: addMovementPayloadRequest,
+      signature: stringify(bufferize(sig.toDER())).toLowerCase()
+    }
+  }
+
+  if (isStateSigning(kind)) {
+    payload = await preSignStateListAndRecycledOrders(apiKey, config, payload)
+  }
+
+  return {
+    blockchainRaw,
+    canonicalString: message,
+    payload,
+    signature: stringify(bufferize(sig.toDER()))
+  }
+}
+
+function buildMovementSignatureData(apiKey: APIKey, config: PresignConfig, payloadAndKind: PayloadAndKind): string {
+  const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
+  switch (blockchain) {
+    case 'neo':
+      const neoData = buildNEOMovementSignatureData(
+        apiKey.child_keys[BIP44.NEO].address,
+        apiKey.child_keys[BIP44.NEO].public_key,
+        config.assetData,
+        payloadAndKind
+      )
+      return neoData
+    case 'eth':
+      const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
+      return ethData
+    case 'btc':
+      return ''
+    default:
+      throw new Error('Not implemented')
+  }
+}
+
+/**
+ * Presign blockchain data. Returns an array of signatures. Needed for operations
+ * such as order placement.
+ *
+ * If the operation occurs within the same blockchain origin, 1 signature is
+ * returned. For example, 1 signature is returned when trading NEO for GAS.
+ *
+ * If the operation is cross-chain, 2 signatures are returned. For example, two
+ * signatures are returned for a BTC-ETH trade.
+ */
+export async function presignBlockchainData(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payloadAndKind: PayloadAndKind
+): Promise<ReadonlyArray<BlockchainSignature>> {
+  // if this is a movement we don't want to do all the stuff below
+  if (payloadAndKind.kind === SigningPayloadID.addMovementPayload) {
+    const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
+    switch (blockchain) {
+      case 'neo':
+        const neoData = buildNEOMovementSignatureData(
+          apiKey.child_keys[BIP44.NEO].address,
+          apiKey.child_keys[BIP44.NEO].public_key,
+          config.assetData,
+          payloadAndKind
+        )
+        const neoSig = await presignNEOBlockchainData(apiKey, config, neoData)
+        return [neoSig]
+      case 'eth':
+        const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
+        const ethSig = await presignETHBlockchainData(apiKey, config, ethData)
+        return [ethSig]
+      case 'btc':
+        return []
+      default:
+        throw new Error('Unsupported blockchain')
+    }
+  }
+  const blockchainData = inferBlockchainData(payloadAndKind)
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
+  const sigs: BlockchainSignature[] = []
+  for (const chainNoncePair of signatureNeeded) {
+    switch (chainNoncePair.chain) {
+      case 'neo':
+        const neoData = buildNEOOrderSignatureData(
+          apiKey.child_keys[BIP44.NEO].address,
+          apiKey.child_keys[BIP44.NEO].public_key,
+          config.assetData,
+          config.marketData,
+          payloadAndKind,
+          chainNoncePair
+        )
+        const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
+        sigs.push({
+          ...neoSignature,
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
+          publicKey: apiKey.child_keys[BIP44.NEO].public_key.toLowerCase()
+        })
+        break
+      case 'eth':
+        const ethData = buildETHOrderSignatureData(
+          apiKey.child_keys[BIP44.ETH].address,
+          config.marketData,
+          payloadAndKind,
+          chainNoncePair
+        )
+        const ethSignature = await presignETHBlockchainData(apiKey, config, ethData)
+        sigs.push({
+          ...ethSignature,
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
+          publicKey: apiKey.child_keys[BIP44.ETH].public_key
+        })
+        break
+      case 'btc':
+        sigs.push({
+          blockchain: 'BTC',
+          nonceFrom: chainNoncePair.nonceFrom,
+          nonceTo: chainNoncePair.nonceTo,
+          publicKey: apiKey.child_keys[BIP44.BTC].public_key.toLowerCase(),
+          signature: ''
+        })
+        break
+
+      default:
+        throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
+    }
+  }
+
+  return sigs
+}
+
+/**
  * Signs blockchain data. Returns an array of signatures. Needed for operations
  * such as order placement.
  *
@@ -182,10 +409,15 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
     const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
     switch (blockchain) {
       case 'neo':
-        const neoData = buildNEOMovementSignatureData(config, payloadAndKind)
+        const neoData = buildNEOMovementSignatureData(
+          config.wallets.neo.address,
+          config.wallets.neo.publicKey,
+          config.assetData,
+          payloadAndKind
+        )
         return [signNEOBlockchainData(config.wallets.neo.privateKey, neoData)]
       case 'eth':
-        const ethData = buildETHMovementSignatureData(config, payloadAndKind)
+        const ethData = buildETHMovementSignatureData(config.wallets.eth.address, payloadAndKind)
         return [signETHBlockchainData(config.wallets.eth.privateKey, ethData)]
       case 'btc':
         return []
@@ -194,12 +426,19 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
 
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config, blockchainData)
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
 
   const sigs = signatureNeeded.map(chainNoncePair => {
     switch (chainNoncePair.chain) {
       case 'neo':
-        const neoData = buildNEOOrderSignatureData(config, payloadAndKind, chainNoncePair)
+        const neoData = buildNEOOrderSignatureData(
+          config.wallets.neo.address,
+          config.wallets.neo.publicKey,
+          config.assetData,
+          config.marketData,
+          payloadAndKind,
+          chainNoncePair
+        )
         const neoSignature = signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
         return {
           ...neoSignature,
@@ -208,7 +447,12 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
           publicKey: config.wallets.neo.publicKey.toLowerCase()
         }
       case 'eth':
-        const ethData = buildETHOrderSignatureData(config, payloadAndKind, chainNoncePair)
+        const ethData = buildETHOrderSignatureData(
+          config.wallets.eth.address,
+          config.marketData,
+          payloadAndKind,
+          chainNoncePair
+        )
         const ethSignature = signETHBlockchainData(config.wallets.eth.privateKey, ethData)
         return {
           ...ethSignature,
@@ -236,7 +480,10 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
 /**
  * @TODO Add documentation.
  */
-export function determineSignatureNonceTuplesNeeded(config: Config, blockchainData: BlockchainData): ChainNoncePair[] {
+export function determineSignatureNonceTuplesNeeded(
+  assetData: Config['assetData'],
+  blockchainData: BlockchainData
+): ChainNoncePair[] {
   const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
 
   let assetFrom = unitA
@@ -247,8 +494,8 @@ export function determineSignatureNonceTuplesNeeded(config: Config, blockchainDa
     assetTo = unitA
   }
 
-  const blockchainFrom = config.assetData[assetFrom].blockchain
-  const blockchainTo = config.assetData[assetTo].blockchain
+  const blockchainFrom = assetData[assetFrom].blockchain
+  const blockchainTo = assetData[assetTo].blockchain
   const blockchains = _.uniq([blockchainFrom, blockchainTo])
   const needed: ChainNoncePair[] = []
 
@@ -269,19 +516,71 @@ export function determineSignatureNonceTuplesNeeded(config: Config, blockchainDa
  */
 export function addRawBlockchainOrderData(config: Config, payloadAndKind: PayloadAndKind): object {
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config, blockchainData)
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
 
   const rawData = signatureNeeded.map(chainNoncePair => {
     switch (chainNoncePair.chain) {
       case 'neo':
         return {
           payload: payloadAndKind.payload,
-          raw: buildNEOOrderSignatureData(config, payloadAndKind, chainNoncePair)
+          raw: buildNEOOrderSignatureData(
+            config.wallets.neo.address,
+            config.wallets.neo.publicKey,
+            config.assetData,
+            config.marketData,
+            payloadAndKind,
+            chainNoncePair
+          )
         }
       case 'eth':
         return {
           payload: payloadAndKind.payload,
-          raw: buildETHOrderSignatureData(config, payloadAndKind, chainNoncePair)
+          raw: buildETHOrderSignatureData(config.wallets.eth.address, config.marketData, payloadAndKind, chainNoncePair)
+        }
+      case 'btc':
+        return {
+          payload: payloadAndKind.payload,
+          raw: ''
+        }
+      default:
+        throw new Error(`invalid chain ${chainNoncePair.chain}`)
+    }
+  })
+
+  return rawData
+}
+
+export function addRawPresignBlockchainOrderData(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payloadAndKind: PayloadAndKind
+): object {
+  const blockchainData = inferBlockchainData(payloadAndKind)
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
+
+  const rawData = signatureNeeded.map(chainNoncePair => {
+    switch (chainNoncePair.chain) {
+      case 'neo':
+        return {
+          payload: payloadAndKind.payload,
+          raw: buildNEOOrderSignatureData(
+            apiKey.child_keys[BIP44.NEO].address,
+            apiKey.child_keys[BIP44.NEO].public_key,
+            config.assetData,
+            config.marketData,
+            payloadAndKind,
+            chainNoncePair
+          )
+        }
+      case 'eth':
+        return {
+          payload: payloadAndKind.payload,
+          raw: buildETHOrderSignatureData(
+            apiKey.child_keys[BIP44.ETH].address,
+            config.marketData,
+            payloadAndKind,
+            chainNoncePair
+          )
         }
       case 'btc':
         return {
@@ -317,6 +616,28 @@ export function signRecycledOrdersForAddMovement(config: Config, payload: AddMov
   return []
 }
 
+export function presignRecycledOrdersForAddMovement(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payload: AddMovementPayload
+): Promise<ClientSignedState[]> {
+  if (payload.recycled_orders !== undefined) {
+    return presignStateList(apiKey, config, payload.recycled_orders as ClientSignedState[])
+  }
+  return Promise.resolve([])
+}
+
+export async function preSignStateListAndRecycledOrders(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payload: any
+): Promise<SignStatesRequestPayload> {
+  return {
+    client_signed_states: await presignStateList(apiKey, config, payload.states as ClientSignedState[]),
+    signed_recycled_orders: await presignStateList(apiKey, config, payload.recycled_orders as ClientSignedState[]),
+    timestamp: payload.timestamp
+  }
+}
 /*
  * @TODO Add documentation.
  */
@@ -333,6 +654,27 @@ export function signTransactionDigestsForAddMovement(config: Config, payload: Ad
     return result
   }
   return []
+}
+
+export async function presignTransactionDigestsForAddMovement(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payload: AddMovementPayload
+): Promise<ClientSignedState[]> {
+  if (payload.digests === undefined) {
+    return []
+  }
+  const result: ClientSignedState[] = []
+  for (const item of payload.digests) {
+    const sig = await preSignBTC(apiKey, config, item.digest)
+    result.push({
+      blockchain: 'BTC',
+      message: item.digest,
+      r: sig.r,
+      signature: sig.signature
+    })
+  }
+  return result
 }
 
 /*
@@ -354,6 +696,39 @@ export function signStateList(config: Config, items: ClientSignedState[]): Clien
         throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)
     }
   })
+  return result
+}
+
+export async function presignStateList(
+  apiKey: APIKey,
+  config: PresignConfig,
+  items: ClientSignedState[]
+): Promise<ClientSignedState[]> {
+  const result: ClientSignedState[] = []
+  for (const item of items) {
+    switch (item.blockchain.toLowerCase()) {
+      case 'eth':
+        const neoSig = await presignETHBlockchainData(apiKey, config, item.message)
+        item.signature = neoSig.signature
+        item.r = neoSig.r
+        result.push(item)
+        break
+      case 'neo':
+        const ethSig = await presignNEOBlockchainData(apiKey, config, item.message)
+        item.signature = ethSig.signature
+        item.r = ethSig.r
+        result.push(item)
+        break
+      case 'btc':
+        const btcSig = await preSignBTC(apiKey, config, item.message)
+        item.signature = btcSig.signature
+        item.r = btcSig.r
+        result.push(item)
+        break
+      default:
+        throw new Error(`Cannot sign states for blockchain ${item.blockchain}`)
+    }
+  }
   return result
 }
 

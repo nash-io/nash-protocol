@@ -27,7 +27,7 @@ test('sign eth deposit movement', async () => {
     data.timestamp
   )
 
-  const rawData = buildETHMovementSignatureData(config, signingPayload).toUpperCase()
+  const rawData = buildETHMovementSignatureData(config.wallets.eth.address, signingPayload).toUpperCase()
   expect(rawData).toBe(data.raw.eth)
   const sig = signETHBlockchainData(config.wallets.eth.privateKey, rawData)
   expect(sig.blockchain).toBe('ETH')
@@ -62,7 +62,7 @@ test('sign usdc withdraw movement', async () => {
 
   const signingPayload = { kind: SigningPayloadID.addMovementPayload, payload }
 
-  const rawData = buildETHMovementSignatureData(config, signingPayload).toUpperCase()
+  const rawData = buildETHMovementSignatureData(config.wallets.eth.address, signingPayload).toUpperCase()
   expect(rawData).toBe(data.raw.eth)
   const sig = signETHBlockchainData(config.wallets.eth.privateKey, rawData)
   expect(sig.blockchain).toBe('ETH')
@@ -99,7 +99,7 @@ test('sign ETH blockchain market order data', async () => {
   }
 
   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
-  const rawData = buildETHOrderSignatureData(config, signingPayload, {
+  const rawData = buildETHOrderSignatureData(config.wallets.eth.address, config.marketData, signingPayload, {
     chain: 'eth',
     nonceFrom: data.nonceFrom,
     nonceTo: data.nonceTo
@@ -130,16 +130,23 @@ test('sign ETH/NEO blockchain market order data', async () => {
   }
 
   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
-  const rawDataEth = buildETHOrderSignatureData(config, signingPayload, {
+  const rawDataEth = buildETHOrderSignatureData(config.wallets.eth.address, config.marketData, signingPayload, {
     chain: 'eth',
     nonceFrom: data.nonceFrom,
     nonceTo: data.nonceTo
   }).toUpperCase()
-  const rawDataNeo = buildNEOOrderSignatureData(config, signingPayload, {
-    chain: 'neo',
-    nonceFrom: data.nonceFrom,
-    nonceTo: data.nonceTo
-  }).toUpperCase()
+  const rawDataNeo = buildNEOOrderSignatureData(
+    config.wallets.neo.address,
+    config.wallets.neo.publicKey,
+    config.assetData,
+    config.marketData,
+    signingPayload,
+    {
+      chain: 'neo',
+      nonceFrom: data.nonceFrom,
+      nonceTo: data.nonceTo
+    }
+  ).toUpperCase()
   expect(rawDataEth).toBe(data.raw.eth)
   expect(rawDataNeo).toBe(data.raw.neo)
 
@@ -179,16 +186,23 @@ test('sign ETH_GAS blockchain limit order data', async () => {
 
   const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
 
-  const rawDataEth = buildETHOrderSignatureData(config, signingPayload, {
+  const rawDataEth = buildETHOrderSignatureData(config.wallets.eth.address, config.marketData, signingPayload, {
     chain: 'eth',
     nonceFrom: data.nonceFrom,
     nonceTo: data.nonceTo
   }).toUpperCase()
-  const rawDataNeo = buildNEOOrderSignatureData(config, signingPayload, {
-    chain: 'neo',
-    nonceFrom: data.nonceFrom,
-    nonceTo: data.nonceTo
-  }).toUpperCase()
+  const rawDataNeo = buildNEOOrderSignatureData(
+    config.wallets.neo.address,
+    config.wallets.neo.publicKey,
+    config.assetData,
+    config.marketData,
+    signingPayload,
+    {
+      chain: 'neo',
+      nonceFrom: data.nonceFrom,
+      nonceTo: data.nonceTo
+    }
+  ).toUpperCase()
   expect(rawDataEth).toBe(data.raw.eth)
   expect(rawDataNeo).toBe(data.raw.neo)
 

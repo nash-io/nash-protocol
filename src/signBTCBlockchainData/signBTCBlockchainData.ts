@@ -1,5 +1,6 @@
-import { BlockchainSignature } from '../types'
 import { ellipticContext } from '../utils/blockchain'
+import { computePresig } from '../mpc/computePresig'
+import { Blockchain, BIP44, APIKey, PresignConfig, BlockchainSignature } from '../types'
 
 export function signBTC(privateKey: string, message: string): BlockchainSignature {
   const data = Buffer.from(message, 'hex')
@@ -14,5 +15,37 @@ export function signBTC(privateKey: string, message: string): BlockchainSignatur
   return {
     blockchain: 'BTC',
     signature: signature.toLowerCase()
+  }
+}
+
+export async function preSignBTC(
+  apiKey: APIKey,
+  config: PresignConfig,
+  data: string,
+  toBase64: boolean = false
+): Promise<BlockchainSignature> {
+  const btcChildKey = apiKey.child_keys[BIP44.BTC]
+  const { r, presig } = await computePresig({
+    apiKey: {
+      client_secret_share: btcChildKey.client_secret_share,
+      paillier_pk: apiKey.paillier_pk,
+      public_key: btcChildKey.public_key,
+      server_secret_share_encrypted: btcChildKey.server_secret_share_encrypted
+    },
+    blockchain: Blockchain.BTC,
+    fillPoolFn: config.fillPoolFn,
+    messageHash: data
+  })
+  if (toBase64) {
+    return {
+      blockchain: 'BTC',
+      r: Buffer.from(r, 'hex').toString('base64'),
+      signature: Buffer.from(presig, 'hex').toString('base64')
+    }
+  }
+  return {
+    blockchain: 'BTC',
+    r,
+    signature: presig
   }
 }
