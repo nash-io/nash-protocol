@@ -583,7 +583,10 @@ export function addRawPresignBlockchainOrderData(
           )
         }
       case 'btc':
-        throw new Error('Not implemented')
+        return {
+          payload: payloadAndKind.payload,
+          raw: ''
+        }
       default:
         throw new Error(`invalid chain ${chainNoncePair.chain}`)
     }
