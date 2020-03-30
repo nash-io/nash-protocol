@@ -203,7 +203,6 @@ export async function preSignPayload(
   const message = `${payloadName},${canonicalizePayload(kind, payload)}`
   const messageHash = SHA256(message).toString(hexEncoding)
   const keypair = curve.keyFromPrivate(apiKey.payload_signing_key)
-
   const sig = keypair.sign(messageHash, {
     canonical: true,
     pers: null

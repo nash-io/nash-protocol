@@ -1,6 +1,6 @@
 {
-  "name": "@neon-exchange/nash-protocol-mpc",
-  "version": "0.5.4",
+  "name": "@neon-exchange/nash-protocol",
+  "version": "3.1.43",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -46,6 +46,7 @@
     "bip32": "2.0.3",
     "bip39": "2.5.0",
     "bitcoinjs-lib": "5.0.5",
+    "bn.js": "^5.1.1",
     "browserify-aes": "1.2.0",
     "crypto-js": "3.1.9-1",
     "elliptic": "6.4.0",

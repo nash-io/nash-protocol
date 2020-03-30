@@ -5,6 +5,7 @@ interface NodeFileInterface {
   fill_rpool: (clientDHSecrets: string, serverDHPublics: string, curve: string) => string
   get_rpool_size: (curve: string) => string
   compute_presig: (apiKeyStr: string, msgHashStr: string, curve: string) => string
+  sign: (secretkey: string, hash: string) => string
 }
 
 const loadNodeFile = (): NodeFileInterface => {
@@ -61,3 +62,11 @@ export const verify_paillier = wasm.verify_paillier
 export const create_api_childkey = wasm.create_api_childkey
 export const verify = wasm.verify
 export const publickey_from_secretkey = wasm.publickey_from_secretkey
+export const sign = wasm.sign
+// export function sign(secret: string, hash: string): string {
+//   if (wasm === MpcWallet) {
+//     return wasm.sign(secret, hash)
+//   }
+//   console.log('native sign')
+//   return MpcWallet.sign(secret, hash)
+// }

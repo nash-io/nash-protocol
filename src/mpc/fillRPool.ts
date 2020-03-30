@@ -1,9 +1,21 @@
 import { FillRPoolParams, BlockchainCurve } from '../types/MPC'
 
 const RPOOL_SIZE = 50
-const MIN_RPOOL_SIZE = 5
+const MIN_RPOOL_SIZE = 25
+const BLOCK_RPOOL_SIZE = 5
 
-export async function fillRPool({ fillPoolFn, blockchain }: FillRPoolParams): Promise<void> {
+async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<number> {
+  const MPCWallet = await import('../mpc-lib')
+  const curveStr = JSON.stringify(BlockchainCurve[fillPoolParams.blockchain])
+  const [getRPoolSizeSuccess, msgOrSize] = JSON.parse(MPCWallet.get_rpool_size(curveStr)) as [boolean, number | string]
+  if (getRPoolSizeSuccess === false) {
+    throw new Error('Error querying rpool size. ' + (msgOrSize as string))
+  }
+  return msgOrSize as number
+}
+
+async function fill(fillPoolParams: FillRPoolParams): Promise<void> {
+  const { fillPoolFn, blockchain } = fillPoolParams
   const MPCWallet = await import('../mpc-lib')
   const curveStr = JSON.stringify(BlockchainCurve[blockchain])
   const [initDHSuccess, clientDHSecrets, clientDHPublics] = JSON.parse(MPCWallet.dh_init(RPOOL_SIZE, curveStr)) as [
@@ -14,7 +26,6 @@ export async function fillRPool({ fillPoolFn, blockchain }: FillRPoolParams): Pr
   if (initDHSuccess === false) {
     throw new Error('ERROR: DH init failed. ' + clientDHSecrets)
   }
-
   const serverDHPublics = await fillPoolFn({
     blockchain,
     client_dh_publics: clientDHPublics
@@ -27,23 +38,32 @@ export async function fillRPool({ fillPoolFn, blockchain }: FillRPoolParams): Pr
   }
 }
 
-export async function fillRPoolIfNeeded(fillPoolParams: FillRPoolParams): Promise<void> {
-  const MPCWallet = await import('../mpc-lib')
-  const curveStr = JSON.stringify(BlockchainCurve[fillPoolParams.blockchain])
+async function fillToMax(args: FillRPoolParams): Promise<void> {
   while (true) {
-    const [getRPoolSizeSuccess, msgOrSize] = JSON.parse(MPCWallet.get_rpool_size(curveStr)) as [
-      boolean,
-      number | string
-    ]
-    if (getRPoolSizeSuccess === true) {
-      const rpoolSize = msgOrSize as number
-      if (rpoolSize < MIN_RPOOL_SIZE) {
-        await fillRPool(fillPoolParams)
-      } else {
-        break
-      }
-    } else {
-      throw new Error('Error querying rpool size. ' + (msgOrSize as string))
+    const poolSize = await getDhPoolSize(args)
+    if (RPOOL_SIZE < poolSize) {
+      break
     }
+    await fill(args)
+  }
+}
+
+export async function fillRPool(args: FillRPoolParams): Promise<void> {
+  const initialPoolSize = await getDhPoolSize(args)
+  if (RPOOL_SIZE < initialPoolSize) {
+    return
+  }
+  await fill(args)
+  fillToMax(args)
+}
+
+export async function fillRPoolIfNeeded(fillPoolParams: FillRPoolParams): Promise<void> {
+  const rpoolSize = await getDhPoolSize(fillPoolParams)
+  if (rpoolSize > MIN_RPOOL_SIZE) {
+    return
+  }
+  const p = fillRPool(fillPoolParams)
+  if (rpoolSize < BLOCK_RPOOL_SIZE) {
+    await p
   }
 }

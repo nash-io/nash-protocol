@@ -1,6 +1,6 @@
 {
   "name": "mpc-wallet-wasm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": [
     "mpc_wallet_wasm_bg.wasm",
     "mpc_wallet_wasm.js",
