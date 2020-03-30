@@ -1,4 +1,5 @@
 // External API
+export { toDER, sign } from './sign/sign'
 export { default as decryptSecretKey } from './decryptSecretKey'
 export { default as encryptSecretKey } from './encryptSecretKey'
 export { default as getHKDFKeysFromPassword } from './getHKDFKeysFromPassword'
