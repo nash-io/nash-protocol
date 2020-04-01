@@ -1,10 +1,16 @@
 import * as bip32 from 'bip32'
 import { Wallet } from '../types'
-import Neon from '@cityofzion/neon-js'
+import { reverseHex } from '../utils/getNEOScriptHash/getNEOScripthash'
 import * as EthUtil from 'ethereumjs-util'
 import * as Bitcoin from 'bitcoinjs-lib'
 import * as tiny from 'tiny-secp256k1'
+import base58 from 'bs58'
+import hexEncoding from 'crypto-js/enc-hex'
+import RIPEMD160 from 'crypto-js/ripemd160'
+import SHA256 from 'crypto-js/sha256'
+import { ec as EC } from 'elliptic'
 
+const curve = new EC('p256')
 const bip44Purpose = 44
 const nashPurpose = 1337
 
@@ -81,6 +87,54 @@ export const coinTypeFromString = (s: string): CoinType => {
   return m[s]
 }
 
+export function neoGetPublicKeyFromPrivateKey(privateKey: string, encode: boolean = true): string {
+  const privateKeyBuffer = Buffer.from(privateKey, 'hex')
+  const keypair = curve.keyFromPrivate(privateKeyBuffer, 'hex')
+  const unencodedPubKey = keypair.getPublic().encode('hex')
+  if (encode) {
+    const tail = parseInt(unencodedPubKey.substr(64 * 2, 2), 16)
+    if (tail % 2 === 1) {
+      return '03' + unencodedPubKey.substr(2, 64)
+    } else {
+      return '02' + unencodedPubKey.substr(2, 64)
+    }
+  } else {
+    return unencodedPubKey
+  }
+}
+
+const getVerificationScriptFromPublicKey = (publicKey: string): string => {
+  return '21' + publicKey + 'ac'
+}
+
+function hash(hex: string, hashingFunction: (i: any) => CryptoJS.WordArray): string {
+  const hexEncoded = hexEncoding.parse(hex)
+  const result = hashingFunction(hexEncoded)
+  return result.toString(hexEncoding)
+}
+export function sha256(hex: string): string {
+  return hash(hex, SHA256)
+}
+export function ripemd160(hex: string): string {
+  return hash(hex, RIPEMD160)
+}
+export function hash160(hex: string): string {
+  const sha = sha256(hex)
+  return ripemd160(sha)
+}
+export function hash256(hex: string): string {
+  const firstSha = sha256(hex)
+  return sha256(firstSha)
+}
+
+const ADDR_VERSION = '17'
+
+export const getAddressFromScriptHash = (scriptHash: string): string => {
+  const scriptHashReversed = reverseHex(scriptHash)
+  const shaChecksum = hash256(ADDR_VERSION + scriptHashReversed).substr(0, 8)
+  return base58.encode(Buffer.from(ADDR_VERSION + scriptHashReversed + shaChecksum, 'hex'))
+}
+
 // NOTE: We can split this out later when there are more wallets needs to be derived.
 function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType, index: number, net?: string): Wallet {
   if (key.privateKey === undefined) {
@@ -88,12 +142,15 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
   }
   switch (coinType) {
     case CoinType.NEO:
-      const account = Neon.create.account(key.privateKey.toString('hex'))
+      const neoPrivKey = key.privateKey.toString('hex')
+      const publicKey = neoGetPublicKeyFromPrivateKey(neoPrivKey)
+      const verifiedScript = getVerificationScriptFromPublicKey(publicKey)
+      const scriptHash = reverseHex(hash160(verifiedScript))
       return {
-        address: account.address,
+        address: getAddressFromScriptHash(scriptHash),
         index,
-        privateKey: key.privateKey.toString('hex'),
-        publicKey: account.publicKey
+        privateKey: neoPrivKey,
+        publicKey
       }
     case CoinType.ETH:
       // TODO: can we replace this with the elliptic package which we already

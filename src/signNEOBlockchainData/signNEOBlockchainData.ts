@@ -1,3 +1,7 @@
+import { ec as EC } from 'elliptic'
+import { SmartBuffer } from 'smart-buffer'
+import crypto from 'crypto'
+
 import { normalizeAmount, toLittleEndianHex } from '../utils/currency'
 import { getUnitPairs, inferBlockchainData, getNEOAssetHash } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
@@ -6,17 +10,22 @@ import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } 
 import { BlockchainSignature, Blockchain, APIKey, PresignConfig, BIP44, Config, ChainNoncePair } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { computePresig } from '../mpc/computePresig'
-import { SmartBuffer } from 'smart-buffer'
-import { wallet, u } from '@cityofzion/neon-core'
-import crypto from 'crypto'
+
+const curve = new EC('p256')
+const sha256 = (msg: string): string => {
+  const sha256H = crypto.createHash('sha256')
+  return sha256H.update(Buffer.from(msg, 'hex')).digest('hex')
+}
 
 export function signNEOBlockchainData(privateKey: string, data: string): BlockchainSignature {
-  const sha256 = crypto.createHash('sha256')
-  const msg = sha256.update(Buffer.from(data, 'hex')).digest('hex')
+  const msgHash = sha256(sha256(data))
+  const msgHashHex = Buffer.from(msgHash, 'hex')
+  const privateKeyBuffer = Buffer.from(privateKey, 'hex')
+  const sig = curve.sign(msgHashHex, privateKeyBuffer)
 
   return {
     blockchain: 'NEO',
-    signature: wallet.sign(msg, privateKey).toLowerCase()
+    signature: sig.r.toString('hex', 32) + sig.s.toString('hex', 32)
   }
 }
 
@@ -25,7 +34,7 @@ export async function presignNEOBlockchainData(
   config: PresignConfig,
   data: string
 ): Promise<BlockchainSignature> {
-  const finalHash = u.sha256(u.sha256(data))
+  const finalHash = sha256(sha256(data))
   const neoChildKey = apiKey.child_keys[BIP44.NEO]
   const { r, presig } = await computePresig({
     apiKey: {

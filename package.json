@@ -1,5 +1,5 @@
 {
-  "name": "@neon-exchange/nash-protocol",
+  "name": "@neon-exchange/nash-protocol-mobile",
   "version": "3.2.3",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
@@ -40,14 +40,13 @@
     "node": ">=8.9"
   },
   "dependencies": {
-    "@cityofzion/neon-core": "4.5.2",
-    "@cityofzion/neon-js": "4.5.2",
     "bignumber.js": "8.1.1",
     "bip32": "2.0.3",
     "bip39": "2.5.0",
     "bitcoinjs-lib": "5.0.5",
-    "bn.js": "^5.1.1",
+    "bn.js": "5.1.1",
     "browserify-aes": "1.2.0",
+    "bs58": "4.0.1",
     "crypto-js": "3.1.9-1",
     "elliptic": "6.4.0",
     "ethereumjs-util": "6.1.0",
