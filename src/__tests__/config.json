@@ -1,0 +1,129 @@
+{
+  "assetData": {
+    "eth": {
+      "blockchain": "eth",
+      "hash": "0000000000000000000000000000000000000000",
+      "precision": 18
+    },
+    "gas": {
+      "blockchain": "neo",
+      "hash": "602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7",
+      "precision": 8
+    },
+    "neo": {
+      "blockchain": "neo",
+      "hash": "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+      "precision": 8
+    },
+    "nos": {
+      "blockchain": "neo",
+      "hash": "36dfd2c33d4948a8429d00fc00a5bd70e02520ef",
+      "precision": 8
+    },
+    "usdc": {
+      "blockchain": "eth",
+      "hash": "aed88173df2578fad078c48a33f0040364989fa8",
+      "precision": 18
+    }
+  },
+  "marketData": {
+    "eth_gas": {
+      "minTickSize": 4,
+      "minTradeSize": 8,
+      "minTradeIncrement": 8,
+      "minTradeIncrementB": 8
+    },
+    "eth_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 8,
+      "minTradeIncrement": 8,
+      "minTradeIncrementB": 8
+    },
+    "eth_usdc": {
+      "minTickSize": 2,
+      "minTradeSize": 5,
+      "minTradeIncrement": 5,
+      "minTradeIncrementB": 5
+    },
+    "gas_eth": {
+      "minTickSize": 8,
+      "minTradeSize": 4,
+      "minTradeIncrement": 4,
+      "minTradeIncrementB": 4
+    },
+    "gas_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 6,
+      "minTradeIncrement": 4,
+      "minTradeIncrementB": 4
+    },
+    "neo_eth": {
+      "minTickSize": 8,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3,
+      "minTradeIncrementB": 3
+    },
+    "neo_gas": {
+      "minTickSize": 4,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3,
+      "minTradeIncrementB": 3
+    },
+    "neo_nos": {
+      "minTickSize": 6,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3,
+      "minTradeIncrementB": 3
+    },
+    "neo_usdc": {
+      "minTickSize": 4,
+      "minTradeSize": 3,
+      "minTradeIncrement": 3,
+      "minTradeIncrementB": 3
+    },
+    "nos_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 6,
+      "minTradeIncrement": 6,
+      "minTradeIncrementB": 6
+    },
+    "usdc_eth": {
+      "minTickSize": 5,
+      "minTradeSize": 2,
+      "minTradeIncrement": 2,
+      "minTradeIncrementB": 2
+    },
+    "usdc_neo": {
+      "minTickSize": 3,
+      "minTradeSize": 4,
+      "minTradeIncrement": 4,
+      "minTradeIncrementB": 4
+    }
+  },
+  "payloadSigningKey": {
+    "index": 1,
+    "publicKey": "037bc9bec8f542971308e400bc34e2f05d87c16b095017a9948e6bff314c1401f1",
+    "privateKey": "4b02442aafb756bbee9877168700601a6946a6d3508ce29122f477ae8425d375",
+    "address": ""
+  },
+  "wallets": {
+    "neo": {
+      "index": 0,
+      "privateKey": "491aac461bd2e0eb02ffe6cdb534a03617e8811764e4eea042f24231ba99b76f",
+      "publicKey": "0208035f32c5d0e59f71c55b1e060f6d504c004222c25670ff2b788d76a84af2f2",
+      "address": "AVSFwsxsedGGip1FgJdjavVBuFHHRXD2Uz"
+    },
+    "eth": {
+      "index": 0,
+      "privateKey": "0b7561f1c775ef4715accd21aac8629bcda2e6eb4e434c0d55c917bd7c297ac6",
+      "publicKey": "04be641c583207c310739a23973fb7cb7336d2b835517ede791e9fa53fa5b0fc46390ebb4dab62e8b01352f37308dbff1512615856bffd3c752db95737d3bc93a4",
+      "address": "55D16CA38dFB219141Ab6617B2872B978aF84702"
+    },
+    "btc": {
+      "index": 0,
+      "privateKey": "3a36746814d81d30f8a5d66ca85657f5455a73e34cb085465279bc989a30b337",
+      "publicKey": "02a15776a6856857d13d7d8f2e4b1f45e0fca58dbeb132ab9b2dcbbb13102ab693",
+      "address": "37yLXh95xYWzLebPRiU8NoJhuNEMsZtNKs"
+    }
+  }
+}
