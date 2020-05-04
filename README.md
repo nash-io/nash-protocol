@@ -22,7 +22,7 @@ The Nash Protocol contains functions necessary to create, setup, and authenticat
 This step registers a new user with Nash's Central Accounts System.
 
 1. A user signs up for an account and provides a password.
-2. `hashPassword()` should be called to hash the password, and `getHKDFKeysFromPassword()` should be called on the hasked password to get an **authentication key** and **encryption key**.
+2. `hashPassword()` should be called to hash the password, and `getHKDFKeysFromPassword()` should be called on the hashed password to get an **authentication key** and **encryption key**.
 3. The **authentication key** is sent to Nash's Central Accounts System in lieu of the original password, and is what is used hereafter for authentication. The **encryption key** is never sent to Nash, and must be computed on the fly from the user's password by the client.
 
 #### Account setup
