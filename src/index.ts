@@ -24,6 +24,7 @@ export {
   preSignPayload
 } from './signPayload'
 export * from './payload'
+export * from './generateWallet'
 
 // Internal API
 export { default as hashPassword } from './hashPassword'
