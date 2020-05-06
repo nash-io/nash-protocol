@@ -2,11 +2,12 @@ import { fillRPoolIfNeeded } from './fillRPool'
 import { ComputePresigParams, BlockchainCurve, Presignature } from '../types/MPC'
 
 export async function computePresig(params: ComputePresigParams): Promise<Presignature> {
+  const MPCWallet = await import('../mpc-lib')
   await fillRPoolIfNeeded({
     blockchain: params.blockchain,
     fillPoolFn: params.fillPoolFn
   })
-  const MPCWallet = await import('../mpc-lib')
+
   const [comutePresigOk, presigOrErrorMessage, r] = JSON.parse(
     MPCWallet.compute_presig(
       JSON.stringify(params.apiKey),

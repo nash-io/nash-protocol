@@ -1,7 +1,7 @@
 import { FillRPoolParams, BlockchainCurve } from '../types/MPC'
 
-const RPOOL_SIZE = 50
-const MIN_RPOOL_SIZE = 25
+const RPOOL_SIZE = 100
+const MIN_RPOOL_SIZE = 49
 const BLOCK_RPOOL_SIZE = 5
 
 async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<number> {
@@ -14,7 +14,8 @@ async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<number> {
   return msgOrSize as number
 }
 
-async function fill(fillPoolParams: FillRPoolParams): Promise<void> {
+let _FILL_JOB: null | Promise<void> = null
+async function _fill(fillPoolParams: FillRPoolParams): Promise<void> {
   const { fillPoolFn, blockchain } = fillPoolParams
   const MPCWallet = await import('../mpc-lib')
   const curveStr = JSON.stringify(BlockchainCurve[blockchain])
@@ -37,11 +38,20 @@ async function fill(fillPoolParams: FillRPoolParams): Promise<void> {
     throw new Error('ERROR: computing r_pool failed: ' + msg)
   }
 }
+async function fill(fillPoolParams: FillRPoolParams): Promise<void> {
+  if (_FILL_JOB == null) {
+    _FILL_JOB = _fill(fillPoolParams)
+    await _FILL_JOB
+    _FILL_JOB = null
+  } else {
+    await _FILL_JOB
+  }
+}
 
 async function fillToMax(args: FillRPoolParams): Promise<void> {
   while (true) {
     const poolSize = await getDhPoolSize(args)
-    if (RPOOL_SIZE < poolSize) {
+    if (RPOOL_SIZE <= poolSize) {
       break
     }
     await fill(args)
@@ -50,7 +60,7 @@ async function fillToMax(args: FillRPoolParams): Promise<void> {
 
 export async function fillRPool(args: FillRPoolParams): Promise<void> {
   const initialPoolSize = await getDhPoolSize(args)
-  if (RPOOL_SIZE < initialPoolSize) {
+  if (RPOOL_SIZE <= initialPoolSize) {
     return
   }
   await fill(args)
@@ -60,10 +70,12 @@ export async function fillRPool(args: FillRPoolParams): Promise<void> {
 export async function fillRPoolIfNeeded(fillPoolParams: FillRPoolParams): Promise<void> {
   const rpoolSize = await getDhPoolSize(fillPoolParams)
   if (rpoolSize > MIN_RPOOL_SIZE) {
+    fillRPool(fillPoolParams)
     return
   }
   const p = fillRPool(fillPoolParams)
   if (rpoolSize < BLOCK_RPOOL_SIZE) {
     await p
   }
+  return
 }
