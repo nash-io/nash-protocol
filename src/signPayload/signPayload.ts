@@ -339,55 +339,56 @@ export async function presignBlockchainData(
   }
   const blockchainData = inferBlockchainData(payloadAndKind)
   const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
-  const sigs: BlockchainSignature[] = []
-  for (const chainNoncePair of signatureNeeded) {
-    switch (chainNoncePair.chain) {
-      case 'neo':
-        const neoData = buildNEOOrderSignatureData(
-          apiKey.child_keys[BIP44.NEO].address,
-          apiKey.child_keys[BIP44.NEO].public_key,
-          config.assetData,
-          config.marketData,
-          payloadAndKind,
-          chainNoncePair
-        )
-        const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
-        sigs.push({
-          ...neoSignature,
-          nonceFrom: chainNoncePair.nonceFrom,
-          nonceTo: chainNoncePair.nonceTo,
-          publicKey: apiKey.child_keys[BIP44.NEO].public_key.toLowerCase()
-        })
-        break
-      case 'eth':
-        const ethData = buildETHOrderSignatureData(
-          apiKey.child_keys[BIP44.ETH].address,
-          config.marketData,
-          payloadAndKind,
-          chainNoncePair
-        )
-        const ethSignature = await presignETHBlockchainData(apiKey, config, ethData)
-        sigs.push({
-          ...ethSignature,
-          nonceFrom: chainNoncePair.nonceFrom,
-          nonceTo: chainNoncePair.nonceTo,
-          publicKey: apiKey.child_keys[BIP44.ETH].public_key
-        })
-        break
-      case 'btc':
-        sigs.push({
-          blockchain: 'BTC',
-          nonceFrom: chainNoncePair.nonceFrom,
-          nonceTo: chainNoncePair.nonceTo,
-          publicKey: apiKey.child_keys[BIP44.BTC].public_key.toLowerCase(),
-          signature: ''
-        })
-        break
+  const sigs: BlockchainSignature[] = await Promise.all(
+    signatureNeeded.map(async chainNoncePair => {
+      switch (chainNoncePair.chain) {
+        case 'neo':
+          const neoData = buildNEOOrderSignatureData(
+            apiKey.child_keys[BIP44.NEO].address,
+            apiKey.child_keys[BIP44.NEO].public_key,
+            config.assetData,
+            config.marketData,
+            payloadAndKind,
+            chainNoncePair
+          )
+          const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
+          return {
+            ...neoSignature,
+            nonceFrom: chainNoncePair.nonceFrom,
+            nonceTo: chainNoncePair.nonceTo,
+            publicKey: apiKey.child_keys[BIP44.NEO].public_key.toLowerCase()
+          }
+          break
+        case 'eth':
+          const ethData = buildETHOrderSignatureData(
+            apiKey.child_keys[BIP44.ETH].address,
+            config.marketData,
+            payloadAndKind,
+            chainNoncePair
+          )
+          const ethSignature = await presignETHBlockchainData(apiKey, config, ethData)
+          return {
+            ...ethSignature,
+            nonceFrom: chainNoncePair.nonceFrom,
+            nonceTo: chainNoncePair.nonceTo,
+            publicKey: apiKey.child_keys[BIP44.ETH].public_key
+          }
+          break
+        case 'btc':
+          return {
+            blockchain: 'BTC',
+            nonceFrom: chainNoncePair.nonceFrom,
+            nonceTo: chainNoncePair.nonceTo,
+            publicKey: apiKey.child_keys[BIP44.BTC].public_key.toLowerCase(),
+            signature: ''
+          }
+          break
 
-      default:
-        throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
-    }
-  }
+        default:
+          throw new Error(`invalid blockchain ${chainNoncePair.chain}`)
+      }
+    })
+  )
 
   return sigs
 }
