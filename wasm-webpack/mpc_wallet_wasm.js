@@ -209,9 +209,10 @@ export function create_api_childkey(api_childkey_creator_str, curve_str) {
 * @param {string} client_dh_secrets_str
 * @param {string} server_dh_publics_str
 * @param {string} curve_str
+* @param {string} paillier_pk_str
 * @returns {string}
 */
-export function fill_rpool(client_dh_secrets_str, server_dh_publics_str, curve_str) {
+export function fill_rpool(client_dh_secrets_str, server_dh_publics_str, curve_str, paillier_pk_str) {
     try {
         var ptr0 = passStringToWasm0(client_dh_secrets_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
@@ -219,7 +220,9 @@ export function fill_rpool(client_dh_secrets_str, server_dh_publics_str, curve_s
         var len1 = WASM_VECTOR_LEN;
         var ptr2 = passStringToWasm0(curve_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len2 = WASM_VECTOR_LEN;
-        wasm.fill_rpool(8, ptr0, len0, ptr1, len1, ptr2, len2);
+        var ptr3 = passStringToWasm0(paillier_pk_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len3 = WASM_VECTOR_LEN;
+        wasm.fill_rpool(8, ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3);
         var r0 = getInt32Memory0()[8 / 4 + 0];
         var r1 = getInt32Memory0()[8 / 4 + 1];
         return getStringFromWasm0(r0, r1);
@@ -395,12 +398,12 @@ export const __wbg_require_6461b1e9a0d7c34a = function(arg0, arg1) {
     return addHeapObject(ret);
 };
 
-export const __wbg_randomFillSync_1b52c8482374c55b = function(arg0, arg1, arg2) {
-    getObject(arg0).randomFillSync(getArrayU8FromWasm0(arg1, arg2));
-};
-
 export const __wbg_getRandomValues_1ef11e888e5228e9 = function(arg0, arg1, arg2) {
     getObject(arg0).getRandomValues(getArrayU8FromWasm0(arg1, arg2));
+};
+
+export const __wbg_randomFillSync_1b52c8482374c55b = function(arg0, arg1, arg2) {
+    getObject(arg0).randomFillSync(getArrayU8FromWasm0(arg1, arg2));
 };
 
 export const __wbindgen_throw = function(arg0, arg1) {

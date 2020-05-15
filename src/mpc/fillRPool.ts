@@ -20,7 +20,7 @@ const _FILL_JOB: Record<Curve, Promise<void> | null> = {
 }
 
 async function _fill(fillPoolParams: FillRPoolParams): Promise<void> {
-  const { fillPoolFn, blockchain } = fillPoolParams
+  const { fillPoolFn, blockchain, paillierPkStr } = fillPoolParams
   const MPCWallet = await import('../mpc-lib')
   const curveStr = JSON.stringify(BlockchainCurve[blockchain])
   const [initDHSuccess, clientDHSecrets, clientDHPublics] = JSON.parse(MPCWallet.dh_init(RPOOL_SIZE, curveStr)) as [
@@ -37,7 +37,7 @@ async function _fill(fillPoolParams: FillRPoolParams): Promise<void> {
     client_dh_publics: clientDHPublics
   })
   const [fillRpoolSuccess, msg] = JSON.parse(
-    MPCWallet.fill_rpool(JSON.stringify(clientDHSecrets), JSON.stringify(serverDHPublics), curveStr)
+    MPCWallet.fill_rpool(JSON.stringify(clientDHSecrets), JSON.stringify(serverDHPublics), curveStr, paillierPkStr)
   ) as [boolean, string]
   if (fillRpoolSuccess === false) {
     throw new Error('ERROR: computing r_pool failed: ' + msg)
