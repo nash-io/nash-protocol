@@ -34,9 +34,10 @@ export function create_api_childkey(api_childkey_creator_str: string, curve_str:
 * @param {string} client_dh_secrets_str 
 * @param {string} server_dh_publics_str 
 * @param {string} curve_str 
+* @param {string} paillier_pk_str 
 * @returns {string} 
 */
-export function fill_rpool(client_dh_secrets_str: string, server_dh_publics_str: string, curve_str: string): string;
+export function fill_rpool(client_dh_secrets_str: string, server_dh_publics_str: string, curve_str: string, paillier_pk_str: string): string;
 /**
 * @param {string} curve_str 
 * @returns {string} 

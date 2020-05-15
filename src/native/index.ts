@@ -2,7 +2,7 @@ import os from 'os'
 import wasm from '../wasm'
 interface NodeFileInterface {
   dh_init: (size: number, curve: string) => string
-  fill_rpool: (clientDHSecrets: string, serverDHPublics: string, curve: string) => string
+  fill_rpool: (clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string) => string
   get_rpool_size: (curve: string) => string
   compute_presig: (apiKeyStr: string, msgHashStr: string, curve: string) => string
   sign: (secretkey: string, hash: string) => string
@@ -37,11 +37,11 @@ export function dh_init(size: number, curve: string): string {
   }
   return MpcWallet.dh_init(size, JSON.parse(curve))
 }
-export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, curve: string): string {
+export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string): string {
   if (wasm === MpcWallet) {
-    return wasm.fill_rpool(clientDHSecrets, serverDHPublics, curve)
+    return wasm.fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
   }
-  return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, JSON.parse(curve))
+  return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, JSON.parse(curve), pkstr)
 }
 export function get_rpool_size(curve: string): string {
   if (wasm === MpcWallet) {

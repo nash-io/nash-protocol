@@ -13,7 +13,7 @@ export function init_api_childkey_creator(a: number, b: number, c: number): void
 export function init_api_childkey_creator_with_verified_paillier(a: number, b: number, c: number, d: number, e: number): void;
 export function verify_paillier(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
 export function create_api_childkey(a: number, b: number, c: number, d: number, e: number): void;
-export function fill_rpool(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
+export function fill_rpool(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number): void;
 export function get_rpool_size(a: number, b: number, c: number): void;
 export function compute_presig(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
 export function verify(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number): void;

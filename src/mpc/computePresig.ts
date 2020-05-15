@@ -5,7 +5,8 @@ export async function computePresig(params: ComputePresigParams): Promise<Presig
   const MPCWallet = await import('../mpc-lib')
   await fillRPoolIfNeeded({
     blockchain: params.blockchain,
-    fillPoolFn: params.fillPoolFn
+    fillPoolFn: params.fillPoolFn,
+    paillierPkStr: JSON.stringify(params.apiKey.paillier_pk)
   })
 
   const [comutePresigOk, presigOrErrorMessage, r] = JSON.parse(

@@ -40,6 +40,7 @@ export interface ComputePresigParams {
 export interface FillRPoolParams {
   fillPoolFn: FillPoolFn
   blockchain: Blockchain
+  paillierPkStr: string
 }
 
 export interface CreatePallierPKParams {
