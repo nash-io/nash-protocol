@@ -2,7 +2,7 @@
 
 Implementation of Nash cryptographic routines.
 
-## [Documentation available here](https://nash-io-public.gitlab.io/nash-protocol)
+## [Documentation available here](https://nash-io.github.io/nash-protocol)
 
 
 ## Getting started
