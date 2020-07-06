@@ -10,7 +10,7 @@ import toLower from 'lodash/fp/toLower'
 import bufferize from '../bufferize'
 import stringify from '../stringify'
 import deep from '../utils/deep'
-import { APIKey } from '../types/MPC'
+import { APIKey, Blockchain } from '../types/MPC'
 import {
   kindToName,
   needBlockchainMovement,
@@ -152,7 +152,11 @@ export default function signPayload(
     const addMovementPayload = payload as AddMovementPayload
     const addMovementPayloadRequest = { ...payload }
     addMovementPayloadRequest.resigned_orders = signRecycledOrdersForAddMovement(config, addMovementPayload)
-    addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(config, payload)
+    addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(
+      config,
+      payload,
+      payloadAndKind
+    )
     const movement = getBlockchainMovement(
       {
         btc: config.wallets.btc,
@@ -234,7 +238,8 @@ export async function preSignPayload(
     addMovementPayloadRequest.signed_transaction_elements = await presignTransactionDigestsForAddMovement(
       apiKey,
       config,
-      payload
+      payload,
+      payloadAndKind
     )
 
     const movement = getBlockchainMovement(
@@ -641,13 +646,39 @@ export async function preSignStateListAndRecycledOrders(
 /*
  * @TODO Add documentation.
  */
-export function signTransactionDigestsForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
+export function signTransactionDigestsForAddMovement(
+  config: Config,
+  payload: AddMovementPayload,
+  payloadAndKind: PayloadAndKind
+): ClientSignedState[] {
+  const { payload: movementPayload } = payloadAndKind
+  const unit = movementPayload.quantity.currency
+  const blockchain = config.assetData[unit].blockchain.toUpperCase()
+
   if (payload.digests !== undefined) {
     const result: ClientSignedState[] = payload.digests.map((item: TransactionDigest) => {
       const signedTransactionElement: ClientSignedState = {
-        blockchain: 'BTC',
-        message: item.digest,
-        signature: signBTC(config.wallets.btc.privateKey, item.digest).signature
+        blockchain,
+        message: item.digest
+      }
+      switch (blockchain) {
+        case Blockchain.BTC:
+          signedTransactionElement.signature = signBTC(config.wallets.btc.privateKey, item.digest).signature
+          break
+        case Blockchain.ETH:
+          signedTransactionElement.signature = signETHBlockchainData(
+            config.wallets.eth.privateKey,
+            item.digest
+          ).signature
+          break
+        case Blockchain.NEO:
+          signedTransactionElement.signature = signNEOBlockchainData(
+            config.wallets.neo.privateKey,
+            item.digest
+          ).signature
+          break
+        default:
+          throw new Error(`Could not sign for chain: ${blockchain}`)
       }
       return signedTransactionElement
     })
@@ -659,20 +690,50 @@ export function signTransactionDigestsForAddMovement(config: Config, payload: Ad
 export async function presignTransactionDigestsForAddMovement(
   apiKey: APIKey,
   config: PresignConfig,
-  payload: AddMovementPayload
+  payload: AddMovementPayload,
+  payloadAndKind: PayloadAndKind
 ): Promise<ClientSignedState[]> {
   if (payload.digests === undefined) {
     return []
   }
+  const { payload: movementPayload } = payloadAndKind
+  const unit = movementPayload.quantity.currency
+  const blockchain = config.assetData[unit].blockchain.toUpperCase()
+
   const result: ClientSignedState[] = []
+  let sig
   for (const item of payload.digests) {
-    const sig = await preSignBTC(apiKey, config, item.digest)
-    result.push({
-      blockchain: 'BTC',
-      message: item.digest,
-      r: sig.r,
-      signature: sig.signature
-    })
+    switch (blockchain) {
+      case Blockchain.BTC:
+        sig = await preSignBTC(apiKey, config, item.digest)
+        result.push({
+          blockchain,
+          message: item.digest,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
+      case Blockchain.ETH:
+        sig = await presignETHBlockchainData(apiKey, config, item.digest)
+        result.push({
+          blockchain,
+          message: item.digest,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
+      case Blockchain.NEO:
+        sig = await presignNEOBlockchainData(apiKey, config, item.digest)
+        result.push({
+          blockchain,
+          message: item.digest,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
+      default:
+        throw new Error(`Blockchain: ${blockchain} not supported`)
+    }
   }
   return result
 }
