@@ -152,11 +152,7 @@ export default function signPayload(
     const addMovementPayload = payload as AddMovementPayload
     const addMovementPayloadRequest = { ...payload }
     addMovementPayloadRequest.resigned_orders = signRecycledOrdersForAddMovement(config, addMovementPayload)
-    addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(
-      config,
-      payload,
-      payloadAndKind
-    )
+    addMovementPayloadRequest.signed_transaction_elements = signTransactionDigestsForAddMovement(config, payload)
     const movement = getBlockchainMovement(
       {
         btc: config.wallets.btc,
@@ -238,8 +234,7 @@ export async function preSignPayload(
     addMovementPayloadRequest.signed_transaction_elements = await presignTransactionDigestsForAddMovement(
       apiKey,
       config,
-      payload,
-      payloadAndKind
+      payload
     )
 
     const movement = getBlockchainMovement(
@@ -646,22 +641,14 @@ export async function preSignStateListAndRecycledOrders(
 /*
  * @TODO Add documentation.
  */
-export function signTransactionDigestsForAddMovement(
-  config: Config,
-  payload: AddMovementPayload,
-  payloadAndKind: PayloadAndKind
-): ClientSignedState[] {
-  const { payload: movementPayload } = payloadAndKind
-  const unit = movementPayload.quantity.currency
-  const blockchain = config.assetData[unit].blockchain.toUpperCase()
-
+export function signTransactionDigestsForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
   if (payload.digests !== undefined) {
     const result: ClientSignedState[] = payload.digests.map((item: TransactionDigest) => {
       const signedTransactionElement: ClientSignedState = {
-        blockchain,
+        blockchain: item.blockchain,
         message: item.digest
       }
-      switch (blockchain) {
+      switch (item.blockchain) {
         case Blockchain.BTC:
           signedTransactionElement.signature = signBTC(config.wallets.btc.privateKey, item.digest).signature
           break
@@ -678,7 +665,7 @@ export function signTransactionDigestsForAddMovement(
           ).signature
           break
         default:
-          throw new Error(`Could not sign for chain: ${blockchain}`)
+          throw new Error(`Could not sign for chain: ${item.blockchain}`)
       }
       return signedTransactionElement
     })
@@ -690,24 +677,20 @@ export function signTransactionDigestsForAddMovement(
 export async function presignTransactionDigestsForAddMovement(
   apiKey: APIKey,
   config: PresignConfig,
-  payload: AddMovementPayload,
-  payloadAndKind: PayloadAndKind
+  payload: AddMovementPayload
 ): Promise<ClientSignedState[]> {
   if (payload.digests === undefined) {
     return []
   }
-  const { payload: movementPayload } = payloadAndKind
-  const unit = movementPayload.quantity.currency
-  const blockchain = config.assetData[unit].blockchain.toUpperCase()
 
   const result: ClientSignedState[] = []
   let sig
   for (const item of payload.digests) {
-    switch (blockchain) {
+    switch (item.blockchain) {
       case Blockchain.BTC:
         sig = await preSignBTC(apiKey, config, item.digest)
         result.push({
-          blockchain,
+          blockchain: item.blockchain,
           message: item.digest,
           r: sig.r,
           signature: sig.signature
@@ -716,7 +699,7 @@ export async function presignTransactionDigestsForAddMovement(
       case Blockchain.ETH:
         sig = await presignETHBlockchainData(apiKey, config, item.digest)
         result.push({
-          blockchain,
+          blockchain: item.blockchain,
           message: item.digest,
           r: sig.r,
           signature: sig.signature
@@ -725,14 +708,14 @@ export async function presignTransactionDigestsForAddMovement(
       case Blockchain.NEO:
         sig = await presignNEOBlockchainData(apiKey, config, item.digest)
         result.push({
-          blockchain,
+          blockchain: item.blockchain,
           message: item.digest,
           r: sig.r,
           signature: sig.signature
         })
         break
       default:
-        throw new Error(`Blockchain: ${blockchain} not supported`)
+        throw new Error(`Blockchain: ${item.blockchain} not supported`)
     }
   }
   return result
