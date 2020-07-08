@@ -38,6 +38,7 @@ export interface ClientSignedState {
 
 export interface TransactionDigest {
   digest: string
+  blockchain: string
 }
 
 export interface AddMovementPayload {
