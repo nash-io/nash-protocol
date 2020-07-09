@@ -1,8 +1,17 @@
 import { FillRPoolParams, BlockchainCurve, Curve } from '../types/MPC'
 
-const RPOOL_SIZE = 100
-const MIN_RPOOL_SIZE = 50
-const BLOCK_RPOOL_SIZE = 8
+// A pool size of 100 is unsuitable for browser applications
+// As the presigning takes half a minute
+let RPOOL_SIZE = 100
+let MIN_RPOOL_SIZE = 50
+const BLOCK_RPOOL_SIZE = 4
+
+// This can be used to reconfigure the pooling size to a more manageble levels
+// We have a bunch of community users who attempt to use the SDK in the browser. So we should support this.
+export const configurePoolSettings = (poolSize: number, minPoolSize?: number) => {
+  RPOOL_SIZE = poolSize
+  MIN_RPOOL_SIZE = Math.max(BLOCK_RPOOL_SIZE, minPoolSize || poolSize / 2)
+}
 
 async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<number> {
   const MPCWallet = await import('../mpc-lib')
