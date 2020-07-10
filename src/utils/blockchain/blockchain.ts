@@ -187,6 +187,8 @@ export function getETHAssetID(asset: string): string {
       return '000e'
     case 'usdt':
       return '0011'
+    case 'erd':
+      return '0013'
     default:
       return 'ffff'
   }
