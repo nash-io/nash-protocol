@@ -10,20 +10,16 @@ interface NodeFileInterface {
 
 const loadNodeFile = (): NodeFileInterface => {
   const platform = os.platform()
-
   switch (platform) {
-    // case 'aix':
-    // case 'android':
-    // case 'freebsd':
-    // case 'openbsd':
-    // case 'sunos':
-    // case 'win32':
-    // case 'cygwin':
-    // case 'netbsd':
+    case 'aix':
+    case 'freebsd':
+    case 'openbsd':
+    case 'sunos':
+    case 'cygwin':
+    case 'netbsd':
     case 'linux':
-      return require('./index_linux.node')
     case 'darwin':
-      return require('./index_osx.node')
+      return require('../../../public-mpc-wallet/mpc-wallet-nodejs/native/index.node')
     default:
       console.log('Using .wasm shim')
       return wasm
