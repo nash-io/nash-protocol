@@ -4,6 +4,13 @@ Implementation of Nash cryptographic routines.
 
 ## [Documentation available here](https://nash-io.github.io/nash-protocol)
 
+## Required dependencies
+
+Make sure you have the following system commands available.
+
+```
+	cmake make gcc gmp-devel openssl-devel clang npm
+```
 
 ## Getting started
 
@@ -64,7 +71,6 @@ This step creates blockchain wallets for a user.
 ### External wallet keys
 
 We will NOT support the user supplying their own wallet keys. While users will control their own wallets, we will generate the wallets for them. This is partially because we want wallets to be deterministically derivable from the master seed.
-
 
 ## References
 
