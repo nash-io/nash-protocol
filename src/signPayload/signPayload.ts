@@ -644,30 +644,28 @@ export async function preSignStateListAndRecycledOrders(
 export function signTransactionDigestsForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
   if (payload.digests !== undefined) {
     const result: ClientSignedState[] = payload.digests.map((item: TransactionDigest) => {
-      const signedTransactionElement: ClientSignedState = {
-        blockchain: item.blockchain,
-        message: item.digest
-      }
       switch (item.blockchain) {
         case Blockchain.BTC:
-          signedTransactionElement.signature = signBTC(config.wallets.btc.privateKey, item.digest).signature
-          break
+          return {
+            blockchain: item.blockchain,
+            message: item.payload_hash,
+            signature: signBTC(config.wallets.btc.privateKey, item.payload_hash).signature
+          }
         case Blockchain.ETH:
-          signedTransactionElement.signature = signETHBlockchainData(
-            config.wallets.eth.privateKey,
-            item.digest
-          ).signature
-          break
+          return {
+            blockchain: item.blockchain,
+            message: item.payload,
+            signature: signETHBlockchainData(config.wallets.eth.privateKey, item.payload).signature
+          }
         case Blockchain.NEO:
-          signedTransactionElement.signature = signNEOBlockchainData(
-            config.wallets.neo.privateKey,
-            item.digest
-          ).signature
-          break
+          return {
+            blockchain: item.blockchain,
+            message: item.payload,
+            signature: signNEOBlockchainData(config.wallets.neo.privateKey, item.payload).signature
+          }
         default:
           throw new Error(`Could not sign for chain: ${item.blockchain}`)
       }
-      return signedTransactionElement
     })
     return result
   }
@@ -688,28 +686,28 @@ export async function presignTransactionDigestsForAddMovement(
   for (const item of payload.digests) {
     switch (item.blockchain) {
       case Blockchain.BTC:
-        sig = await preSignBTC(apiKey, config, item.digest)
+        sig = await preSignBTC(apiKey, config, item.payload_hash)
         result.push({
           blockchain: item.blockchain,
-          message: item.digest,
+          message: item.payload_hash,
           r: sig.r,
           signature: sig.signature
         })
         break
       case Blockchain.ETH:
-        sig = await presignETHBlockchainData(apiKey, config, item.digest)
+        sig = await presignETHBlockchainData(apiKey, config, item.payload)
         result.push({
           blockchain: item.blockchain,
-          message: item.digest,
+          message: item.payload,
           r: sig.r,
           signature: sig.signature
         })
         break
       case Blockchain.NEO:
-        sig = await presignNEOBlockchainData(apiKey, config, item.digest)
+        sig = await presignNEOBlockchainData(apiKey, config, item.payload)
         result.push({
           blockchain: item.blockchain,
-          message: item.digest,
+          message: item.payload,
           r: sig.r,
           signature: sig.signature
         })
