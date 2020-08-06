@@ -1,5 +1,6 @@
 import os from 'os'
-import wasm from '../wasm'
+import * as wasm from '../wasm/mpc_wallet_wasm'
+
 interface NodeFileInterface {
   dh_init: (size: number, curve: string) => string
   fill_rpool: (clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string) => string
