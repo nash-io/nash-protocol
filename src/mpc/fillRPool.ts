@@ -3,7 +3,7 @@ import { FillRPoolParams, BlockchainCurve, Curve } from '../types/MPC'
 // A pool size of 100 is unsuitable for browser applications
 // As the presigning takes half a minute
 let RPOOL_SIZE = 100
-let MIN_RPOOL_SIZE = 50
+let MIN_RPOOL_SIZE = 10
 const BLOCK_RPOOL_SIZE = 4
 
 // This can be used to reconfigure the pooling size to a more manageble levels
@@ -66,15 +66,12 @@ export async function fillRPool(fillPoolParams: FillRPoolParams): Promise<void> 
 }
 
 export async function fillRPoolIfNeeded(fillPoolParams: FillRPoolParams): Promise<void> {
-  while (true) {
-    const rpoolSize = await getDhPoolSize(fillPoolParams)
-    if (rpoolSize > MIN_RPOOL_SIZE) {
-      return
-    }
-    const p = fillRPool(fillPoolParams)
-    if (rpoolSize >= BLOCK_RPOOL_SIZE) {
-      return
-    }
+  const rpoolSize = await getDhPoolSize(fillPoolParams)
+  if (rpoolSize > MIN_RPOOL_SIZE) {
+    return
+  }
+  const p = fillRPool(fillPoolParams)
+  if (rpoolSize <= BLOCK_RPOOL_SIZE) {
     await p
   }
 }
