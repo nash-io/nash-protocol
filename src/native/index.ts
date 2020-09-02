@@ -1,5 +1,7 @@
 import os from 'os'
-import wasm from '../wasm'
+import * as wasm from '../wasm/mpc_wallet_wasm'
+
+
 interface NodeFileInterface {
   dh_init: (size: number, curve: string) => string
   fill_rpool: (clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string) => string
@@ -19,15 +21,14 @@ const loadNodeFile = (): NodeFileInterface => {
     // case 'sunos':
     // case 'netbsd':
     case 'linux':
-      return require('./linux_index.node')
+      return require('./linux_debug_index.node')
     case 'darwin':
       return require('./osx_index.node')
     case 'win32':
     case 'cygwin':
       return require('./win_index.node')
     default:
-      console.log('Using .wasm shim')
-      return wasm
+      throw new Error(`Platform ${platform}`)
   }
 }
 
