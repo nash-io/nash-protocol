@@ -17,13 +17,14 @@ const loadNodeFile = (): NodeFileInterface => {
     // case 'freebsd':
     // case 'openbsd':
     // case 'sunos':
-    // case 'win32':
-    // case 'cygwin':
     // case 'netbsd':
     case 'linux':
-      return require('./index_linux.node')
+      return require('./linux_index.node')
     case 'darwin':
-      return require('./index_osx.node')
+      return require('./osx_index.node')
+    case 'win32':
+    case 'cygwin':
+      return require('./win_index.node')
     default:
       console.log('Using .wasm shim')
       return wasm
