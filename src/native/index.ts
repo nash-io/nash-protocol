@@ -12,11 +12,13 @@ interface NodeFileInterface {
 const loadNodeFile = (): NodeFileInterface => {
   const platform = os.platform()
   switch (platform) {
+    case 'win32':
+    case 'cygwin':
+      return require('../../../public-mpc-wallet/mpc-wallet-nodejs-win/native/index.node')
     case 'aix':
     case 'freebsd':
     case 'openbsd':
     case 'sunos':
-    case 'cygwin':
     case 'netbsd':
     case 'linux':
     case 'darwin':
