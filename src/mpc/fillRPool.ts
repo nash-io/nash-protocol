@@ -13,7 +13,7 @@ export const configurePoolSettings = (poolSize: number, minPoolSize?: number) =>
   MIN_RPOOL_SIZE = Math.max(BLOCK_RPOOL_SIZE, minPoolSize || poolSize / 2)
 }
 
-async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<number> {
+export async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<number> {
   const MPCWallet = await import('../mpc-lib')
   const curveStr = JSON.stringify(BlockchainCurve[fillPoolParams.blockchain])
   const [getRPoolSizeSuccess, msgOrSize] = JSON.parse(MPCWallet.get_rpool_size(curveStr)) as [boolean, number | string]
