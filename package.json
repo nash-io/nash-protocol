@@ -1,6 +1,6 @@
 {
-  "name": "@neon-exchange/nash-protocol",
-  "version": "3.3.11",
+  "name": "@neon-exchange/nash-protocol-legacy",
+  "version": "0.1.2",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -10,7 +10,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "copy:nativewasm": "cp -r src/wasm build/main/wasm && cp src/native/index_osx.node build/main/native && cp src/native/index_linux.node build/main/native && cp -r wasm-webpack build/module/wasm && rm -r build/module/mpc-lib && cp -r wasm-webpack build/module/mpc-lib",
+    "copy:nativewasm": "cp -r src/wasm build/main/wasm && cp src/native/osx_index.node build/main/native && cp src/native/linux_debug_index.node build/main/native && cp src/native/win_index.node build/main/native && cp -r wasm-webpack build/module/wasm && rm -r build/module/mpc-lib && cp -r wasm-webpack build/module/mpc-lib",
     "copy:wasm": "cp -r src/wasm build/main/wasm && cp -r wasm-webpack build/module/wasm",
     "build": "yarn clean && yarn build:main && yarn build:module && yarn copy:nativewasm",
     "build:main": "tsc -p tsconfig.json",
@@ -66,7 +66,7 @@
     "@types/elliptic": "6.4.5",
     "@types/jest": "23.3.9",
     "@types/lodash": "4.14.122",
-    "@types/node": "13.7.0",
+    "@types/node": "^13.7.0",
     "@types/randombytes": "2.0.0",
     "jest": "23.6.0",
     "nyc": "13.1.0",

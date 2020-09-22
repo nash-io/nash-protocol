@@ -1,5 +1,5 @@
 import os from 'os'
-import wasm from '../wasm'
+
 interface NodeFileInterface {
   dh_init: (size: number, curve: string) => string
   fill_rpool: (clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string) => string
@@ -17,56 +17,51 @@ const loadNodeFile = (): NodeFileInterface => {
     // case 'freebsd':
     // case 'openbsd':
     // case 'sunos':
-    // case 'win32':
-    // case 'cygwin':
     // case 'netbsd':
     case 'linux':
-      return require('./index_linux.node')
+      return require('./linux_debug_index.node')
     case 'darwin':
-      return require('./index_osx.node')
+      return require('./osx_index.node')
+    case 'win32':
+    case 'cygwin':
+      return require('./win_index.node')
     default:
-      console.log('Using .wasm shim')
-      return wasm
+      throw new Error(`Platform ${platform}`)
   }
 }
 
 const MpcWallet = loadNodeFile()
 export function dh_init(size: number, curve: string): string {
-  if (wasm === MpcWallet) {
-    return wasm.dh_init(size, curve)
-  }
   return MpcWallet.dh_init(size, JSON.parse(curve))
 }
 export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string): string {
-  if (wasm === MpcWallet) {
-    return wasm.fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
-  }
   return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, JSON.parse(curve), pkstr)
 }
 export function get_rpool_size(curve: string): string {
-  if (wasm === MpcWallet) {
-    return wasm.get_rpool_size(curve)
-  }
   return MpcWallet.get_rpool_size(JSON.parse(curve))
 }
 export function compute_presig(apiKeyStr: string, msgHashStr: string, curve: string): string {
-  if (wasm === MpcWallet) {
-    return wasm.compute_presig(apiKeyStr, msgHashStr, curve)
-  }
   return MpcWallet.compute_presig(apiKeyStr, msgHashStr, JSON.parse(curve))
 }
 
-export const init_api_childkey_creator = wasm.init_api_childkey_creator
-export const init_api_childkey_creator_with_verified_paillier = wasm.init_api_childkey_creator_with_verified_paillier
-export const verify_paillier = wasm.verify_paillier
-export const create_api_childkey = wasm.create_api_childkey
-export const verify = wasm.verify
-export const publickey_from_secretkey = wasm.publickey_from_secretkey
-export const sign = wasm.sign
-// export function sign(secret: string, hash: string): string {
-//   if (wasm === MpcWallet) {
-//     return wasm.sign(secret, hash)
-//   }
-//   console.log('native sign')
-//   return MpcWallet.sign(secret, hash)
-// }
+export function init_api_childkey_creator(_: string): string {
+  throw new Error('unsupported')
+}
+export function init_api_childkey_creator_with_verified_paillier(_: string, __: string): string {
+  throw new Error('unsupported')
+}
+export function verify_paillier(_: string, __: string, ___: string): string {
+  throw new Error('unsupported')
+}
+export function create_api_childkey(_: string, __: string): string {
+  throw new Error('unsupported')
+}
+export function verify(_: string, __: string, ___: string, ____: string, _____: string): string {
+  throw new Error('unsupported')
+}
+export function publickey_from_secretkey(_: string, __: string): string {
+  throw new Error('unsupported')
+}
+export function sign(_: string, __: string): string {
+  throw new Error('unsupported')
+}
