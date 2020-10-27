@@ -193,6 +193,8 @@ export function getETHAssetID(asset: string): string {
       return '0014'
     case 'gunthy':
       return '0015'
+    case 'noia':
+      return '0019'
     default:
       return 'ffff'
   }
