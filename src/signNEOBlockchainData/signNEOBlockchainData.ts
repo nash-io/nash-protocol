@@ -3,10 +3,17 @@ import { SmartBuffer } from 'smart-buffer'
 import crypto from 'crypto'
 
 import { normalizeAmount, toLittleEndianHex } from '../utils/currency'
-import { getUnitPairs, inferBlockchainData, getNEOAssetHash } from '../utils/blockchain'
+import {
+  getUnitPairs,
+  inferBlockchainData,
+  getNEOAssetHash,
+  OrderSignatureData,
+  bigNumberFormat,
+  rateWithFees
+} from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
-import { maxOrderRate, maxFeeRate, minOrderRate } from '../constants'
-import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } from '../payload'
+import { BLOCKCHAIN_PRECISION, MIN_ORDER_RATE, MAX_FEE_RATE, MAX_ORDER_RATE, MAX_ORDER_AMOUNT } from '../constants'
+import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID, BuyOrSellBuy } from '../payload'
 import { BlockchainSignature, Blockchain, APIKey, PresignConfig, BIP44, Config, ChainNoncePair } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { computePresig } from '../mpc/computePresig'
@@ -57,43 +64,41 @@ export async function presignNEOBlockchainData(
 export function buildNEOOrderSignatureData(
   address: string,
   publicKey: string,
-  assetData: Config['assetData'],
-  marketData: Config['marketData'],
   payloadAndKind: PayloadAndKind,
-  chainNoncePair: ChainNoncePair
+  chainNoncePair: ChainNoncePair,
+  orderData: OrderSignatureData
 ): string {
   const { kind } = payloadAndKind
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
 
-  let assetFrom = unitA
-  let assetTo = unitB
-  const amountPrecision = marketData[blockchainData.marketName].minTradeIncrement
-  if (blockchainData.buyOrSell === BuyOrSellBuy) {
-    assetFrom = unitB
-    assetTo = unitA
-  }
-
+  //  let minOrderRate = orderData.rate
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind)) // prefix
   buffer.writeString(reverseHexString(getNEOScriptHash(address)))
 
-  buffer.writeString(getNEOAssetHash(assetData[assetFrom]))
-  buffer.writeString(getNEOAssetHash(assetData[assetTo]))
+  buffer.writeString(getNEOAssetHash(orderData.source.asset))
+  buffer.writeString(getNEOAssetHash(orderData.destination.asset))
 
   buffer.writeString(toLittleEndianHex(chainNoncePair.nonceFrom))
   buffer.writeString(toLittleEndianHex(chainNoncePair.nonceTo))
-  const amount = normalizeAmount(blockchainData.amount, amountPrecision)
-  buffer.writeString(toLittleEndianHex(amount))
 
-  let orderRate: string = maxOrderRate
-  if (isLimitOrderPayload(kind)) {
-    orderRate = toLittleEndianHex(normalizeAmount(blockchainData.limitPrice as string, 8))
+  // market buy orders are not supported, but if they were we would set the amount to max value
+  if (payloadAndKind.kind === SigningPayloadID.placeMarketOrderPayload && blockchainData.buyOrSell === BuyOrSellBuy) {
+    buffer.writeString(MAX_ORDER_AMOUNT)
+  } else {
+    const amount = normalizeAmount(orderData.source.amount, BLOCKCHAIN_PRECISION)
+    buffer.writeString(toLittleEndianHex(amount))
   }
 
-  buffer.writeString(toLittleEndianHex(minOrderRate))
-  buffer.writeString(orderRate)
-  buffer.writeString(toLittleEndianHex(maxFeeRate))
+  let orderRate: number = MIN_ORDER_RATE
+  if (isLimitOrderPayload(kind)) {
+    const rate = rateWithFees(orderData.rate)
+    orderRate = normalizeAmount(rate.toFormat(8, bigNumberFormat), BLOCKCHAIN_PRECISION)
+  }
+
+  buffer.writeString(toLittleEndianHex(orderRate))
+  buffer.writeString(MAX_ORDER_RATE)
+  buffer.writeString(toLittleEndianHex(MAX_FEE_RATE))
 
   // use the nonceOrder field when we need to sign any order payload.
   buffer.writeString(toLittleEndianHex(blockchainData.nonceOrder))

@@ -4,7 +4,7 @@ import { SigningPayloadID, MovementTypeWithdrawal, MovementTypeDeposit } from '.
 import config from '../__tests__/blockchain_config.json'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 import {
-  buildNEOOrderSignatureData,
+  // buildNEOOrderSignatureData,
   signNEOBlockchainData,
   buildNEOMovementSignatureData
 } from './signNEOBlockchainData'
@@ -91,47 +91,47 @@ test('sign GAS withdrawal movement', async () => {
   })
 })
 
-test('sign NEO_GAS blockchain market order data', async () => {
-  const data = sigTestVectors.marketOrders.neo_gas
-  const payload = {
-    amount: { amount: data.amount.value, currency: data.amount.currency },
-    buyOrSell: data.buyOrSell,
-    marketName: data.marketName,
-    nonceOrder: data.nonceOrder,
-    noncesFrom: [data.nonceFrom],
-    noncesTo: [data.nonceTo],
-    timestamp: data.timestamp
-  }
+// test('sign NEO_GAS blockchain market order data', async () => {
+//   const data = sigTestVectors.marketOrders.neo_gas
+//   const payload = {
+//     amount: { amount: data.amount.value, currency: data.amount.currency },
+//     buyOrSell: data.buyOrSell,
+//     marketName: data.marketName,
+//     nonceOrder: data.nonceOrder,
+//     noncesFrom: [data.nonceFrom],
+//     noncesTo: [data.nonceTo],
+//     timestamp: data.timestamp
+//   }
 
-  const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
+//   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
 
-  const rawData = buildNEOOrderSignatureData(
-    config.wallets.neo.address,
-    config.wallets.neo.publicKey,
-    config.assetData,
-    config.marketData,
-    signingPayload,
-    {
-      chain: 'neo',
-      nonceFrom: data.nonceFrom,
-      nonceTo: data.nonceTo
-    }
-  ).toUpperCase()
-  expect(rawData).toBe(data.raw.neo)
-  const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
-  expect(sig.blockchain).toBe('NEO')
-  expect(sig.signature).toBe(data.blockchainSignatures.neo)
+//   const rawData = buildNEOOrderSignatureData(
+//     config.wallets.neo.address,
+//     config.wallets.neo.publicKey,
+//     config.assetData,
+//     config.marketData,
+//     signingPayload,
+//     {
+//       chain: 'neo',
+//       nonceFrom: data.nonceFrom,
+//       nonceTo: data.nonceTo
+//     }
+//   ).toUpperCase()
+//   expect(rawData).toBe(data.raw.neo)
+//   const sig = signNEOBlockchainData(config.wallets.neo.privateKey, rawData)
+//   expect(sig.blockchain).toBe('NEO')
+//   expect(sig.signature).toBe(data.blockchainSignatures.neo)
 
-  const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
+//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
 
-  const expectedCanonicalString =
-    'place_market_order,{"amount":{"amount":"10.000","currency":"neo"},"buy_or_sell":"sell","market_name":"neo_gas","nonce_from":4294967295,"nonce_order":5432876,"nonce_to":4294967295,"timestamp":12345648}'
+//   const expectedCanonicalString =
+//     'place_market_order,{"amount":{"amount":"10.000","currency":"neo"},"buy_or_sell":"sell","market_name":"neo_gas","nonce_from":4294967295,"nonce_order":5432876,"nonce_to":4294967295,"timestamp":12345648}'
 
-  expect(payloadRes.payload.blockchainSignatures).toHaveLength(1)
+//   expect(payloadRes.payload.blockchainSignatures).toHaveLength(1)
 
-  expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
-  expect(payloadRes.blockchainRaw[0].raw.toUpperCase()).toBe(data.raw.neo)
-})
+//   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+//   expect(payloadRes.blockchainRaw[0].raw.toUpperCase()).toBe(data.raw.neo)
+// })
 
 // test('sign NEO_GAS blockchain limit order data', async () => {
 //   const data = sigTestVectors.limitOrders.a

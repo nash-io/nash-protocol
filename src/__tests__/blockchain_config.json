@@ -24,6 +24,11 @@
       "blockchain": "eth",
       "hash": "aed88173df2578fad078c48a33f0040364989fa8",
       "precision": 18
+    },
+    "bat": {
+      "blockchain": "eth",
+      "hash": "abcd",
+      "precision": 18
     }
   },
   "marketData": {
@@ -98,6 +103,12 @@
       "minTradeSize": 4,
       "minTradeIncrement": 4,
       "minTradeIncrementB": 4
+    },
+    "eth_bat": {
+      "minTickSize": 2,
+      "minTradeSize": 5,
+      "minTradeIncrement": 8,
+      "minTradeIncrementB": 5
     }
   },
   "payloadSigningKey": {

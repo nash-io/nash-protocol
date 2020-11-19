@@ -33,10 +33,14 @@ import {
   ClientSignedState,
   SignStatesRequestPayload,
   AddMovementPayload,
-  BuyOrSellBuy,
   TransactionDigest
 } from '../payload'
-import { inferBlockchainData, getUnitPairs, getBlockchainMovement } from '../utils/blockchain'
+import {
+  inferBlockchainData,
+  getBlockchainMovement,
+  OrderSignatureData,
+  buildOrderSignatureData
+} from '../utils/blockchain'
 import {
   buildNEOOrderSignatureData,
   buildNEOMovementSignatureData,
@@ -338,7 +342,9 @@ export async function presignBlockchainData(
     }
   }
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
+  const orderData: OrderSignatureData = buildOrderSignatureData(config.marketData, config.assetData, payloadAndKind)
+
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
   const sigs: BlockchainSignature[] = await Promise.all(
     signatureNeeded.map(async chainNoncePair => {
       switch (chainNoncePair.chain) {
@@ -346,10 +352,9 @@ export async function presignBlockchainData(
           const neoData = buildNEOOrderSignatureData(
             apiKey.child_keys[BIP44.NEO].address,
             apiKey.child_keys[BIP44.NEO].public_key,
-            config.assetData,
-            config.marketData,
             payloadAndKind,
-            chainNoncePair
+            chainNoncePair,
+            orderData
           )
           const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
           return {
@@ -362,9 +367,9 @@ export async function presignBlockchainData(
         case 'eth':
           const ethData = buildETHOrderSignatureData(
             apiKey.child_keys[BIP44.ETH].address,
-            config.marketData,
             payloadAndKind,
-            chainNoncePair
+            chainNoncePair,
+            orderData
           )
           const ethSignature = await presignETHBlockchainData(apiKey, config, ethData)
           return {
@@ -426,7 +431,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
 
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
+  const orderData: OrderSignatureData = buildOrderSignatureData(config.marketData, config.assetData, payloadAndKind)
+
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
 
   const sigs = signatureNeeded.map(chainNoncePair => {
     switch (chainNoncePair.chain) {
@@ -434,10 +441,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
         const neoData = buildNEOOrderSignatureData(
           config.wallets.neo.address,
           config.wallets.neo.publicKey,
-          config.assetData,
-          config.marketData,
           payloadAndKind,
-          chainNoncePair
+          chainNoncePair,
+          orderData
         )
         const neoSignature = signNEOBlockchainData(config.wallets.neo.privateKey, neoData)
         return {
@@ -449,9 +455,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
       case 'eth':
         const ethData = buildETHOrderSignatureData(
           config.wallets.eth.address,
-          config.marketData,
           payloadAndKind,
-          chainNoncePair
+          chainNoncePair,
+          orderData
         )
         const ethSignature = signETHBlockchainData(config.wallets.eth.privateKey, ethData)
         return {
@@ -481,21 +487,11 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
  * @TODO Add documentation.
  */
 export function determineSignatureNonceTuplesNeeded(
-  assetData: Config['assetData'],
+  orderData: OrderSignatureData,
   blockchainData: BlockchainData
 ): ChainNoncePair[] {
-  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-
-  let assetFrom = unitA
-  let assetTo = unitB
-
-  if (blockchainData.buyOrSell === BuyOrSellBuy) {
-    assetFrom = unitB
-    assetTo = unitA
-  }
-
-  const blockchainFrom = assetData[assetFrom].blockchain
-  const blockchainTo = assetData[assetTo].blockchain
+  const blockchainFrom = orderData.source.asset.blockchain
+  const blockchainTo = orderData.destination.asset.blockchain
   const blockchains = _.uniq([blockchainFrom, blockchainTo])
   const needed: ChainNoncePair[] = []
 
@@ -516,7 +512,8 @@ export function determineSignatureNonceTuplesNeeded(
  */
 export function addRawBlockchainOrderData(config: Config, payloadAndKind: PayloadAndKind): object {
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
+  const orderData: OrderSignatureData = buildOrderSignatureData(config.marketData, config.assetData, payloadAndKind)
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
 
   const rawData = signatureNeeded.map(chainNoncePair => {
     switch (chainNoncePair.chain) {
@@ -526,16 +523,15 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
           raw: buildNEOOrderSignatureData(
             config.wallets.neo.address,
             config.wallets.neo.publicKey,
-            config.assetData,
-            config.marketData,
             payloadAndKind,
-            chainNoncePair
+            chainNoncePair,
+            orderData
           )
         }
       case 'eth':
         return {
           payload: payloadAndKind.payload,
-          raw: buildETHOrderSignatureData(config.wallets.eth.address, config.marketData, payloadAndKind, chainNoncePair)
+          raw: buildETHOrderSignatureData(config.wallets.eth.address, payloadAndKind, chainNoncePair, orderData)
         }
       case 'btc':
         return {
@@ -556,7 +552,8 @@ export function addRawPresignBlockchainOrderData(
   payloadAndKind: PayloadAndKind
 ): object {
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(config.assetData, blockchainData)
+  const orderData: OrderSignatureData = buildOrderSignatureData(config.marketData, config.assetData, payloadAndKind)
+  const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
 
   const rawData = signatureNeeded.map(chainNoncePair => {
     switch (chainNoncePair.chain) {
@@ -566,10 +563,9 @@ export function addRawPresignBlockchainOrderData(
           raw: buildNEOOrderSignatureData(
             apiKey.child_keys[BIP44.NEO].address,
             apiKey.child_keys[BIP44.NEO].public_key,
-            config.assetData,
-            config.marketData,
             payloadAndKind,
-            chainNoncePair
+            chainNoncePair,
+            orderData
           )
         }
       case 'eth':
@@ -577,9 +573,9 @@ export function addRawPresignBlockchainOrderData(
           payload: payloadAndKind.payload,
           raw: buildETHOrderSignatureData(
             apiKey.child_keys[BIP44.ETH].address,
-            config.marketData,
             payloadAndKind,
-            chainNoncePair
+            chainNoncePair,
+            orderData
           )
         }
       case 'btc':

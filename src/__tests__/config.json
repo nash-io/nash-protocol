@@ -45,6 +45,12 @@
       "minTradeIncrement": 5,
       "minTradeIncrementB": 5
     },
+    "eth_bat": {
+      "minTickSize": 2,
+      "minTradeSize": 5,
+      "minTradeIncrement": 5,
+      "minTradeIncrementB": 5
+    },
     "gas_eth": {
       "minTickSize": 8,
       "minTradeSize": 4,
