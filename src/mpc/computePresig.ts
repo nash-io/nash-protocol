@@ -13,7 +13,7 @@ export async function computePresig(params: ComputePresigParams): Promise<Presig
     MPCWallet.compute_presig(
       JSON.stringify(params.apiKey),
       params.messageHash,
-      JSON.stringify(BlockchainCurve[params.blockchain])
+      BlockchainCurve[params.blockchain]
     )
   ) as [boolean, string, string]
   if (comutePresigOk === false) {
