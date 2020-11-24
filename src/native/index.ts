@@ -17,9 +17,10 @@ const loadNodeFile = (): NodeFileInterface => {
     // case 'freebsd':
     // case 'openbsd':
     // case 'sunos':
-    // case 'win32':
-    // case 'cygwin':
     // case 'netbsd':
+    case 'cygwin':
+    case 'win32':
+      return require('./index_win.node')
     case 'linux':
       return require('./index_linux.node')
     case 'darwin':
@@ -35,25 +36,25 @@ export function dh_init(size: number, curve: string): string {
   if (wasm === MpcWallet) {
     return wasm.dh_init(size, curve)
   }
-  return MpcWallet.dh_init(size, JSON.parse(curve))
+  return MpcWallet.dh_init(size, curve)
 }
 export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string): string {
   if (wasm === MpcWallet) {
     return wasm.fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
   }
-  return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, JSON.parse(curve), pkstr)
+  return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
 }
 export function get_rpool_size(curve: string): string {
   if (wasm === MpcWallet) {
     return wasm.get_rpool_size(curve)
   }
-  return MpcWallet.get_rpool_size(JSON.parse(curve))
+  return MpcWallet.get_rpool_size(curve)
 }
 export function compute_presig(apiKeyStr: string, msgHashStr: string, curve: string): string {
   if (wasm === MpcWallet) {
     return wasm.compute_presig(apiKeyStr, msgHashStr, curve)
   }
-  return MpcWallet.compute_presig(apiKeyStr, msgHashStr, JSON.parse(curve))
+  return MpcWallet.compute_presig(apiKeyStr, msgHashStr, curve)
 }
 
 export const init_api_childkey_creator = wasm.init_api_childkey_creator
