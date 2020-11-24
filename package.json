@@ -1,6 +1,6 @@
 {
-  "name": "@neon-exchange/nash-protocol",
-  "version": "3.3.14",
+  "name": "@neon-exchange/nash-protocol-gunbot",
+  "version": "3.3.12",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -37,7 +37,7 @@
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('nash-protocol must be installed with Yarn: https://yarnpkg.com/')\""
   },
   "engines": {
-    "node": ">=8.9"
+    "node": ">=14.3"
   },
   "dependencies": {
     "bignumber.js": "8.1.1",
