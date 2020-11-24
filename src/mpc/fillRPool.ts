@@ -15,7 +15,7 @@ export const configurePoolSettings = (poolSize: number, minPoolSize?: number) =>
 
 export async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<number> {
   const MPCWallet = await import('../mpc-lib')
-  const curveStr = JSON.stringify(BlockchainCurve[fillPoolParams.blockchain])
+  const curveStr = BlockchainCurve[fillPoolParams.blockchain]
   const [getRPoolSizeSuccess, msgOrSize] = JSON.parse(MPCWallet.get_rpool_size(curveStr)) as [boolean, number | string]
   if (getRPoolSizeSuccess === false) {
     throw new Error('Error querying rpool size. ' + (msgOrSize as string))
@@ -31,7 +31,7 @@ const _FILL_JOB: Record<Curve, Promise<void> | null> = {
 async function _fill(fillPoolParams: FillRPoolParams): Promise<void> {
   const { fillPoolFn, blockchain, paillierPkStr } = fillPoolParams
   const MPCWallet = await import('../mpc-lib')
-  const curveStr = JSON.stringify(BlockchainCurve[blockchain])
+  const curveStr = BlockchainCurve[fillPoolParams.blockchain]
   const [initDHSuccess, clientDHSecrets, clientDHPublics] = JSON.parse(MPCWallet.dh_init(RPOOL_SIZE, curveStr)) as [
     boolean,
     string[],
