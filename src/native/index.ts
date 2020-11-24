@@ -42,7 +42,7 @@ export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, cur
   if (wasm === MpcWallet) {
     return wasm.fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
   }
-  return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
+  return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, pkstr, curve)
 }
 export function get_rpool_size(curve: string): string {
   if (wasm === MpcWallet) {
