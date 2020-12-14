@@ -40,6 +40,7 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
       if (isLimitOrderPayload(kind)) {
         limitPrice = getLimitPrice(payload.marketName, payload.buyOrSell, payload.limitPrice, amountFlipped)
       }
+      console.info("amount flipped? ", amountFlipped)
       return {
         amount: payload.amount.amount,
         amountFlipped,
@@ -48,8 +49,8 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
         marketName: payload.marketName,
         nonce: payload.nonce,
         nonceOrder: payload.nonceOrder,
-        noncesFrom: payload.noncesFrom,
-        noncesTo: payload.noncesTo
+        noncesFrom: amountFlipped ? payload.noncesTo : payload.noncesFrom,
+        noncesTo: amountFlipped ? payload.noncesFrom : payload.noncesTo
       }
 
     default:
