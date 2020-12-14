@@ -134,7 +134,7 @@ export default function signPayload(
     pers: null
   })
 
-  if (needBlockchainSignature(kind)) {
+  if (needBlockchainSignature(kind, payload)) {
     if (config === undefined) {
       throw new Error('blockchain signatures needs a Config object')
     }
@@ -208,7 +208,7 @@ export async function preSignPayload(
     pers: null
   })
 
-  if (needBlockchainSignature(kind)) {
+  if (needBlockchainSignature(kind, payload)) {
     if (config == null) {
       throw new Error('blockchain signatures needs a Config object')
     }
