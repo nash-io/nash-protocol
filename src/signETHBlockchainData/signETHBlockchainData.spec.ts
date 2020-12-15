@@ -304,204 +304,96 @@ test('limit eth_usdc sell 1.0 eth', async () => {
   )
 })
 
-test('limit eth_bat buy 10.0 bat', async () => {
-  const payload = {
-    amount: { amount: '10', currency: 'BAT' },
-    buyOrSell: BuyOrSellBuy,
-    limitPrice: {
-      amount: '2',
-      currency_a: 'eth',
-      currency_b: 'bat'
-    },
-    marketName: 'eth_bat',
-    nonceOrder: 42,
-    noncesFrom: [5],
-    noncesTo: [23],
-    timestamp: 1234
-  }
+// # WARNING: The following 3 tests an order that the matching engine won't accept
+// # "wrong amount unit for target market",
 
-  const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
-  const blockchainData = inferBlockchainData(signingPayload)
-  const orderData = buildOrderSignatureData(config.marketData, config.assetData, signingPayload)
-  const chainNoncePair = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
-  const rawData = buildETHOrderSignatureData(
-    'A24002F03F2AD04D2409AF47BB43E76A00C3EF01',
-    signingPayload,
-    chainNoncePair[0],
-    orderData
-  )
-  expect(rawData).toBe(
-    '01A24002F03F2AD04D2409AF47BB43E76A00C3EF0100000001000000050000001700000000773594000000000002F90838FFFFFFFFFFFFFFFF00000000000000000000002A'
-  )
-})
-
-// # WARNING: This test an order that the matching engine won't accept
-// # "wrong amount unit for target market", but we test it anyway to make
-// # sure the overall logic is correct
-test('limit eth_bat sell 10.0 bat', async () => {
-  const payload = {
-    amount: { amount: '10', currency: 'BAT' },
-    buyOrSell: BuyOrSellSell,
-    limitPrice: {
-      amount: '2',
-      currency_a: 'eth',
-      currency_b: 'bat'
-    },
-    marketName: 'eth_bat',
-    nonceOrder: 42,
-    noncesFrom: [23],
-    noncesTo: [5],
-    timestamp: 1234
-  }
-
-  const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
-  const blockchainData = inferBlockchainData(signingPayload)
-  const orderData = buildOrderSignatureData(config.marketData, config.assetData, signingPayload)
-  const chainNoncePair = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
-  const rawData = buildETHOrderSignatureData(
-    '1E9FAD205D8D02C9CF347E2AA61A1E922AF0D0EA',
-    signingPayload,
-    chainNoncePair[0],
-    orderData
-  )
-  expect(rawData).toBe(
-    '011E9FAD205D8D02C9CF347E2AA61A1E922AF0D0EA000100000000001700000005000000003B9ACA00000000000BE420E0FFFFFFFFFFFFFFFF00000000000000000000002A'
-  )
-})
-
-// # WARNING: This test an order that the matching engine won't accept
-// # "wrong amount unit for target market", but we test it anyway to make
-// # sure the overall logic is correct
-test('limit eth_bat buy 10.0 bat, test price inversion', async () => {
-  const payload = {
-    amount: { amount: '10', currency: 'BAT' },
-    buyOrSell: BuyOrSellBuy,
-    limitPrice: {
-      amount: '.5',
-      currency_a: 'bat',
-      currency_b: 'eth'
-    },
-    marketName: 'eth_bat',
-    nonceOrder: 42,
-    noncesFrom: [5],
-    noncesTo: [23],
-    timestamp: 1234
-  }
-
-  const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
-  const blockchainData = inferBlockchainData(signingPayload)
-  const orderData = buildOrderSignatureData(config.marketData, config.assetData, signingPayload)
-  const chainNoncePair = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
-  const rawData = buildETHOrderSignatureData(
-    '229470549E8978659247DB9E1D73E61316B9BC70',
-    signingPayload,
-    chainNoncePair[0],
-    orderData
-  )
-  expect(rawData).toBe(
-    '01229470549E8978659247DB9E1D73E61316B9BC7000000001000000050000001700000000773594000000000002F90838FFFFFFFFFFFFFFFF00000000000000000000002A'
-  )
-})
-
-// test('sign ETH/NEO blockchain market order data', async () => {
-//   const data = sigTestVectors.marketOrders.eth_neo
+// test('limit eth_bat buy 10.0 bat', async () => {
 //   const payload = {
-//     amount: { amount: data.amount.value, currency: data.amount.currency },
-//     buyOrSell: data.buyOrSell,
-//     marketName: data.marketName,
-//     nonceOrder: data.nonceOrder,
-//     noncesFrom: [data.nonceFrom],
-//     noncesTo: [data.nonceTo],
-//     timestamp: data.timestamp
-//   }
-
-//   const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
-//   const rawDataEth = buildETHOrderSignatureData(config.wallets.eth.address, config.marketData, signingPayload, {
-//     chain: 'eth',
-//     nonceFrom: data.nonceFrom,
-//     nonceTo: data.nonceTo
-//   }).toUpperCase()
-//   const rawDataNeo = buildNEOOrderSignatureData(
-//     config.wallets.neo.address,
-//     config.wallets.neo.publicKey,
-//     config.assetData,
-//     config.marketData,
-//     signingPayload,
-//     {
-//       chain: 'neo',
-//       nonceFrom: data.nonceFrom,
-//       nonceTo: data.nonceTo
-//     }
-//   ).toUpperCase()
-//   expect(rawDataEth).toBe(data.raw.eth)
-//   expect(rawDataNeo).toBe(data.raw.neo)
-
-//   const sigEth = signETHBlockchainData(config.wallets.eth.privateKey, rawDataEth)
-//   const sigNeo = signNEOBlockchainData(config.wallets.neo.privateKey, rawDataNeo)
-
-//   expect(sigNeo.signature).toBe(data.blockchainSignatures.neo)
-//   expect(sigEth.signature).toBe(data.blockchainSignatures.eth)
-
-//   const canonicalExpected =
-//     'place_market_order,{"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","market_name":"eth_neo","nonce_from":4294967295,"nonce_order":5432876,"nonce_to":4294967295,"timestamp":12345648}'
-
-//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
-//   expect(payloadRes.canonicalString).toBe(canonicalExpected)
-
-//   expect(payloadRes.signature).toBe(data.signature)
-// })
-
-// test('sign ETH_GAS blockchain limit order data', async () => {
-//   const data = sigTestVectors.limitOrders.b
-//   const payload = {
-//     allowTaker: data.allowTaker,
-//     amount: { amount: data.amount.value, currency: data.amount.currency },
-//     buyOrSell: data.buyOrSell,
-//     cancellationPolicy: data.cancellationPolicy,
+//     amount: { amount: '10', currency: 'BAT' },
+//     buyOrSell: BuyOrSellBuy,
 //     limitPrice: {
-//       amount: data.limitPrice.value,
-//       currency_a: data.limitPrice.currency_a,
-//       currency_b: data.limitPrice.currency_b
+//       amount: '2',
+//       currency_a: 'eth',
+//       currency_b: 'bat'
 //     },
-//     marketName: data.marketName,
-//     nonceOrder: data.nonceOrder,
-//     noncesFrom: [data.nonceFrom],
-//     noncesTo: [data.nonceTo],
-//     timestamp: data.timestamp
+//     marketName: 'eth_bat',
+//     nonceOrder: 42,
+//     noncesFrom: [5],
+//     noncesTo: [23],
+//     timestamp: 1234
 //   }
 
 //   const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
-
-//   const rawDataEth = buildETHOrderSignatureData(config.wallets.eth.address, config.marketData, signingPayload, {
-//     chain: 'eth',
-//     nonceFrom: data.nonceFrom,
-//     nonceTo: data.nonceTo
-//   }).toUpperCase()
-//   const rawDataNeo = buildNEOOrderSignatureData(
-//     config.wallets.neo.address,
-//     config.wallets.neo.publicKey,
-//     config.assetData,
-//     config.marketData,
+//   const blockchainData = inferBlockchainData(signingPayload)
+//   const orderData = buildOrderSignatureData(config.marketData, config.assetData, signingPayload)
+//   const chainNoncePair = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
+//   const rawData = buildETHOrderSignatureData(
+//     'A24002F03F2AD04D2409AF47BB43E76A00C3EF01',
 //     signingPayload,
-//     {
-//       chain: 'neo',
-//       nonceFrom: data.nonceFrom,
-//       nonceTo: data.nonceTo
-//     }
-//   ).toUpperCase()
-//   expect(rawDataEth).toBe(data.raw.eth)
-//   expect(rawDataNeo).toBe(data.raw.neo)
+//     chainNoncePair[0],
+//     orderData
+//   )
+//   expect(rawData).toBe(
+//     '01A24002F03F2AD04D2409AF47BB43E76A00C3EF0100000001000000050000001700000000773594000000000002F90838FFFFFFFFFFFFFFFF00000000000000000000002A'
+//   )
+// })
+// test('limit eth_bat sell 10.0 bat', async () => {
+//   const payload = {
+//     amount: { amount: '10', currency: 'BAT' },
+//     buyOrSell: BuyOrSellSell,
+//     limitPrice: {
+//       amount: '2',
+//       currency_a: 'eth',
+//       currency_b: 'bat'
+//     },
+//     marketName: 'eth_bat',
+//     nonceOrder: 42,
+//     noncesFrom: [23],
+//     noncesTo: [5],
+//     timestamp: 1234
+//   }
 
-//   const sigEth = signETHBlockchainData(config.wallets.eth.privateKey, rawDataEth)
-//   const sigNeo = signNEOBlockchainData(config.wallets.neo.privateKey, rawDataNeo)
+//   const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
+//   const blockchainData = inferBlockchainData(signingPayload)
+//   const orderData = buildOrderSignatureData(config.marketData, config.assetData, signingPayload)
+//   const chainNoncePair = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
+//   const rawData = buildETHOrderSignatureData(
+//     '1E9FAD205D8D02C9CF347E2AA61A1E922AF0D0EA',
+//     signingPayload,
+//     chainNoncePair[0],
+//     orderData
+//   )
+//   expect(rawData).toBe(
+//     '011E9FAD205D8D02C9CF347E2AA61A1E922AF0D0EA000100000000001700000005000000003B9ACA00000000000BE420E0FFFFFFFFFFFFFFFF00000000000000000000002A'
+//   )
+// })
+// test('limit eth_bat buy 10.0 bat, test price inversion', async () => {
+//   const payload = {
+//     amount: { amount: '10', currency: 'BAT' },
+//     buyOrSell: BuyOrSellBuy,
+//     limitPrice: {
+//       amount: '.5',
+//       currency_a: 'bat',
+//       currency_b: 'eth'
+//     },
+//     marketName: 'eth_bat',
+//     nonceOrder: 42,
+//     noncesFrom: [5],
+//     noncesTo: [23],
+//     timestamp: 1234
+//   }
 
-//   expect(sigNeo.signature).toBe(data.blockchainSignatures.neo)
-//   expect(sigEth.signature).toBe(data.blockchainSignatures.eth)
-
-//   const payloadRes = signPayload(Buffer.from(config.payloadSigningKey.privateKey, 'hex'), signingPayload, config)
-//   expect(payloadRes.payload.blockchainSignatures).toHaveLength(2)
-
-//   const expectedCanonicalString =
-//     'place_limit_order,{"allow_taker":true,"amount":{"amount":"10.00000000","currency":"eth"},"buy_or_sell":"sell","cancellation_policy":"immediate_or_cancel","limit_price":{"amount":"0.0024","currency_a":"gas","currency_b":"eth"},"market_name":"eth_gas","nonce_from":4294967295,"nonce_order":5432876,"nonce_to":4294967295,"timestamp":1565361133707}'
-//   expect(payloadRes.canonicalString).toBe(expectedCanonicalString)
+//   const signingPayload = { kind: SigningPayloadID.placeLimitOrderPayload, payload }
+//   const blockchainData = inferBlockchainData(signingPayload)
+//   const orderData = buildOrderSignatureData(config.marketData, config.assetData, signingPayload)
+//   const chainNoncePair = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
+//   const rawData = buildETHOrderSignatureData(
+//     '229470549E8978659247DB9E1D73E61316B9BC70',
+//     signingPayload,
+//     chainNoncePair[0],
+//     orderData
+//   )
+//   expect(rawData).toBe(
+//     '01229470549E8978659247DB9E1D73E61316B9BC7000000001000000050000001700000000773594000000000002F90838FFFFFFFFFFFFFFFF00000000000000000000002A'
+//   )
 // })

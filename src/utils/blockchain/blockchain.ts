@@ -36,21 +36,18 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
     case SigningPayloadID.placeLimitOrderPayload:
     case SigningPayloadID.placeStopLimitOrderPayload:
       let limitPrice: BigNumber = new BigNumber(0)
-      const amountFlipped = isAmountFlipped(payload.marketName, payload.amount)
       if (isLimitOrderPayload(kind)) {
-        limitPrice = getLimitPrice(payload.marketName, payload.buyOrSell, payload.limitPrice, amountFlipped)
+        limitPrice = getLimitPrice(payload.marketName, payload.buyOrSell, payload.limitPrice)
       }
-      console.info("amount flipped? ", amountFlipped)
       return {
         amount: payload.amount.amount,
-        amountFlipped,
         buyOrSell: payload.buyOrSell,
         limitPrice,
         marketName: payload.marketName,
         nonce: payload.nonce,
         nonceOrder: payload.nonceOrder,
-        noncesFrom: amountFlipped ? payload.noncesTo : payload.noncesFrom,
-        noncesTo: amountFlipped ? payload.noncesFrom : payload.noncesTo
+        noncesFrom: payload.noncesFrom,
+        noncesTo: payload.noncesTo
       }
 
     default:
@@ -141,7 +138,7 @@ export function buildOrderSignatureData(
   payloadAndKind: PayloadAndKind
 ): OrderSignatureData {
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const { unitA, unitB } = getUnitPairsFlipped(blockchainData.marketName, blockchainData.amountFlipped)
+  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
   const amountPrecision = marketData[blockchainData.marketName].minTradeIncrement
   const assetA = assetData[unitA]
   const assetB = assetData[unitB]
@@ -206,22 +203,9 @@ export function rateWithFees(rate: BigNumber): BigNumber {
   return rate.times(399).div(400)
 }
 
-export function isAmountFlipped(marketName: string, amount: any): boolean {
+export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice: any): BigNumber {
   const { unitB } = getUnitPairs(marketName)
-  return unitB === amount.currency.toLowerCase()
-}
-
-export function getLimitPrice(
-  marketName: string,
-  buyOrSell: string,
-  limitPrice: any,
-  amountFlipped: boolean
-): BigNumber {
-  const { unitA, unitB } = getUnitPairs(marketName)
-  let assetFrom = unitB
-  if (amountFlipped) {
-    assetFrom = unitA
-  }
+  const assetFrom = unitB
 
   if (limitPrice.currency_a === assetFrom) {
     return new BigNumber(limitPrice.amount)
@@ -235,14 +219,6 @@ export function getLimitPrice(
       limitPrice
     )}`
   )
-}
-
-export function getUnitPairsFlipped(market: string, flip: boolean): any {
-  const { unitA, unitB } = getUnitPairs(market)
-  if (flip) {
-    return { unitA: unitB, unitB: unitA }
-  }
-  return { unitA, unitB }
 }
 
 export function getUnitPairs(market: string): any {

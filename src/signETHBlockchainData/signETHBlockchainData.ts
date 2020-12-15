@@ -88,7 +88,6 @@ export function buildETHOrderSignatureData(
   buffer.writeString(address)
   buffer.writeString(getETHAssetID(orderData.source.symbol))
   buffer.writeString(getETHAssetID(orderData.destination.symbol))
-  console.log("Chain nonce pair::: nonce from, nonce to", chainNoncePair.nonceFrom, chainNoncePair.nonceTo)
   buffer.writeString(convertEthNonce(chainNoncePair.nonceFrom))
   buffer.writeString(convertEthNonce(chainNoncePair.nonceTo))
 

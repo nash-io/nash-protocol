@@ -5,7 +5,6 @@ import BigNumber from 'bignumber.js'
  */
 export default interface BlockchainData {
   readonly amount: string
-  readonly amountFlipped: boolean
   readonly marketName: string
   readonly buyOrSell: string
   readonly nonce: number
