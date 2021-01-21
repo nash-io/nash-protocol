@@ -15,6 +15,7 @@ import { computePresig } from '../mpc/computePresig'
 import { BLOCKCHAIN_PRECISION, MIN_ORDER_RATE, MAX_FEE_RATE, MAX_ORDER_RATE, MAX_ORDER_AMOUNT } from '../constants'
 import { Blockchain, BIP44, BlockchainSignature, APIKey, PresignConfig, ChainNoncePair } from '../types'
 import createKeccakHash from 'keccak'
+import BigNumber from 'bignumber.js'
 
 const createHashedMessage = (data: string): Buffer => {
   const initialHash = createKeccakHash('keccak256')
@@ -102,7 +103,7 @@ export function buildETHOrderSignatureData(
   let orderRate: number = MIN_ORDER_RATE
   if (isLimitOrderPayload(kind)) {
     const rate = rateWithFees(orderData.rate)
-    orderRate = normalizeAmount(rate.toFormat(8, bigNumberFormat), BLOCKCHAIN_PRECISION)
+    orderRate = normalizeAmount(rate.toFormat(8, BigNumber.ROUND_DOWN, bigNumberFormat), BLOCKCHAIN_PRECISION)
   }
 
   buffer.writeString(toBigEndianHex(orderRate))

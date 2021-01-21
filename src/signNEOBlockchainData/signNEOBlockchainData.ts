@@ -17,6 +17,7 @@ import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadI
 import { BlockchainSignature, Blockchain, APIKey, PresignConfig, BIP44, Config, ChainNoncePair } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { computePresig } from '../mpc/computePresig'
+import { BigNumber } from 'bignumber.js'
 
 const curve = new EC('p256')
 const sha256 = (msg: string): string => {
@@ -93,7 +94,7 @@ export function buildNEOOrderSignatureData(
   let orderRate: number = MIN_ORDER_RATE
   if (isLimitOrderPayload(kind)) {
     const rate = rateWithFees(orderData.rate)
-    orderRate = normalizeAmount(rate.toFormat(8, bigNumberFormat), BLOCKCHAIN_PRECISION)
+    orderRate = normalizeAmount(rate.toFormat(8, BigNumber.ROUND_DOWN, bigNumberFormat), BLOCKCHAIN_PRECISION)
   }
 
   buffer.writeString(toLittleEndianHex(orderRate))
