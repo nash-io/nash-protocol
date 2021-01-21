@@ -196,7 +196,7 @@ export function invertPrice(amount: BigNumber): BigNumber {
 
 export function exchangeAmount(price: BigNumber, amount: string): string {
   const total = new BigNumber(amount).times(price)
-  return total.toFormat(8, bigNumberFormat)
+  return total.toFormat(8, BigNumber.ROUND_DOWN, bigNumberFormat)
 }
 
 export function rateWithFees(rate: BigNumber): BigNumber {
