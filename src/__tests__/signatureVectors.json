@@ -65,10 +65,10 @@
       "allowTaker": false,
       "amount": {
         "value": "10.000000",
-        "currency": "gas"
+        "currency": "neo"
       },
       "buyOrSell": "SELL",
-      "marketName": "gas_neo",
+      "marketName": "neo_gas",
       "cancellationPolicy": "immediate_or_cancel",
       "limitPrice": {
         "value": "17.000",

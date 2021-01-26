@@ -1,11 +1,21 @@
 import { SmartBuffer } from 'smart-buffer'
-import { inferBlockchainData, getUnitPairs, convertEthNonce, getETHAssetID, ellipticContext } from '../utils/blockchain'
+import {
+  inferBlockchainData,
+  getUnitPairs,
+  convertEthNonce,
+  getETHAssetID,
+  ellipticContext,
+  OrderSignatureData,
+  bigNumberFormat,
+  rateWithFees
+} from '../utils/blockchain'
 import { toBigEndianHex, normalizeAmount } from '../utils/currency'
-import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, BuyOrSellBuy } from '../payload'
+import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID, BuyOrSellBuy } from '../payload'
 import { computePresig } from '../mpc/computePresig'
-import { minOrderRate, maxOrderRate, maxFeeRate } from '../constants'
-import { Config, Blockchain, BIP44, BlockchainSignature, APIKey, PresignConfig, ChainNoncePair } from '../types'
+import { BLOCKCHAIN_PRECISION, MIN_ORDER_RATE, MAX_FEE_RATE, MAX_ORDER_RATE, MAX_ORDER_AMOUNT } from '../constants'
+import { Blockchain, BIP44, BlockchainSignature, APIKey, PresignConfig, ChainNoncePair } from '../types'
 import createKeccakHash from 'keccak'
+import BigNumber from 'bignumber.js'
 
 const createHashedMessage = (data: string): Buffer => {
   const initialHash = createKeccakHash('keccak256')
@@ -67,45 +77,38 @@ export async function presignETHBlockchainData(
 
 export function buildETHOrderSignatureData(
   address: string,
-  marketData: Config['marketData'],
   payloadAndKind: PayloadAndKind,
-  chainNoncePair: ChainNoncePair
+  chainNoncePair: ChainNoncePair,
+  orderData: OrderSignatureData
 ): string {
   const { kind } = payloadAndKind
   const blockchainData = inferBlockchainData(payloadAndKind)
-  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
-
-  let assetFrom = unitA
-  let assetTo = unitB
-  const amountPrecision = marketData[blockchainData.marketName].minTradeIncrement
-
-  if (blockchainData.buyOrSell === BuyOrSellBuy) {
-    assetFrom = unitB
-    assetTo = unitA
-  }
 
   const buffer = new SmartBuffer()
   buffer.writeString(kindToOrderPrefix(kind))
   buffer.writeString(address)
-  buffer.writeString(getETHAssetID(assetFrom))
-  buffer.writeString(getETHAssetID(assetTo))
-
+  buffer.writeString(getETHAssetID(orderData.source.symbol))
+  buffer.writeString(getETHAssetID(orderData.destination.symbol))
   buffer.writeString(convertEthNonce(chainNoncePair.nonceFrom))
   buffer.writeString(convertEthNonce(chainNoncePair.nonceTo))
 
-  // normalize + to big endian
-  const amount = normalizeAmount(blockchainData.amount, amountPrecision)
-  buffer.writeString(toBigEndianHex(amount))
-
-  let orderRate: string = maxOrderRate
-
-  if (isLimitOrderPayload(kind)) {
-    orderRate = toBigEndianHex(normalizeAmount(blockchainData.limitPrice as string, 8))
+  // market buy orders are not supported, but if they were we would set the amount to max value
+  if (payloadAndKind.kind === SigningPayloadID.placeMarketOrderPayload && blockchainData.buyOrSell === BuyOrSellBuy) {
+    buffer.writeString(MAX_ORDER_AMOUNT)
+  } else {
+    const amount = normalizeAmount(orderData.source.amount, BLOCKCHAIN_PRECISION)
+    buffer.writeString(toBigEndianHex(amount))
   }
 
-  buffer.writeString(toBigEndianHex(minOrderRate))
-  buffer.writeString(orderRate)
-  buffer.writeString(toBigEndianHex(maxFeeRate))
+  let orderRate: number = MIN_ORDER_RATE
+  if (isLimitOrderPayload(kind)) {
+    const rate = rateWithFees(orderData.rate)
+    orderRate = normalizeAmount(rate.toFormat(8, BigNumber.ROUND_DOWN, bigNumberFormat), BLOCKCHAIN_PRECISION)
+  }
+
+  buffer.writeString(toBigEndianHex(orderRate))
+  buffer.writeString(MAX_ORDER_RATE)
+  buffer.writeString(toBigEndianHex(MAX_FEE_RATE))
 
   buffer.writeString(convertEthNonce(blockchainData.nonceOrder))
 

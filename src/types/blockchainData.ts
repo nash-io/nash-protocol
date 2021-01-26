@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js'
+
 /**
  * @TODO Add documentation.
  */
@@ -9,7 +11,7 @@ export default interface BlockchainData {
   readonly nonceOrder: number
   readonly noncesFrom: number[]
   readonly noncesTo: number[]
-  readonly limitPrice: string
+  readonly limitPrice: BigNumber
 }
 
 /**

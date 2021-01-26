@@ -1,4 +1,11 @@
-import { PayloadAndKind, SigningPayloadID, kindToOrderPrefix, isLimitOrderPayload, BuyOrSellSell } from '../../payload'
+import {
+  PayloadAndKind,
+  SigningPayloadID,
+  kindToOrderPrefix,
+  BuyOrSellSell,
+  BuyOrSellBuy,
+  isLimitOrderPayload
+} from '../../payload'
 import { Config, BlockchainData, BlockchainMovement, Asset } from '../../types'
 import getNEOScriptHash from '../getNEOScriptHash'
 import { normalizeAmount, toLittleEndianHex } from '../currency'
@@ -9,9 +16,9 @@ import * as EC from 'elliptic'
 // only do this once
 export const ellipticContext = new EC.ec('secp256k1')
 
-const BN = BigNumber.clone({ DECIMAL_PLACES: 16, ROUNDING_MODE: BigNumber.ROUND_FLOOR })
+export const BN = BigNumber.clone({ DECIMAL_PLACES: 16 })
 
-const bigNumberFormat = {
+export const bigNumberFormat = {
   decimalSeparator: '.',
   groupSeparator: '',
   groupSize: 50,
@@ -28,12 +35,10 @@ export function inferBlockchainData(payloadAndKind: PayloadAndKind): BlockchainD
     case SigningPayloadID.placeStopMarketOrderPayload:
     case SigningPayloadID.placeLimitOrderPayload:
     case SigningPayloadID.placeStopLimitOrderPayload:
-      let limitPrice: string = ''
-
+      let limitPrice: BigNumber = new BigNumber(0)
       if (isLimitOrderPayload(kind)) {
         limitPrice = getLimitPrice(payload.marketName, payload.buyOrSell, payload.limitPrice)
       }
-
       return {
         amount: payload.amount.amount,
         buyOrSell: payload.buyOrSell,
@@ -112,18 +117,101 @@ export function getBlockchainMovement(
   }
 }
 
-export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice: any): string {
-  const { unitA, unitB } = getUnitPairs(marketName)
-  let assetFrom = unitB
-  if (buyOrSell === BuyOrSellSell) {
-    assetFrom = unitA
+export interface AssetAmount {
+  amount: string
+  asset: Asset
+  symbol: string
+}
+
+export interface OrderSignatureData {
+  destination: AssetAmount
+  meAmount: string
+  meRate: string
+  precision: number
+  rate: BigNumber
+  source: AssetAmount
+}
+
+export function buildOrderSignatureData(
+  marketData: Config['marketData'],
+  assetData: Config['assetData'],
+  payloadAndKind: PayloadAndKind
+): OrderSignatureData {
+  const blockchainData = inferBlockchainData(payloadAndKind)
+  const { unitA, unitB } = getUnitPairs(blockchainData.marketName)
+  const amountPrecision = marketData[blockchainData.marketName].minTradeIncrement
+  const assetA = assetData[unitA]
+  const assetB = assetData[unitB]
+
+  // Amount of order always in asset A in ME
+  const amountOfA = blockchainData.amount
+  // Price is always in terms of asset B in ME
+  const bPerA = blockchainData.limitPrice
+  const aPerB = invertPrice(blockchainData.limitPrice)
+  const amountOfB = exchangeAmount(bPerA, amountOfA)
+
+  switch (blockchainData.buyOrSell) {
+    case BuyOrSellBuy:
+      return {
+        destination: {
+          amount: amountOfA,
+          asset: assetA,
+          symbol: unitA
+        },
+        meAmount: amountOfA,
+        meRate: bPerA.toFormat(bigNumberFormat),
+        precision: amountPrecision,
+        rate: aPerB,
+        source: {
+          amount: amountOfB,
+          asset: assetB,
+          symbol: unitB
+        }
+      }
+    case BuyOrSellSell:
+      return {
+        destination: {
+          amount: amountOfB,
+          asset: assetB,
+          symbol: unitB
+        },
+        meAmount: amountOfA,
+        meRate: bPerA.toFormat(bigNumberFormat),
+        precision: amountPrecision,
+        rate: bPerA,
+        source: {
+          amount: amountOfA,
+          asset: assetA,
+          symbol: unitA
+        }
+      }
+    default:
+      throw new Error('Invalid order side')
   }
+}
+
+export function invertPrice(amount: BigNumber): BigNumber {
+  return new BN(1).div(amount)
+}
+
+export function exchangeAmount(price: BigNumber, amount: string): string {
+  const total = new BigNumber(amount).times(price)
+  return total.toFormat(8, BigNumber.ROUND_DOWN, bigNumberFormat)
+}
+
+export function rateWithFees(rate: BigNumber): BigNumber {
+  return rate.times(399).div(400)
+}
+
+export function getLimitPrice(marketName: string, buyOrSell: string, limitPrice: any): BigNumber {
+  const { unitB } = getUnitPairs(marketName)
+  const assetFrom = unitB
+
   if (limitPrice.currency_a === assetFrom) {
-    return limitPrice.amount
+    return new BigNumber(limitPrice.amount)
   } else if (limitPrice.currency_b === assetFrom) {
     const amount = new BN(limitPrice.amount)
-    const reciprocal = new BN(1).div(amount)
-    return reciprocal.toFormat(8, bigNumberFormat)
+    return new BN(1).div(amount)
   }
 
   throw Error(
