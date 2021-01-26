@@ -14,6 +14,9 @@ export interface SignedState extends SyncState {
 
 export const MovementTypeDeposit = 'DEPOSIT'
 export const MovementTypeWithdrawal = 'WITHDRAWAL'
+// This is used for personal -> external
+export const MovementTypeTransfer = 'TRANSFER'
+
 export const BuyOrSellBuy = 'BUY'
 export const BuyOrSellSell = 'SELL'
 

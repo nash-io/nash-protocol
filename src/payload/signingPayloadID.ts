@@ -1,4 +1,4 @@
-import { MovementTypeWithdrawal, MovementTypeDeposit } from './payload'
+import { MovementTypeWithdrawal, MovementTypeDeposit, MovementTypeTransfer } from './payload'
 
 /**
  * IDs mapping Nash Matching Engine operations with handling strategies.
@@ -101,15 +101,20 @@ export function isStateSigning(kind: SigningPayloadID): boolean {
   return kind === SigningPayloadID.signStatesPayload
 }
 
-export function needBlockchainSignature(kind: SigningPayloadID): boolean {
-  return (
+export function needBlockchainSignature(kind: SigningPayloadID, payload): boolean {
+  if (
     [
       SigningPayloadID.placeLimitOrderPayload,
       SigningPayloadID.placeMarketOrderPayload,
       SigningPayloadID.placeStopLimitOrderPayload,
-      SigningPayloadID.placeStopMarketOrderPayload,
-      SigningPayloadID.addMovementPayload
+      SigningPayloadID.placeStopMarketOrderPayload
     ].indexOf(kind) > -1
+  ) {
+    return true
+  }
+
+  return (
+    kind === SigningPayloadID.addMovementPayload && [MovementTypeDeposit, MovementTypeWithdrawal].includes(payload.type)
   )
 }
 
@@ -138,6 +143,9 @@ export function kindToOrderPrefix(kind: SigningPayloadID, payload?: any): string
   }
   if (kind === SigningPayloadID.addMovementPayload && payload.type === MovementTypeWithdrawal) {
     return '03'
+  }
+  if (kind === SigningPayloadID.addMovementPayload && payload.type === MovementTypeTransfer) {
+    return ''
   }
 
   throw new Error(`invalid kind given ${kindToName(kind)}`)
