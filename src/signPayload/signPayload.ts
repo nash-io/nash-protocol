@@ -432,8 +432,6 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
   // if this is an order then its a bit more complicated
   const blockchainData = inferBlockchainData(payloadAndKind)
   const orderData: OrderSignatureData = buildOrderSignatureData(config.marketData, config.assetData, payloadAndKind)
-  console.info('blockchain data: ', blockchainData)
-  console.info('order daat: ', orderData)
 
   const signatureNeeded: ChainNoncePair[] = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
 
