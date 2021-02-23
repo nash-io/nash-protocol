@@ -44,6 +44,21 @@ test('generates deterministic BIP44 BTC keys', async () => {
   }
 })
 
+// test('generates deterministic BIP44 LTC keys', async () => {
+//   for (const vector of testVectors) {
+//     const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+
+//     const genWallet = generateWallet(masterSeed, CoinType.LTC, 0)
+//     console.info("LTC Wallet: ", genWallet)
+//     // expect(genWallet.address).toBe(wallet.address)
+//     // expect(genWallet.publicKey).toBe(wallet.publicKey)
+//     // expect(genWallet.privateKey).toBe(wallet.privateKey)
+//     // expect(genWallet.index).toBe(wallet.index)
+//     //}
+//   }
+// })
+
+
 test('generates deterministic payload signing key', async () => {
   for (const vector of testVectors) {
     const masterSeed = Buffer.from(vector.masterSeed, 'hex')

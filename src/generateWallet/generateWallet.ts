@@ -4,6 +4,8 @@ import { reverseHex } from '../utils/getNEOScriptHash/getNEOScripthash'
 import * as EthUtil from 'ethereumjs-util'
 import * as Bitcoin from 'bitcoinjs-lib'
 import * as tiny from 'tiny-secp256k1'
+import * as coininfo from 'coininfo'
+
 import base58 from 'bs58'
 import hexEncoding from 'crypto-js/enc-hex'
 import RIPEMD160 from 'crypto-js/ripemd160'
@@ -16,9 +18,18 @@ const nashPurpose = 1337
 
 export enum CoinType {
   BTC = 0,
+  LTC = 2,
+  DOGE = 3,
   ETH = 60,
-  NEO = 888
+  ETC = 61,
+  BCH = 145,
+  DOT = 354,
+  ERD = 508,
+  NEO = 888,
+  AVAX = 9000
 }
+
+const NON_SEGWIT = [CoinType.BCH]
 
 /**
  * Creates a wallet for a given token via the
@@ -77,7 +88,14 @@ export const coinTypeFromString = (s: string): CoinType => {
   const m: Record<string, CoinType> = {
     btc: CoinType.BTC,
     eth: CoinType.ETH,
-    neo: CoinType.NEO
+    neo: CoinType.NEO,
+    ltc: CoinType.LTC,
+    doge: CoinType.DOGE,
+    bch: CoinType.BCH,
+    avax: CoinType.AVAX,
+    etc: CoinType.ETC,
+    dot: CoinType.DOT,
+    erd: CoinType.ERD
   }
 
   if (!(s in m)) {
@@ -153,6 +171,7 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         publicKey
       }
     case CoinType.ETH:
+    case CoinType.ETC:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)
@@ -163,8 +182,11 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         publicKey: pubkey.toString('hex')
       }
     case CoinType.BTC:
+    case CoinType.BCH:
+    case CoinType.LTC:
+    case CoinType.DOGE:
       return {
-        address: bitcoinAddressFromPublicKey(key.publicKey, net!),
+        address: bitcoinAddressFromPublicKey(key.publicKey, coinType, net!),
         index,
         privateKey: key.privateKey.toString('hex'),
         publicKey: key.publicKey.toString('hex')
@@ -174,24 +196,57 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
   }
 }
 
-const bitcoinAddressFromPublicKey = (publicKey: Buffer, net: string): string => {
-  const network = bitcoinNetworkFromString(net)
+const bitcoinAddressFromPublicKey = (publicKey: Buffer, type: CoinType, net: string): string => {
+  const network = bitcoinNetworkFromString(type, net)
+  if (NON_SEGWIT.includes(type)) {
+    return Bitcoin.payments.p2pkh({ pubkey: publicKey, network }).address as string
+  }
+  console.info("network: ", publicKey.toString('hex'))
   return Bitcoin.payments.p2sh({
     network,
     redeem: Bitcoin.payments.p2wpkh({ pubkey: publicKey, network })
   }).address as string
 }
 
-const bitcoinNetworkFromString = (net: string | undefined): Bitcoin.Network => {
-  switch (net) {
-    case 'MainNet':
-      return Bitcoin.networks.bitcoin
-    case 'TestNet':
-      return Bitcoin.networks.regtest
-    case 'LocalNet':
-      return Bitcoin.networks.regtest
+const bitcoinNetworkFromString = (type: CoinType, net: string | undefined): Bitcoin.Network => {
+  switch (type) {
+    case CoinType.BTC:
+      switch (net) {
+        case 'MainNet':
+          return Bitcoin.networks.bitcoin
+        case 'TestNet':
+          return Bitcoin.networks.regtest
+        case 'LocalNet':
+          return Bitcoin.networks.regtest
+        default:
+          return Bitcoin.networks.bitcoin
+      }
+    case CoinType.LTC:
+      switch (net) {
+        case 'TestNet':
+        case 'LocalNet':
+          return coininfo.litecoin.regtest
+        default:
+          return coininfo.litecoin.main
+      }
+    case CoinType.BCH:
+      switch (net) {
+        case 'TestNet':
+        case 'LocalNet':
+          return coininfo.bch.regtest
+        default:
+          return coininfo.bch.main
+      }
+    case CoinType.DOGE:
+      switch (net) {
+        case 'TestNet':
+        case 'LocalNet':
+          return coininfo.doge.regtest
+        default:
+          return coininfo.doge.main
+      }
     default:
-      return Bitcoin.networks.bitcoin
+      throw new Error(`Could not get bitcoin network for coin type: ${type}`)
   }
 }
 
