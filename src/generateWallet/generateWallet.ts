@@ -3,6 +3,7 @@ import { Wallet } from '../types'
 import { reverseHex } from '../utils/getNEOScriptHash/getNEOScripthash'
 import * as EthUtil from 'ethereumjs-util'
 import * as Bitcoin from 'bitcoinjs-lib'
+import bchaddr from 'bchaddrjs'
 import * as tiny from 'tiny-secp256k1'
 import * as coininfo from 'coininfo'
 
@@ -29,7 +30,7 @@ export enum CoinType {
   AVAX = 9000
 }
 
-const NON_SEGWIT = [CoinType.BCH]
+const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
 
 /**
  * Creates a wallet for a given token via the
@@ -86,16 +87,16 @@ export function deriveIndex(extendedKey: bip32.BIP32Interface, index: number): b
 
 export const coinTypeFromString = (s: string): CoinType => {
   const m: Record<string, CoinType> = {
-    btc: CoinType.BTC,
-    eth: CoinType.ETH,
-    neo: CoinType.NEO,
-    ltc: CoinType.LTC,
-    doge: CoinType.DOGE,
-    bch: CoinType.BCH,
     avax: CoinType.AVAX,
-    etc: CoinType.ETC,
+    bch: CoinType.BCH,
+    btc: CoinType.BTC,
+    doge: CoinType.DOGE,
     dot: CoinType.DOT,
-    erd: CoinType.ERD
+    erd: CoinType.ERD,
+    etc: CoinType.ETC,
+    eth: CoinType.ETH,
+    ltc: CoinType.LTC,
+    neo: CoinType.NEO
   }
 
   if (!(s in m)) {
@@ -199,9 +200,13 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
 const bitcoinAddressFromPublicKey = (publicKey: Buffer, type: CoinType, net: string): string => {
   const network = bitcoinNetworkFromString(type, net)
   if (NON_SEGWIT.includes(type)) {
-    return Bitcoin.payments.p2pkh({ pubkey: publicKey, network }).address as string
+    const addr = Bitcoin.payments.p2pkh({ pubkey: publicKey, network }).address as string
+    // For BCH, we convert to bitcoincash format
+    if (type === CoinType.BCH) {
+      return bchaddr.toCashAddress(addr)
+    }
+    return addr
   }
-  console.info("network: ", publicKey.toString('hex'))
   return Bitcoin.payments.p2sh({
     network,
     redeem: Bitcoin.payments.p2wpkh({ pubkey: publicKey, network })
@@ -225,25 +230,25 @@ const bitcoinNetworkFromString = (type: CoinType, net: string | undefined): Bitc
       switch (net) {
         case 'TestNet':
         case 'LocalNet':
-          return coininfo.litecoin.regtest
+          return coininfo.litecoin.test.toBitcoinJS()
         default:
-          return coininfo.litecoin.main
+          return coininfo.litecoin.main.toBitcoinJS()
       }
     case CoinType.BCH:
       switch (net) {
         case 'TestNet':
         case 'LocalNet':
-          return coininfo.bch.regtest
+          return coininfo.bitcoincash.test.toBitcoinJS()
         default:
-          return coininfo.bch.main
+          return coininfo.bitcoincash.main.toBitcoinJS()
       }
     case CoinType.DOGE:
       switch (net) {
         case 'TestNet':
         case 'LocalNet':
-          return coininfo.doge.regtest
+          return coininfo.dogecoin.test.toBitcoinJS()
         default:
-          return coininfo.doge.main
+          return coininfo.dogecoin.main.toBitcoinJS()
       }
     default:
       throw new Error(`Could not get bitcoin network for coin type: ${type}`)

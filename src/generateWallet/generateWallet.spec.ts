@@ -44,20 +44,65 @@ test('generates deterministic BIP44 BTC keys', async () => {
   }
 })
 
-// test('generates deterministic BIP44 LTC keys', async () => {
-//   for (const vector of testVectors) {
-//     const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+test('generates deterministic BIP44 LTC keys', async () => {
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+    const ltc = vector.wallets.ltc.MainNet
 
-//     const genWallet = generateWallet(masterSeed, CoinType.LTC, 0)
-//     console.info("LTC Wallet: ", genWallet)
-//     // expect(genWallet.address).toBe(wallet.address)
-//     // expect(genWallet.publicKey).toBe(wallet.publicKey)
-//     // expect(genWallet.privateKey).toBe(wallet.privateKey)
-//     // expect(genWallet.index).toBe(wallet.index)
-//     //}
-//   }
-// })
+    const genWallet = generateWallet(masterSeed, CoinType.LTC, ltc.index, 'MainNet')
+    expect(genWallet.address).toBe(ltc.address)
+    expect(genWallet.publicKey).toBe(ltc.publicKey)
+    expect(genWallet.privateKey).toBe(ltc.privateKey)
+    expect(genWallet.index).toBe(ltc.index)
 
+    const ltcTestnet = vector.wallets.ltc.TestNet
+    const testnetWallet = generateWallet(masterSeed, CoinType.LTC, ltc.index, 'TestNet')
+    expect(testnetWallet.address).toBe(ltcTestnet.address)
+    expect(testnetWallet.publicKey).toBe(ltcTestnet.publicKey)
+    expect(testnetWallet.privateKey).toBe(ltcTestnet.privateKey)
+    expect(testnetWallet.index).toBe(ltcTestnet.index)
+  }
+})
+
+test('generates deterministic BIP44 doge keys', async () => {
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+    const wallet = vector.wallets.doge.MainNet
+
+    const genWallet = generateWallet(masterSeed, CoinType.DOGE, wallet.index, 'MainNet')
+    expect(genWallet.address).toBe(wallet.address)
+    expect(genWallet.publicKey).toBe(wallet.publicKey)
+    expect(genWallet.privateKey).toBe(wallet.privateKey)
+    expect(genWallet.index).toBe(wallet.index)
+
+    const testWallet = vector.wallets.doge.TestNet
+    const testnetWallet = generateWallet(masterSeed, CoinType.DOGE, testWallet.index, 'TestNet')
+    expect(testnetWallet.address).toBe(testWallet.address)
+    expect(testnetWallet.publicKey).toBe(testWallet.publicKey)
+    expect(testnetWallet.privateKey).toBe(testWallet.privateKey)
+    expect(testnetWallet.index).toBe(testWallet.index)
+  }
+})
+
+test('generates deterministic BIP44 bitcoincash keys', async () => {
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+    const wallet = vector.wallets.bch.MainNet
+
+    const genWallet = generateWallet(masterSeed, CoinType.BCH, wallet.index, 'MainNet')
+    expect(genWallet.address).toBe(wallet.address)
+    expect(genWallet.publicKey).toBe(wallet.publicKey)
+    expect(genWallet.privateKey).toBe(wallet.privateKey)
+    expect(genWallet.index).toBe(wallet.index)
+
+    const testWallet = vector.wallets.bch.TestNet
+    const testnetWallet = generateWallet(masterSeed, CoinType.BCH, testWallet.index, 'TestNet')
+    expect(testnetWallet.address).toBe(testWallet.address)
+    expect(testnetWallet.publicKey).toBe(testWallet.publicKey)
+    expect(testnetWallet.privateKey).toBe(testWallet.privateKey)
+    expect(testnetWallet.index).toBe(testWallet.index)
+  }
+})
 
 test('generates deterministic payload signing key', async () => {
   for (const vector of testVectors) {
