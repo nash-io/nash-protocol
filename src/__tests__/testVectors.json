@@ -113,6 +113,14 @@
           "privateKey": "6bdb92cc545a2da68473eda031db2e77961ba14938ae505df786e1021f40a018",
           "publicKey": "02e0b806db8ab79814a5009885b12de754d09f8f419d0ca0a6406ce767cb58a14d"
         }
+      },
+      "dot": {
+        "MainNet": {
+          "address": "12Gez5b4gsvD2RbPqjD7jX9bvSG5BNoyuxjZ51XeTxyXnSMm",
+          "index": 0,
+          "privateKey": "d85ab13b994b71d81c45187427ab0f33db7f99ae3f4a8f0eb17b74656b80c217",
+          "publicKey": "382cc7cd04190bff63bf3e47e01539992ea7e208e527f4769a84f510534fa23f"
+        }
       }
     }
   }

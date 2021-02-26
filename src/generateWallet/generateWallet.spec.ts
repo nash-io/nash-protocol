@@ -1,6 +1,7 @@
 import { generateNashPayloadSigningKey, generateWallet, CoinType } from './generateWallet'
 import _ from 'lodash'
 import testVectors from '../__tests__/testVectors.json'
+import { cryptoWaitReady } from '@polkadot/util-crypto'
 
 test('generates deterministic BIP44 ETH keys', async () => {
   for (const vector of testVectors) {
@@ -101,6 +102,21 @@ test('generates deterministic BIP44 bitcoincash keys', async () => {
     expect(testnetWallet.publicKey).toBe(testWallet.publicKey)
     expect(testnetWallet.privateKey).toBe(testWallet.privateKey)
     expect(testnetWallet.index).toBe(testWallet.index)
+  }
+})
+
+test('generates deterministic BIP44 dot keys', async () => {
+  await cryptoWaitReady()
+
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+    const wallet = vector.wallets.dot.MainNet
+
+    const genWallet = generateWallet(masterSeed, CoinType.DOT, wallet.index, 'MainNet')
+    expect(genWallet.address).toBe(wallet.address)
+    expect(genWallet.publicKey).toBe(wallet.publicKey)
+    expect(genWallet.privateKey).toBe(wallet.privateKey)
+    expect(genWallet.index).toBe(wallet.index)
   }
 })
 

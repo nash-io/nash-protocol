@@ -40,6 +40,8 @@
     "node": ">=14.3"
   },
   "dependencies": {
+    "@polkadot/keyring": "^5.8.1",
+    "@polkadot/util-crypto": "^5.8.1",
     "bchaddrjs": "^0.5.2",
     "bignumber.js": "8.1.1",
     "bip32": "2.0.3",
