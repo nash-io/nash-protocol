@@ -71,7 +71,65 @@
           "publicKey": "03a41d39a4209e18eb79245ea368674edf335a4ebeb8ed344b87d3ccaf3a2c730e",
           "address": "ANwZ2RFRKrASBvZifGgjqqJNUbfJUW6gbn"
         }
-      ]
+      ],
+      "ltc": {
+        "MainNet": {
+          "address": "MCPi7QVw4DGJMapjUNtArnMHCsRQpHPo1e",
+          "index": 0,
+          "privateKey": "febfcd1fbd52b4a5c5e1d54284875fec98f3810f14273f41921da4c94e7c66a2",
+          "publicKey": "0300b3c811a09ee947e9fe9727f92d8d32fdc9cdcc3084f4dce2eb65141aae6247"
+        },
+        "TestNet": {
+          "address": "QR6XzGtEjeyJu3wRfjYijnXaEuUxYAk6qX",
+          "index": 0,
+          "privateKey": "febfcd1fbd52b4a5c5e1d54284875fec98f3810f14273f41921da4c94e7c66a2",
+          "publicKey": "0300b3c811a09ee947e9fe9727f92d8d32fdc9cdcc3084f4dce2eb65141aae6247"
+        }
+      },
+      "doge": {
+        "MainNet": {
+          "address": "DGx1o7YAWukpfsWKbj6p2ihDdaJBnD5gQM",
+          "index": 0,
+          "privateKey": "229138899669a83627a9328d8629233f1e906ed0f1c92cbee35efb77e1433931",
+          "publicKey": "023c3b135e0e3eeeaa4fff825fd712bdddb75e0594a8e96b1598af8804fdc946e2"
+        },
+        "TestNet": {
+          "address": "ng15X8H5StDYYr5WdYkGH8HWsSgUoz3gMy",
+          "index": 0,
+          "privateKey": "229138899669a83627a9328d8629233f1e906ed0f1c92cbee35efb77e1433931",
+          "publicKey": "023c3b135e0e3eeeaa4fff825fd712bdddb75e0594a8e96b1598af8804fdc946e2"
+        }
+      },
+      "bch": {
+        "MainNet": {
+          "address": "bitcoincash:qpmqltp5krmqqvxwppvem6xw99fdnqz3rugdqw39w4",
+          "index": 0,
+          "privateKey": "6bdb92cc545a2da68473eda031db2e77961ba14938ae505df786e1021f40a018",
+          "publicKey": "02e0b806db8ab79814a5009885b12de754d09f8f419d0ca0a6406ce767cb58a14d"
+        },
+        "TestNet": {
+          "address": "bchtest:qpmqltp5krmqqvxwppvem6xw99fdnqz3ruvlyfnjff",
+          "index": 0,
+          "privateKey": "6bdb92cc545a2da68473eda031db2e77961ba14938ae505df786e1021f40a018",
+          "publicKey": "02e0b806db8ab79814a5009885b12de754d09f8f419d0ca0a6406ce767cb58a14d"
+        }
+      },
+      "dot": {
+        "MainNet": {
+          "address": "12Gez5b4gsvD2RbPqjD7jX9bvSG5BNoyuxjZ51XeTxyXnSMm",
+          "index": 0,
+          "privateKey": "d85ab13b994b71d81c45187427ab0f33db7f99ae3f4a8f0eb17b74656b80c217",
+          "publicKey": "382cc7cd04190bff63bf3e47e01539992ea7e208e527f4769a84f510534fa23f"
+        }
+      },
+      "erd": {
+        "MainNet": {
+          "address": "erd1lqzc8aam9gpxxc7xqmg4pyw8gl25jw8vmzmmx84d8glepalf6gpsuhj4py",
+          "index": 0,
+          "privateKey": "a555541a7eab5081098c10d47b2a076b999e8561d787d3362f0854981b3d9ab1",
+          "publicKey": "f80583f7bb2a026363c606d15091c747d54938ecd8b7b31ead3a3f90f7e9d203"
+        }
+      }
     }
   }
 ]

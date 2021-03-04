@@ -3,7 +3,12 @@ import { Wallet } from '../types'
 import { reverseHex } from '../utils/getNEOScriptHash/getNEOScripthash'
 import * as EthUtil from 'ethereumjs-util'
 import * as Bitcoin from 'bitcoinjs-lib'
+import bchaddr from 'bchaddrjs'
 import * as tiny from 'tiny-secp256k1'
+import * as coininfo from 'coininfo'
+import Keyring from '@polkadot/keyring'
+import { account as erdAccount } from '@elrondnetwork/elrond-core-js'
+
 import base58 from 'bs58'
 import hexEncoding from 'crypto-js/enc-hex'
 import RIPEMD160 from 'crypto-js/ripemd160'
@@ -16,10 +21,23 @@ const nashPurpose = 1337
 
 export enum CoinType {
   BTC = 0,
+  LTC = 2,
+  DOGE = 3,
   ETH = 60,
-  NEO = 888
+  ETC = 61,
+  BCH = 145,
+  DOT = 354,
+  ERD = 508,
+  NEO = 888,
+  AVAX = 9000
 }
 
+const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
+
+interface DotKeyPair {
+  publicKey: Uint8Array
+  address: string
+}
 /**
  * Creates a wallet for a given token via the
  * [BIP-44 protocol]((https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki).
@@ -75,8 +93,15 @@ export function deriveIndex(extendedKey: bip32.BIP32Interface, index: number): b
 
 export const coinTypeFromString = (s: string): CoinType => {
   const m: Record<string, CoinType> = {
+    avax: CoinType.AVAX,
+    bch: CoinType.BCH,
     btc: CoinType.BTC,
+    doge: CoinType.DOGE,
+    dot: CoinType.DOT,
+    erd: CoinType.ERD,
+    etc: CoinType.ETC,
     eth: CoinType.ETH,
+    ltc: CoinType.LTC,
     neo: CoinType.NEO
   }
 
@@ -153,6 +178,8 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         publicKey
       }
     case CoinType.ETH:
+    case CoinType.ETC:
+    case CoinType.AVAX:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)
@@ -163,36 +190,99 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         publicKey: pubkey.toString('hex')
       }
     case CoinType.BTC:
+    case CoinType.BCH:
+    case CoinType.LTC:
+    case CoinType.DOGE:
       return {
-        address: bitcoinAddressFromPublicKey(key.publicKey, net!),
+        address: bitcoinAddressFromPublicKey(key.publicKey, coinType, net!),
         index,
         privateKey: key.privateKey.toString('hex'),
         publicKey: key.publicKey.toString('hex')
+      }
+    case CoinType.DOT:
+      const keypair = dotKeypairFromSeed(key.privateKey)
+      return {
+        address: keypair.address,
+        index,
+        privateKey: key.privateKey.toString('hex'),
+        publicKey: new Buffer(keypair.publicKey).toString('hex')
+      }
+    case CoinType.ERD:
+      const account = new erdAccount()
+      account.loadFromSeed(key.privateKey)
+      return {
+        address: account.address(),
+        index,
+        privateKey: key.privateKey.toString('hex'),
+        publicKey: account.publicKeyAsString()
       }
     default:
       throw new Error(`invalid coin type ${coinType} for generating a wallet`)
   }
 }
 
-const bitcoinAddressFromPublicKey = (publicKey: Buffer, net: string): string => {
-  const network = bitcoinNetworkFromString(net)
+const bitcoinAddressFromPublicKey = (publicKey: Buffer, type: CoinType, net: string): string => {
+  const network = bitcoinNetworkFromString(type, net)
+  if (NON_SEGWIT.includes(type)) {
+    const addr = Bitcoin.payments.p2pkh({ pubkey: publicKey, network }).address as string
+    // For BCH, we convert to bitcoincash format
+    if (type === CoinType.BCH) {
+      return bchaddr.toCashAddress(addr)
+    }
+    return addr
+  }
   return Bitcoin.payments.p2sh({
     network,
     redeem: Bitcoin.payments.p2wpkh({ pubkey: publicKey, network })
   }).address as string
 }
 
-const bitcoinNetworkFromString = (net: string | undefined): Bitcoin.Network => {
-  switch (net) {
-    case 'MainNet':
-      return Bitcoin.networks.bitcoin
-    case 'TestNet':
-      return Bitcoin.networks.regtest
-    case 'LocalNet':
-      return Bitcoin.networks.regtest
+const bitcoinNetworkFromString = (type: CoinType, net: string | undefined): Bitcoin.Network => {
+  switch (type) {
+    case CoinType.BTC:
+      switch (net) {
+        case 'MainNet':
+          return Bitcoin.networks.bitcoin
+        case 'TestNet':
+          return Bitcoin.networks.regtest
+        case 'LocalNet':
+          return Bitcoin.networks.regtest
+        default:
+          return Bitcoin.networks.bitcoin
+      }
+    case CoinType.LTC:
+      switch (net) {
+        case 'TestNet':
+        case 'LocalNet':
+          return coininfo.litecoin.test.toBitcoinJS()
+        default:
+          return coininfo.litecoin.main.toBitcoinJS()
+      }
+    case CoinType.BCH:
+      switch (net) {
+        case 'TestNet':
+        case 'LocalNet':
+          return coininfo.bitcoincash.test.toBitcoinJS()
+        default:
+          return coininfo.bitcoincash.main.toBitcoinJS()
+      }
+    case CoinType.DOGE:
+      switch (net) {
+        case 'TestNet':
+        case 'LocalNet':
+          return coininfo.dogecoin.test.toBitcoinJS()
+        default:
+          return coininfo.dogecoin.main.toBitcoinJS()
+      }
     default:
-      return Bitcoin.networks.bitcoin
+      throw new Error(`Could not get bitcoin network for coin type: ${type}`)
   }
+}
+
+const dotKeypairFromSeed = (key: Buffer): DotKeyPair => {
+  const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 })
+  keyring.addFromSeed(key)
+  return keyring.getPairs().shift() as DotKeyPair
 }
 
 function derivePath(
