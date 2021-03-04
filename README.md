@@ -7,6 +7,8 @@ Implementation of Nash cryptographic routines.
 
 ## Getting started
 
+This library requires Node v14 or higher.  Install on lower versions is not supported. 
+
     yarn install
     yarn build
     yarn test
