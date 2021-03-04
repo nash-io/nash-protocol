@@ -121,6 +121,14 @@
           "privateKey": "d85ab13b994b71d81c45187427ab0f33db7f99ae3f4a8f0eb17b74656b80c217",
           "publicKey": "382cc7cd04190bff63bf3e47e01539992ea7e208e527f4769a84f510534fa23f"
         }
+      },
+      "erd": {
+        "MainNet": {
+          "address": "erd1lqzc8aam9gpxxc7xqmg4pyw8gl25jw8vmzmmx84d8glepalf6gpsuhj4py",
+          "index": 0,
+          "privateKey": "a555541a7eab5081098c10d47b2a076b999e8561d787d3362f0854981b3d9ab1",
+          "publicKey": "f80583f7bb2a026363c606d15091c747d54938ecd8b7b31ead3a3f90f7e9d203"
+        }
       }
     }
   }

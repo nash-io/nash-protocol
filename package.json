@@ -37,9 +37,10 @@
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('nash-protocol must be installed with Yarn: https://yarnpkg.com/')\""
   },
   "engines": {
-    "node": ">=14.3"
+    "node": ">=10"
   },
   "dependencies": {
+    "@elrondnetwork/elrond-core-js": "^2.1.0",
     "@polkadot/keyring": "^5.8.1",
     "@polkadot/util-crypto": "^5.8.1",
     "bchaddrjs": "^0.5.2",

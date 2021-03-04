@@ -120,6 +120,20 @@ test('generates deterministic BIP44 dot keys', async () => {
   }
 })
 
+test('generates deterministic BIP44 erd keys', async () => {
+  await cryptoWaitReady()
+
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+    const wallet = vector.wallets.erd.MainNet
+    const genWallet = generateWallet(masterSeed, CoinType.ERD, wallet.index, 'MainNet')
+    expect(genWallet.address).toBe(wallet.address)
+    expect(genWallet.publicKey).toBe(wallet.publicKey)
+    expect(genWallet.privateKey).toBe(wallet.privateKey)
+    expect(genWallet.index).toBe(wallet.index)
+  }
+})
+
 test('generates deterministic payload signing key', async () => {
   for (const vector of testVectors) {
     const masterSeed = Buffer.from(vector.masterSeed, 'hex')

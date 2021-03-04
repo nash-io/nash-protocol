@@ -7,6 +7,7 @@ import bchaddr from 'bchaddrjs'
 import * as tiny from 'tiny-secp256k1'
 import * as coininfo from 'coininfo'
 import Keyring from '@polkadot/keyring'
+import { account as erdAccount } from '@elrondnetwork/elrond-core-js'
 
 import base58 from 'bs58'
 import hexEncoding from 'crypto-js/enc-hex'
@@ -205,6 +206,15 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         index,
         privateKey: key.privateKey.toString('hex'),
         publicKey: new Buffer(keypair.publicKey).toString('hex')
+      }
+    case CoinType.ERD:
+      const account = new erdAccount()
+      account.loadFromSeed(key.privateKey)
+      return {
+        address: account.address(),
+        index,
+        privateKey: key.privateKey.toString('hex'),
+        publicKey: account.publicKeyAsString()
       }
     default:
       throw new Error(`invalid coin type ${coinType} for generating a wallet`)
