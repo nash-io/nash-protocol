@@ -34,25 +34,29 @@ const loadNodeFile = (): NodeFileInterface => {
 const MpcWallet = loadNodeFile()
 export function dh_init(size: number, curve: string): string {
   if (wasm === MpcWallet) {
-    return wasm.dh_init(size, curve)
+    // wasm expects double quotes for the curve param
+    return wasm.dh_init(size, JSON.stringify(curve))
   }
   return MpcWallet.dh_init(size, curve)
 }
 export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string): string {
   if (wasm === MpcWallet) {
-    return wasm.fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
+    // wasm expects double quotes for the curve param
+    return wasm.fill_rpool(clientDHSecrets, serverDHPublics, JSON.stringify(curve), pkstr)
   }
   return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, pkstr, curve)
 }
 export function get_rpool_size(curve: string): string {
   if (wasm === MpcWallet) {
-    return wasm.get_rpool_size(curve)
+    // wasm expects double quotes for the curve param
+    return wasm.get_rpool_size(JSON.stringify(curve))
   }
   return MpcWallet.get_rpool_size(curve)
 }
 export function compute_presig(apiKeyStr: string, msgHashStr: string, curve: string): string {
   if (wasm === MpcWallet) {
-    return wasm.compute_presig(apiKeyStr, msgHashStr, curve)
+    // wasm expects double quotes for the curve param
+    return wasm.compute_presig(apiKeyStr, msgHashStr, JSON.stringify(curve))
   }
   return MpcWallet.compute_presig(apiKeyStr, msgHashStr, curve)
 }
