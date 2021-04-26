@@ -90,6 +90,7 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       const newPayload: AddMovementPayload = { ...payload }
       delete newPayload.recycled_orders
       delete newPayload.digests
+      delete newPayload.backendGeneratedPayload
       return canonicalString(newPayload)
     case SigningPayloadID.listOrderPayload:
       const newOrderPayload: any = { ...payload }
@@ -99,6 +100,11 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       const newTradePayload: any = { ...payload }
       delete newTradePayload.limit
       return canonicalString(newTradePayload)
+    case SigningPayloadID.prepareMovementPayload:
+      const newPrepareMovementPayload: any = { ...payload }
+      delete newPrepareMovementPayload.backendGeneratedPayload
+      return canonicalString(newPrepareMovementPayload)
+
     default:
       if (isOrderPayload(kind)) {
         const tempPayload = alterOrderPayloadForGraphql(payload)
@@ -657,7 +663,8 @@ export function signTransactionDigestsForAddMovement(config: Config, payload: Ad
         case Blockchain.NEO:
           signedTransactionElement.signature = signNEOBlockchainData(
             config.wallets.neo.privateKey,
-            item.digest
+            item.digest,
+            false
           ).signature
           break
         default:
@@ -702,7 +709,7 @@ export async function presignTransactionDigestsForAddMovement(
         })
         break
       case Blockchain.NEO:
-        sig = await presignNEOBlockchainData(apiKey, config, item.digest)
+        sig = await presignNEOBlockchainData(apiKey, config, item.digest, false)
         result.push({
           blockchain: item.blockchain,
           message: item.digest,
