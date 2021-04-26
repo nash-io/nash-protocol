@@ -42,11 +42,14 @@ export interface ClientSignedState {
 export interface TransactionDigest {
   digest: string
   blockchain: string
+  paylaod: string
+  payloadHash: string
 }
 
 export interface AddMovementPayload {
   digests?: TransactionDigest[]
   recycled_orders?: ClientSignedState[]
+  backendGeneratedPayload?: boolean
 }
 
 export interface AddMovementRequestPayload {
@@ -347,13 +350,19 @@ export function createPlaceStopMarketOrderParams(
 
 export function createPrepareMovementParams(
   address: string,
+  backendGeneratedPayload: boolean,
   quantity: object,
   type: string,
-  timestamp?: number
+  timestamp?: number,
+  targetAddress?: string,
+  capQuantityToMaximum?: boolean
 ): PayloadAndKind {
   const payload = {
     address,
+    backendGeneratedPayload,
+    capQuantityToMaximum: capQuantityToMaximum ? capQuantityToMaximum : false,
     quantity,
+    targetAddress,
     timestamp: timestamp || createTimestamp(),
     type
   }
@@ -365,6 +374,7 @@ export function createPrepareMovementParams(
 
 export function createAddMovementParams(
   address: string,
+  backendGeneratedPayload: boolean,
   quantity: object,
   type: string,
   nonce: number,
@@ -374,6 +384,7 @@ export function createAddMovementParams(
 ): PayloadAndKind {
   const payload = {
     address,
+    backendGeneratedPayload,
     digests: digests || [],
     nonce,
     quantity,

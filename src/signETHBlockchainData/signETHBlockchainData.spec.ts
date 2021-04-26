@@ -29,6 +29,7 @@ test('sign eth deposit movement', async () => {
 
   const signingPayload = createAddMovementParams(
     data.address,
+    false,
     { amount: '1.32450000', currency: 'eth' },
     MovementTypeDeposit,
     data.nonce,

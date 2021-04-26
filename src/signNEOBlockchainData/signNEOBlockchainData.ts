@@ -25,9 +25,16 @@ const sha256 = (msg: string): string => {
   return sha256H.update(Buffer.from(msg, 'hex')).digest('hex')
 }
 
-export function signNEOBlockchainData(privateKey: string, data: string): BlockchainSignature {
-  const msgHash = sha256(sha256(data))
-  const msgHashHex = Buffer.from(msgHash, 'hex')
+
+
+export function signNEOBlockchainData(privateKey: string, data: string, performHash: boolean = true): BlockchainSignature {
+  let msgHashHex
+  if (performHash) {
+    const msgHash = sha256(sha256(data))
+    msgHashHex = Buffer.from(msgHash, 'hex')
+  } else {
+    msgHashHex = Buffer.from(data, 'hex')
+  }
   const privateKeyBuffer = Buffer.from(privateKey, 'hex')
   const sig = curve.sign(msgHashHex, privateKeyBuffer)
 
@@ -40,9 +47,15 @@ export function signNEOBlockchainData(privateKey: string, data: string): Blockch
 export async function presignNEOBlockchainData(
   apiKey: APIKey,
   config: PresignConfig,
-  data: string
+  data: string,
+  performHash: boolean = true
 ): Promise<BlockchainSignature> {
-  const finalHash = sha256(sha256(data))
+  let finalHash
+  if (performHash) {
+    finalHash = sha256(sha256(data))
+  } else {
+    finalHash = data
+  }
   const neoChildKey = apiKey.child_keys[BIP44.NEO]
   const { r, presig } = await computePresig({
     apiKey: {
