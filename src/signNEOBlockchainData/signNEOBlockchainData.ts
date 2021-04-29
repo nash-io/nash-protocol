@@ -51,11 +51,12 @@ export async function presignNEOBlockchainData(
   performHash: boolean = true
 ): Promise<BlockchainSignature> {
   let finalHash
-  if (performHash) {
+  if (performHash === true) {
     finalHash = sha256(sha256(data))
   } else {
     finalHash = data
   }
+  console.info("Siging final hash: ", finalHash)
   const neoChildKey = apiKey.child_keys[BIP44.NEO]
   const { r, presig } = await computePresig({
     apiKey: {
