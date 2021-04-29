@@ -53,9 +53,15 @@ export function signETHBlockchainData(privateKey: string, data: string): Blockch
 export async function presignETHBlockchainData(
   apiKey: APIKey,
   config: PresignConfig,
-  data: string
+  data: string,
+  performHash: boolean = true
 ): Promise<BlockchainSignature> {
-  const finalHash = createHashedMessage(data).toString('hex')
+  let finalHash
+  if (performHash) {
+    finalHash = createHashedMessage(data).toString('hex')
+  } else {
+    finalHash = data
+  }
   const ethChildKey = apiKey.child_keys[BIP44.ETH]
   const { r, presig } = await computePresig({
     apiKey: {

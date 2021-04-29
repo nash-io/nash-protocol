@@ -42,7 +42,7 @@ export interface ClientSignedState {
 export interface TransactionDigest {
   digest: string
   blockchain: string
-  paylaod: string
+  payload: string
   payloadHash: string
 }
 
@@ -355,12 +355,14 @@ export function createPrepareMovementParams(
   type: string,
   timestamp?: number,
   targetAddress?: string,
-  capQuantityToMaximum?: boolean
+  capQuantityToMaximum?: boolean,
+  gasPrice?: number
 ): PayloadAndKind {
   const payload = {
     address,
     backendGeneratedPayload,
     capQuantityToMaximum: capQuantityToMaximum ? capQuantityToMaximum : false,
+    gasPrice,
     quantity,
     targetAddress,
     timestamp: timestamp || createTimestamp(),
