@@ -105,6 +105,10 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       delete newPrepareMovementPayload.backendGeneratedPayload
       delete newPrepareMovementPayload.gasPrice
       return canonicalString(newPrepareMovementPayload)
+    case SigningPayloadID.updateMovementPayload:
+      const newUpateMovementPayload: any = { ...payload }
+      delete newUpateMovementPayload.digests
+      return canonicalString(newUpateMovementPayload)
 
     default:
       if (isOrderPayload(kind)) {
@@ -229,6 +233,13 @@ export async function preSignPayload(
       payload = alterOrderPayloadForGraphql(payload)
     }
   }
+  if (kind === SigningPayloadID.updateMovementPayload) {
+    payload.signed_transaction_elements = await presignTransactionDigestsForAddMovement(
+      apiKey,
+      config,
+      payload
+    )
+  }
 
   if (needBlockchainMovement(kind)) {
     if (config == null) {
@@ -248,24 +259,6 @@ export async function preSignPayload(
       payload
     )
 
-    // const movement = getBlockchainMovement(
-    //   {
-    //     btc: {
-    //       address: apiKey.child_keys[BIP44.BTC].address,
-    //       publicKey: apiKey.child_keys[BIP44.BTC].public_key
-    //     },
-    //     eth: {
-    //       address: apiKey.child_keys[BIP44.ETH].address,
-    //       publicKey: apiKey.child_keys[BIP44.ETH].public_key
-    //     },
-    //     neo: {
-    //       address: apiKey.child_keys[BIP44.NEO].address,
-    //       publicKey: apiKey.child_keys[BIP44.NEO].public_key
-    //     }
-    //   },
-    //   config.assetData,
-    //   { kind, payload }
-    // )
     delete addMovementPayloadRequest.blockchainSignatures
 
     return {
