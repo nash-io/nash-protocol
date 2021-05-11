@@ -13,7 +13,7 @@ import {
 } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { BLOCKCHAIN_PRECISION, MIN_ORDER_RATE, MAX_FEE_RATE, MAX_ORDER_RATE, MAX_ORDER_AMOUNT } from '../constants'
-import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID, BuyOrSellBuy } from '../payload'
+import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID, BuyOrSellBuy, HASH_NONE, HASH_SHA256, HASH_DOUBLESHA256, HASH_DOUBLE_SHA256 } from '../payload'
 import { BlockchainSignature, Blockchain, APIKey, PresignConfig, BIP44, Config, ChainNoncePair } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { computePresig } from '../mpc/computePresig'
@@ -48,14 +48,23 @@ export async function presignNEOBlockchainData(
   apiKey: APIKey,
   config: PresignConfig,
   data: string,
-  performHash: boolean = true
+  payloadHashFunction: string
 ): Promise<BlockchainSignature> {
-  let finalHash
-  if (performHash === true) {
-    finalHash = sha256(sha256(data))
-  } else {
-    finalHash = data
+  console.info("Siginig with payload hash function: ", payloadHashFunction)
+  let finalHash = data
+
+  switch (payloadHashFunction) {
+    case HASH_NONE:
+      break
+    case HASH_SHA256:
+      finalHash = sha256(data)
+      break
+    case HASH_DOUBLESHA256:
+    case HASH_DOUBLE_SHA256:
+      finalHash = sha256(sha256(sha256(data)))
+      break
   }
+
   console.info("Siging final hash: ", finalHash)
   const neoChildKey = apiKey.child_keys[BIP44.NEO]
   const { r, presig } = await computePresig({
