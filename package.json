@@ -58,7 +58,7 @@
     "futoin-hkdf": "1.0.2",
     "int64-buffer": "0.99.1007",
     "keccak": "2.0.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.21",
     "node-fetch": "2.6.0",
     "randombytes": "2.1.0",
     "scrypt-js": "2.0.4",
