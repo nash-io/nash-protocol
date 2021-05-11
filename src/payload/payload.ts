@@ -20,6 +20,11 @@ export const MovementTypeTransfer = 'TRANSFER'
 export const BuyOrSellBuy = 'BUY'
 export const BuyOrSellSell = 'SELL'
 
+export const HASH_SHA256 = 'SHA256'
+export const HASH_DOUBLE_SHA256 = 'DOUBLE_SHA256'
+export const HASH_DOUBLESHA256 = 'DOUBLESHA256'
+export const HASH_NONE = 'NOHASH'
+
 export interface SignStatesPayload {
   timestamp: number
   states: ClientSignedState[]
@@ -44,6 +49,8 @@ export interface TransactionDigest {
   blockchain: string
   payload: string
   payloadHash: string
+  payloadHashFunction: string
+  signatureFunction: string
 }
 
 export interface AddMovementPayload {
