@@ -33,7 +33,9 @@ import {
   ClientSignedState,
   SignStatesRequestPayload,
   AddMovementPayload,
-  TransactionDigest
+  TransactionDigest,
+  HASH_DOUBLESHA256,
+  HASH_DOUBLE_SHA256
 } from '../payload'
 import {
   inferBlockchainData,
@@ -262,7 +264,7 @@ export async function preSignPayload(
     delete addMovementPayloadRequest.blockchainSignatures
 
     return {
-      blockchainRaw: buildMovementSignatureData(apiKey, config, { payload, kind }),
+      blockchainRaw: '',
       canonicalString: message,
       payload: addMovementPayloadRequest,
       signature: stringify(bufferize(sig.toDER())).toLowerCase()
@@ -281,26 +283,6 @@ export async function preSignPayload(
   }
 }
 
-function buildMovementSignatureData(apiKey: APIKey, config: PresignConfig, payloadAndKind: PayloadAndKind): string {
-  const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
-  switch (blockchain) {
-    case 'neo':
-      const neoData = buildNEOMovementSignatureData(
-        apiKey.child_keys[BIP44.NEO].address,
-        apiKey.child_keys[BIP44.NEO].public_key,
-        config.assetData,
-        payloadAndKind
-      )
-      return neoData
-    case 'eth':
-      const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
-      return ethData
-    case 'btc':
-      return ''
-    default:
-      throw new Error('Not implemented')
-  }
-}
 
 /**
  * Presign blockchain data. Returns an array of signatures. Needed for operations
@@ -328,7 +310,7 @@ export async function presignBlockchainData(
           config.assetData,
           payloadAndKind
         )
-        const neoSig = await presignNEOBlockchainData(apiKey, config, neoData)
+        const neoSig = await presignNEOBlockchainData(apiKey, config, neoData, HASH_DOUBLE_SHA256)
         return [neoSig]
       case 'eth':
         const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
@@ -355,7 +337,7 @@ export async function presignBlockchainData(
             chainNoncePair,
             orderData
           )
-          const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
+          const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData, HASH_DOUBLE_SHA256)
           return {
             ...neoSignature,
             nonceFrom: chainNoncePair.nonceFrom,
@@ -707,7 +689,7 @@ export async function presignTransactionDigestsForAddMovement(
         })
         break
       case Blockchain.NEO:
-        sig = await presignNEOBlockchainData(apiKey, config, item.payload)
+        sig = await presignNEOBlockchainData(apiKey, config, item.payload, item.payloadHashFunction)
         result.push({
           blockchain: item.blockchain,
           message: item.payload,
@@ -759,7 +741,8 @@ export async function presignStateList(
         result.push(item)
         break
       case 'neo':
-        const ethSig = await presignNEOBlockchainData(apiKey, config, item.message)
+        console.info("Presiging neo blockchain data for sign state")
+        const ethSig = await presignNEOBlockchainData(apiKey, config, item.message, HASH_DOUBLESHA256)
         item.signature = ethSig.signature
         item.r = ethSig.r
         result.push(item)
