@@ -218,6 +218,7 @@ export async function preSignPayload(
   let payload = payloadAndKind.payload
   const payloadName = kindToName(kind)
   const message = `${payloadName},${canonicalizePayload(kind, payload)}`
+  console.info("Canonincal string: ", message)
   const messageHash = SHA256(message).toString(hexEncoding)
   const keypair = curve.keyFromPrivate(apiKey.payload_signing_key)
   const sig = keypair.sign(messageHash, {
@@ -264,7 +265,7 @@ export async function preSignPayload(
     delete addMovementPayloadRequest.blockchainSignatures
 
     return {
-      blockchainRaw: '',
+      blockchainRaw: buildMovementSignatureData(apiKey, config, { payload, kind }),
       canonicalString: message,
       payload: addMovementPayloadRequest,
       signature: stringify(bufferize(sig.toDER())).toLowerCase()
@@ -283,6 +284,27 @@ export async function preSignPayload(
   }
 }
 
+
+function buildMovementSignatureData(apiKey: APIKey, config: PresignConfig, payloadAndKind: PayloadAndKind): string {
+  const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
+  switch (blockchain) {
+    case 'neo':
+      const neoData = buildNEOMovementSignatureData(
+        apiKey.child_keys[BIP44.NEO].address,
+        apiKey.child_keys[BIP44.NEO].public_key,
+        config.assetData,
+        payloadAndKind
+      )
+      return neoData
+    case 'eth':
+      const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
+      return ethData
+    case 'btc':
+      return ''
+    default:
+      throw new Error('Not implemented')
+  }
+}
 
 /**
  * Presign blockchain data. Returns an array of signatures. Needed for operations
