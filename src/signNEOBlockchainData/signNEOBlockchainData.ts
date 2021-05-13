@@ -61,7 +61,7 @@ export async function presignNEOBlockchainData(
       break
     case HASH_DOUBLESHA256:
     case HASH_DOUBLE_SHA256:
-      finalHash = sha256(sha256(sha256(data)))
+      finalHash = sha256(sha256(data))
       break
   }
 
