@@ -236,11 +236,7 @@ export async function preSignPayload(
     }
   }
   if (kind === SigningPayloadID.updateMovementPayload) {
-    payload.signed_transaction_elements = await presignTransactionDigestsForAddMovement(
-      apiKey,
-      config,
-      payload
-    )
+    payload.signed_transaction_elements = await presignTransactionDigestsForAddMovement(apiKey, config, payload)
   }
 
   if (needBlockchainMovement(kind)) {
@@ -282,7 +278,6 @@ export async function preSignPayload(
     signature: stringify(bufferize(sig.toDER()))
   }
 }
-
 
 function buildMovementSignatureData(apiKey: APIKey, config: PresignConfig, payloadAndKind: PayloadAndKind): string {
   const blockchain = config.assetData[payloadAndKind.payload.quantity.currency].blockchain
@@ -653,20 +648,13 @@ export function signTransactionDigestsForAddMovement(config: Config, payload: Ad
           return {
             blockchain: item.blockchain,
             message: item.payload,
-            signature: signETHBlockchainData(
-              config.wallets.eth.privateKey,
-              item.digest
-            ).signature
+            signature: signETHBlockchainData(config.wallets.eth.privateKey, item.digest).signature
           }
         case Blockchain.NEO:
           return {
             blockchain: item.blockchain,
             message: item.payload,
-            signature: signNEOBlockchainData(
-              config.wallets.neo.privateKey,
-              item.digest,
-              false
-            ).signature
+            signature: signNEOBlockchainData(config.wallets.neo.privateKey, item.digest, false).signature
           }
         default:
           throw new Error(`Could not sign for chain: ${item.blockchain}`)
