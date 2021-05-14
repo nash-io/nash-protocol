@@ -50,7 +50,6 @@ export async function presignNEOBlockchainData(
   data: string,
   payloadHashFunction: string
 ): Promise<BlockchainSignature> {
-  console.info("Siginig with payload hash function: ", payloadHashFunction)
   let finalHash = data
 
   switch (payloadHashFunction) {
@@ -65,7 +64,6 @@ export async function presignNEOBlockchainData(
       break
   }
 
-  console.info("Siging final hash: ", finalHash)
   const neoChildKey = apiKey.child_keys[BIP44.NEO]
   const { r, presig } = await computePresig({
     apiKey: {
