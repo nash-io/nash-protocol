@@ -13,7 +13,17 @@ import {
 } from '../utils/blockchain'
 import reverseHexString from '../utils/reverseHexString'
 import { BLOCKCHAIN_PRECISION, MIN_ORDER_RATE, MAX_FEE_RATE, MAX_ORDER_RATE, MAX_ORDER_AMOUNT } from '../constants'
-import { isLimitOrderPayload, kindToOrderPrefix, PayloadAndKind, SigningPayloadID, BuyOrSellBuy, HASH_NONE, HASH_SHA256, HASH_DOUBLESHA256, HASH_DOUBLE_SHA256 } from '../payload'
+import {
+  isLimitOrderPayload,
+  kindToOrderPrefix,
+  PayloadAndKind,
+  SigningPayloadID,
+  BuyOrSellBuy,
+  HASH_NONE,
+  HASH_SHA256,
+  HASH_DOUBLESHA256,
+  HASH_DOUBLE_SHA256
+} from '../payload'
 import { BlockchainSignature, Blockchain, APIKey, PresignConfig, BIP44, Config, ChainNoncePair } from '../types'
 import getNEOScriptHash from '../utils/getNEOScriptHash'
 import { computePresig } from '../mpc/computePresig'
@@ -25,9 +35,11 @@ const sha256 = (msg: string): string => {
   return sha256H.update(Buffer.from(msg, 'hex')).digest('hex')
 }
 
-
-
-export function signNEOBlockchainData(privateKey: string, data: string, performHash: boolean = true): BlockchainSignature {
+export function signNEOBlockchainData(
+  privateKey: string,
+  data: string,
+  performHash: boolean = true
+): BlockchainSignature {
   let msgHashHex
   if (performHash) {
     const msgHash = sha256(sha256(data))
