@@ -218,7 +218,6 @@ export async function preSignPayload(
   let payload = payloadAndKind.payload
   const payloadName = kindToName(kind)
   const message = `${payloadName},${canonicalizePayload(kind, payload)}`
-  console.info("Canonincal string: ", message)
   const messageHash = SHA256(message).toString(hexEncoding)
   const keypair = curve.keyFromPrivate(apiKey.payload_signing_key)
   const sig = keypair.sign(messageHash, {
@@ -763,7 +762,6 @@ export async function presignStateList(
         result.push(item)
         break
       case 'neo':
-        console.info("Presiging neo blockchain data for sign state")
         const ethSig = await presignNEOBlockchainData(apiKey, config, item.message, HASH_DOUBLESHA256)
         item.signature = ethSig.signature
         item.r = ethSig.r
