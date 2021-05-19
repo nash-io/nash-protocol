@@ -114,13 +114,11 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       delete newUpateMovementPayload.digests
       return canonicalString(newUpateMovementPayload)
     case SigningPayloadID.prepareTransactionPayload:
-      return canonicalString(
-        {
-          blockchain: (payload as any).blockchain,
-          gasPrice: (payload as any).gasPrice,
-          timestamp: (payload as any).timestamp
-        }
-      )
+      return canonicalString({
+        blockchain: (payload as any).blockchain,
+        gasPrice: (payload as any).gasPrice,
+        timestamp: (payload as any).timestamp
+      })
     case SigningPayloadID.iterateTransactionPayload:
       return canonicalString({ reference: (payload as any).reference })
     default:
@@ -727,7 +725,6 @@ export async function presignTransactionDigestsForAddMovement(
   }
   return result
 }
-
 
 export async function presignTransactionDigestsForIterateTransaction(
   apiKey: APIKey,
