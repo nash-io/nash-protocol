@@ -89,7 +89,6 @@ export const PayloadIDToName: Record<SigningPayloadID, string> = {
   [SigningPayloadID.prepareMovementPayload]: 'prepare_movement',
   [SigningPayloadID.prepareTransactionPayload]: 'prepare_transaction',
   [SigningPayloadID.iterateTransactionPayload]: 'iterate_transaction'
-
 }
 
 export function kindToName(kind: SigningPayloadID): string {

@@ -44,7 +44,6 @@ export interface ClientSignedState {
   r?: string
 }
 
-
 export interface SignedTransactionElement {
   blockchain: string
   payloadHash: string
