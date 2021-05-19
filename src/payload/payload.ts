@@ -44,6 +44,14 @@ export interface ClientSignedState {
   r?: string
 }
 
+
+export interface SignedTransactionElement {
+  blockchain: string
+  payloadHash: string
+  signature?: string
+  r?: string
+}
+
 export interface TransactionDigest {
   digest: string
   blockchain: string
@@ -57,6 +65,10 @@ export interface AddMovementPayload {
   digests?: TransactionDigest[]
   recycled_orders?: ClientSignedState[]
   backendGeneratedPayload?: boolean
+}
+
+export interface TransactionElementPayload {
+  transactionElements?: TransactionDigest[]
 }
 
 export interface AddMovementRequestPayload {
