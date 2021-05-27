@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.3](https://github.com/nash-io/nash-protocol/compare/v4.0.9...v4.1.3) (2021-05-27)
+
+
+### Bug Fixes
+
+* **utils/blockchain:** check blockchainSignatures before using it ([86e45fd](https://github.com/nash-io/nash-protocol/commit/86e45fdd07b1836668fe995f8704beb65c2e68ae))
+
 ### [4.1.1](https://github.com/nash-io/nash-protocol/compare/v4.0.9...v4.1.1) (2021-05-26)
 
 
