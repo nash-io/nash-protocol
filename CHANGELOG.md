@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [4.0.15](https://github.com/nash-io/nash-protocol/compare/v4.1.0...v4.0.15) (2021-06-14)
 =======
+### [4.1.5](https://github.com/nash-io/nash-protocol/compare/v4.1.3...v4.1.5) (2021-05-27)
+
 ### [4.1.3](https://github.com/nash-io/nash-protocol/compare/v4.0.9...v4.1.3) (2021-05-27)
 
 
