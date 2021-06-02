@@ -80,7 +80,8 @@ export interface Presignature {
 export enum BIP44 {
   BTC = "m/44'/0'/0'/0/0",
   ETH = "m/44'/60'/0'/0/0",
-  NEO = "m/44'/888'/0'/0/0"
+  NEO = "m/44'/888'/0'/0/0",
+  AVAXC = "m/44'/9000'/0'/0/0"
 }
 
 export interface ChildKey {
