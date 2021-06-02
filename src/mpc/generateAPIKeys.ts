@@ -14,10 +14,13 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const btcWallet = generateWallet(masterSeed, coinTypeFromString('btc'), params.walletIndices.btc, params.net)
   const ethWallet = generateWallet(masterSeed, coinTypeFromString('eth'), params.walletIndices.eth, params.net)
   const neoWallet = generateWallet(masterSeed, coinTypeFromString('neo'), params.walletIndices.neo, params.net)
+  const avaxcWallet = generateWallet(masterSeed, coinTypeFromString('avaxc'), params.walletIndices.avaxc, params.net)
 
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
   const neoSecret = neoWallet.privateKey
+  const avaxcSecret = avaxcWallet.privateKey
+
   const btc = await createAPIKey({
     ...params,
     curve: 'Secp256k1',
@@ -32,6 +35,11 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     ...params,
     curve: 'Secp256r1',
     secret: neoSecret
+  })
+  const avaxc = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: avaxcSecret
   })
   return {
     child_keys: {
@@ -52,6 +60,12 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         client_secret_share: neo.client_secret_share,
         public_key: neoWallet.publicKey,
         server_secret_share_encrypted: neo.server_secret_share_encrypted
+      },
+      [BIP44.AVAXC]: {
+        address: avaxcWallet.address,
+        client_secret_share: avaxc.client_secret_share,
+        public_key: avaxcWallet.publicKey,
+        server_secret_share_encrypted: avaxc.server_secret_share_encrypted
       }
     },
     paillier_pk: btc.paillier_pk,
