@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/nash-io/nash-protocol/compare/v4.0.11...v4.1.0) (2021-06-09)
+
+
+### Features
+
+* generate AVAXC APIKeys ([453adb3](https://github.com/nash-io/nash-protocol/commit/453adb31acb53f157d4807cf138bbec86253482f))
+
+
+### Bug Fixes
+
+* **utils/blockchain:** check blockchainSignatures before using it ([86e45fd](https://github.com/nash-io/nash-protocol/commit/86e45fdd07b1836668fe995f8704beb65c2e68ae))
+
 ### [4.0.11](https://github.com/nash-io/nash-protocol/compare/v4.0.9...v4.0.11) (2021-05-11)
 
 ### [4.0.9](https://github.com/nash-io/nash-protocol/compare/v4.0.7...v4.0.9) (2021-03-04)
