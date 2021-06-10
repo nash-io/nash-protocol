@@ -1,7 +1,8 @@
 export enum Blockchain {
   BTC = 'BTC',
   ETH = 'ETH',
-  NEO = 'NEO'
+  NEO = 'NEO',
+  AVAXC = 'AVAXC'
 }
 
 /**
@@ -13,7 +14,8 @@ export type Curve = 'Secp256k1' | 'Secp256r1'
 export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.BTC]: 'Secp256k1',
   [Blockchain.ETH]: 'Secp256k1',
-  [Blockchain.NEO]: 'Secp256r1'
+  [Blockchain.NEO]: 'Secp256r1',
+  [Blockchain.AVAXC]: 'Secp256k1'
 }
 
 export interface PallierPK {
@@ -93,7 +95,17 @@ export interface ChildKey {
 export interface APIKey {
   version: number
   paillier_pk: PallierPK
-  child_keys: Record<BIP44, ChildKey>
+  child_keys: {
+    [BIP44.BTC]: ChildKey
+    [BIP44.ETH]: ChildKey
+    [BIP44.NEO]: ChildKey
+    /**
+     * below this, keys are optional
+     * because users may not have opted
+     * in to new wallets
+     */
+    [BIP44.AVAXC]?: ChildKey
+  }
   payload_signing_key: string
   payload_public_key: string
 }
