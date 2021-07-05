@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DotKeyPair | Nash Protocol - v4.3.1</title>
+	<title>TransactionElementPayload | Nash Protocol - v4.3.1</title>
 	<meta name="description" content="Documentation for Nash Protocol - v4.3.1">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2721,13 +2721,10 @@ img {
 <nav class="tsd-navigation secondary">
 	<ul>
 		<li class="current tsd-kind-interface">
-			<a href="dotkeypair.html" class="tsd-kind-icon">Dot<wbr>Key<wbr>Pair</a>
+			<a href="transactionelementpayload.html" class="tsd-kind-icon">Transaction<wbr>Element<wbr>Payload</a>
 			<ul>
 				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="dotkeypair.html#address" class="tsd-kind-icon">address</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="dotkeypair.html#publickey" class="tsd-kind-icon">public<wbr>Key</a>
+					<a href="transactionelementpayload.html#transactionelements" class="tsd-kind-icon">transaction<wbr>Elements</a>
 				</li>
 			</ul>
 		</li>
@@ -2739,7 +2736,7 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">DotKeyPair</span>
+					<span class="target">TransactionElementPayload</span>
 				</li>
 			</ul>
 		</section>
@@ -2750,8 +2747,7 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="dotkeypair.html#address" class="tsd-kind-icon">address</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="dotkeypair.html#publickey" class="tsd-kind-icon">public<wbr>Key</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="transactionelementpayload.html#transactionelements" class="tsd-kind-icon">transaction<wbr>Elements</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2760,22 +2756,12 @@ img {
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="address" class="tsd-anchor"></a>
-				<h3>address</h3>
-				<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<a name="transactionelements" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> transaction<wbr>Elements</h3>
+				<div class="tsd-signature tsd-kind-icon">transaction<wbr>Elements<span class="tsd-signature-symbol">:</span> <a href="transactiondigest.html" class="tsd-signature-type">TransactionDigest</a><span class="tsd-signature-symbol">[]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/nash-io/nash-protocol/blob/804038a/src/generateWallet/generateWallet.ts#L39">src/generateWallet/generateWallet.ts:39</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="publickey" class="tsd-anchor"></a>
-				<h3>public<wbr>Key</h3>
-				<div class="tsd-signature tsd-kind-icon">public<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/nash-io/nash-protocol/blob/804038a/src/generateWallet/generateWallet.ts#L38">src/generateWallet/generateWallet.ts:38</a></li>
+						<li>Defined in <a href="https://github.com/nash-io/nash-protocol/blob/804038a/src/payload/payload.ts#L70">src/payload/payload.ts:70</a></li>
 					</ul>
 				</aside>
 			</section>
