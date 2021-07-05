@@ -1,13 +1,9 @@
-
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<<<<<<< HEAD
-### Features
+### [4.2.1](https://github.com/nash-io/nash-protocol/compare/v4.0.15...v4.2.1) (2021-07-05)
 
-* generate AVAXC APIKeys ([453adb3](https://github.com/nash-io/nash-protocol/commit/453adb31acb53f157d4807cf138bbec86253482f))
-=======
 ### [4.1.5](https://github.com/nash-io/nash-protocol/compare/v4.1.3...v4.1.5) (2021-05-27)
 
 >>>>>>> 64bb461 (chore(release): 4.1.5)
