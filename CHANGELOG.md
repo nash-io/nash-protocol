@@ -2,14 +2,9 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [4.0.15](https://github.com/nash-io/nash-protocol/compare/v4.1.0...v4.0.15) (2021-06-14)
+### [4.2.2](https://github.com/nash-io/nash-protocol/compare/v4.2.0...v4.2.2) (2021-06-02)
 
-
-### Bug Fixes
-
-* **types/MPC:** include AVAXC; make it optional in APIKey ([a5adce3](https://github.com/nash-io/nash-protocol/commit/a5adce31f40ce1f326cd22a2ccc72649f2c18f87))
-
-## [4.1.0](https://github.com/nash-io/nash-protocol/compare/v4.0.11...v4.1.0) (2021-06-09)
+## [4.2.0](https://github.com/nash-io/nash-protocol/compare/v4.0.11...v4.2.0) (2021-06-02)
 
 
 ### Features
@@ -20,6 +15,34 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * **utils/blockchain:** check blockchainSignatures before using it ([86e45fd](https://github.com/nash-io/nash-protocol/commit/86e45fdd07b1836668fe995f8704beb65c2e68ae))
+
+### [4.1.5](https://github.com/nash-io/nash-protocol/compare/v4.1.3...v4.1.5) (2021-05-27)
+
+### [4.1.3](https://github.com/nash-io/nash-protocol/compare/v4.0.9...v4.1.3) (2021-05-27)
+
+
+### Bug Fixes
+
+* **types/MPC:** include AVAXC; make it optional in APIKey ([a5adce3](https://github.com/nash-io/nash-protocol/commit/a5adce31f40ce1f326cd22a2ccc72649f2c18f87))
+
+### [4.1.1](https://github.com/nash-io/nash-protocol/compare/v4.0.9...v4.1.1) (2021-05-26)
+
+
+### Bug Fixes
+
+* **utils/blockchain:** check blockchainSignatures before using it ([86e45fd](https://github.com/nash-io/nash-protocol/commit/86e45fdd07b1836668fe995f8704beb65c2e68ae))
+
+
+## [4.1.0](https://github.com/nash-io/nash-protocol/compare/v4.0.11...v4.1.0) (2021-06-09)
+
+
+### Features
+
+* generate AVAXC APIKeys ([453adb3](https://github.com/nash-io/nash-protocol/commit/453adb31acb53f157d4807cf138bbec86253482f))
+
+* **utils/blockchain:** check blockchainSignatures before using it ([86e45fd](https://github.com/nash-io/nash-protocol/commit/86e45fdd07b1836668fe995f8704beb65c2e68ae))
+
+### [4.0.15](https://github.com/nash-io/nash-protocol/compare/v4.1.0...v4.0.15) (2021-06-14)
 
 ### [4.0.11](https://github.com/nash-io/nash-protocol/compare/v4.0.9...v4.0.11) (2021-05-11)
 

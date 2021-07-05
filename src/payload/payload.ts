@@ -20,6 +20,11 @@ export const MovementTypeTransfer = 'TRANSFER'
 export const BuyOrSellBuy = 'BUY'
 export const BuyOrSellSell = 'SELL'
 
+export const HASH_SHA256 = 'SHA256'
+export const HASH_DOUBLE_SHA256 = 'DOUBLE_SHA256'
+export const HASH_DOUBLESHA256 = 'DOUBLESHA256'
+export const HASH_NONE = 'NOHASH'
+
 export interface SignStatesPayload {
   timestamp: number
   states: ClientSignedState[]
@@ -39,14 +44,30 @@ export interface ClientSignedState {
   r?: string
 }
 
+export interface SignedTransactionElement {
+  blockchain: string
+  payloadHash: string
+  signature?: string
+  r?: string
+}
+
 export interface TransactionDigest {
   digest: string
   blockchain: string
+  payload: string
+  payloadHash: string
+  payloadHashFunction: string
+  signatureFunction: string
 }
 
 export interface AddMovementPayload {
   digests?: TransactionDigest[]
   recycled_orders?: ClientSignedState[]
+  backendGeneratedPayload?: boolean
+}
+
+export interface TransactionElementPayload {
+  transactionElements?: TransactionDigest[]
 }
 
 export interface AddMovementRequestPayload {
@@ -347,13 +368,21 @@ export function createPlaceStopMarketOrderParams(
 
 export function createPrepareMovementParams(
   address: string,
+  backendGeneratedPayload: boolean,
   quantity: object,
   type: string,
-  timestamp?: number
+  timestamp?: number,
+  targetAddress?: string,
+  capQuantityToMaximum?: boolean,
+  gasPrice?: number
 ): PayloadAndKind {
   const payload = {
     address,
+    backendGeneratedPayload,
+    capQuantityToMaximum: capQuantityToMaximum ? capQuantityToMaximum : false,
+    gasPrice,
     quantity,
+    targetAddress,
     timestamp: timestamp || createTimestamp(),
     type
   }
@@ -365,6 +394,7 @@ export function createPrepareMovementParams(
 
 export function createAddMovementParams(
   address: string,
+  backendGeneratedPayload: boolean,
   quantity: object,
   type: string,
   nonce: number,
@@ -374,6 +404,7 @@ export function createAddMovementParams(
 ): PayloadAndKind {
   const payload = {
     address,
+    backendGeneratedPayload,
     digests: digests || [],
     nonce,
     quantity,

@@ -33,7 +33,11 @@ import {
   ClientSignedState,
   SignStatesRequestPayload,
   AddMovementPayload,
-  TransactionDigest
+  TransactionDigest,
+  HASH_DOUBLESHA256,
+  HASH_DOUBLE_SHA256,
+  SignedTransactionElement,
+  TransactionElementPayload
 } from '../payload'
 import {
   inferBlockchainData,
@@ -90,6 +94,7 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       const newPayload: AddMovementPayload = { ...payload }
       delete newPayload.recycled_orders
       delete newPayload.digests
+      delete newPayload.backendGeneratedPayload
       return canonicalString(newPayload)
     case SigningPayloadID.listOrderPayload:
       const newOrderPayload: any = { ...payload }
@@ -99,6 +104,23 @@ export const canonicalizePayload = (kind: SigningPayloadID, payload: object): st
       const newTradePayload: any = { ...payload }
       delete newTradePayload.limit
       return canonicalString(newTradePayload)
+    case SigningPayloadID.prepareMovementPayload:
+      const newPrepareMovementPayload: any = { ...payload }
+      delete newPrepareMovementPayload.backendGeneratedPayload
+      delete newPrepareMovementPayload.gasPrice
+      return canonicalString(newPrepareMovementPayload)
+    case SigningPayloadID.updateMovementPayload:
+      const newUpateMovementPayload: any = { ...payload }
+      delete newUpateMovementPayload.digests
+      return canonicalString(newUpateMovementPayload)
+    case SigningPayloadID.prepareTransactionPayload:
+      return canonicalString({
+        blockchain: (payload as any).blockchain,
+        gasPrice: (payload as any).gasPrice,
+        timestamp: (payload as any).timestamp
+      })
+    case SigningPayloadID.iterateTransactionPayload:
+      return canonicalString({ reference: (payload as any).reference })
     default:
       if (isOrderPayload(kind)) {
         const tempPayload = alterOrderPayloadForGraphql(payload)
@@ -222,6 +244,13 @@ export async function preSignPayload(
       payload = alterOrderPayloadForGraphql(payload)
     }
   }
+  if ([SigningPayloadID.updateMovementPayload].includes(kind)) {
+    payload.signed_transaction_elements = await presignTransactionDigestsForAddMovement(apiKey, config, payload)
+  }
+
+  if ([SigningPayloadID.iterateTransactionPayload].includes(kind)) {
+    payload.signedTransactionElements = await presignTransactionDigestsForIterateTransaction(apiKey, config, payload)
+  }
 
   if (needBlockchainMovement(kind)) {
     if (config == null) {
@@ -241,28 +270,9 @@ export async function preSignPayload(
       payload
     )
 
-    const movement = getBlockchainMovement(
-      {
-        btc: {
-          address: apiKey.child_keys[BIP44.BTC].address,
-          publicKey: apiKey.child_keys[BIP44.BTC].public_key
-        },
-        eth: {
-          address: apiKey.child_keys[BIP44.ETH].address,
-          publicKey: apiKey.child_keys[BIP44.ETH].public_key
-        },
-        neo: {
-          address: apiKey.child_keys[BIP44.NEO].address,
-          publicKey: apiKey.child_keys[BIP44.NEO].public_key
-        }
-      },
-      config.assetData,
-      { kind, payload }
-    )
     delete addMovementPayloadRequest.blockchainSignatures
 
     return {
-      blockchainMovement: movement,
       blockchainRaw: buildMovementSignatureData(apiKey, config, { payload, kind }),
       canonicalString: message,
       payload: addMovementPayloadRequest,
@@ -329,7 +339,7 @@ export async function presignBlockchainData(
           config.assetData,
           payloadAndKind
         )
-        const neoSig = await presignNEOBlockchainData(apiKey, config, neoData)
+        const neoSig = await presignNEOBlockchainData(apiKey, config, neoData, HASH_DOUBLE_SHA256)
         return [neoSig]
       case 'eth':
         const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
@@ -356,7 +366,7 @@ export async function presignBlockchainData(
             chainNoncePair,
             orderData
           )
-          const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData)
+          const neoSignature = await presignNEOBlockchainData(apiKey, config, neoData, HASH_DOUBLE_SHA256)
           return {
             ...neoSignature,
             nonceFrom: chainNoncePair.nonceFrom,
@@ -640,30 +650,28 @@ export async function preSignStateListAndRecycledOrders(
 export function signTransactionDigestsForAddMovement(config: Config, payload: AddMovementPayload): ClientSignedState[] {
   if (payload.digests !== undefined) {
     const result: ClientSignedState[] = payload.digests.map((item: TransactionDigest) => {
-      const signedTransactionElement: ClientSignedState = {
-        blockchain: item.blockchain,
-        message: item.digest
-      }
       switch (item.blockchain) {
         case Blockchain.BTC:
-          signedTransactionElement.signature = signBTC(config.wallets.btc.privateKey, item.digest).signature
-          break
+          return {
+            blockchain: item.blockchain,
+            message: item.digest,
+            signature: signBTC(config.wallets.btc.privateKey, item.digest).signature
+          }
         case Blockchain.ETH:
-          signedTransactionElement.signature = signETHBlockchainData(
-            config.wallets.eth.privateKey,
-            item.digest
-          ).signature
-          break
+          return {
+            blockchain: item.blockchain,
+            message: item.payload,
+            signature: signETHBlockchainData(config.wallets.eth.privateKey, item.digest).signature
+          }
         case Blockchain.NEO:
-          signedTransactionElement.signature = signNEOBlockchainData(
-            config.wallets.neo.privateKey,
-            item.digest
-          ).signature
-          break
+          return {
+            blockchain: item.blockchain,
+            message: item.payload,
+            signature: signNEOBlockchainData(config.wallets.neo.privateKey, item.digest, false).signature
+          }
         default:
           throw new Error(`Could not sign for chain: ${item.blockchain}`)
       }
-      return signedTransactionElement
     })
     return result
   }
@@ -678,34 +686,35 @@ export async function presignTransactionDigestsForAddMovement(
   if (payload.digests === undefined) {
     return []
   }
-
+  // for BTC we return item.digest (which is the hashed payload) as message
+  // but for ETH/NEO we want the actual payload itself as the message
   const result: ClientSignedState[] = []
   let sig
   for (const item of payload.digests) {
     switch (item.blockchain) {
       case Blockchain.BTC:
-        sig = await preSignBTC(apiKey, config, item.digest)
+        sig = await preSignBTC(apiKey, config, item.payloadHash)
         result.push({
           blockchain: item.blockchain,
-          message: item.digest,
+          message: item.payloadHash,
           r: sig.r,
           signature: sig.signature
         })
         break
       case Blockchain.ETH:
-        sig = await presignETHBlockchainData(apiKey, config, item.digest)
+        sig = await presignETHBlockchainData(apiKey, config, item.payloadHash, false)
         result.push({
           blockchain: item.blockchain,
-          message: item.digest,
+          message: item.payload,
           r: sig.r,
           signature: sig.signature
         })
         break
       case Blockchain.NEO:
-        sig = await presignNEOBlockchainData(apiKey, config, item.digest)
+        sig = await presignNEOBlockchainData(apiKey, config, item.payload, item.payloadHashFunction)
         result.push({
           blockchain: item.blockchain,
-          message: item.digest,
+          message: item.payload,
           r: sig.r,
           signature: sig.signature
         })
@@ -714,6 +723,55 @@ export async function presignTransactionDigestsForAddMovement(
         throw new Error(`Blockchain: ${item.blockchain} not supported`)
     }
   }
+  return result
+}
+
+export async function presignTransactionDigestsForIterateTransaction(
+  apiKey: APIKey,
+  config: PresignConfig,
+  payload: TransactionElementPayload
+): Promise<SignedTransactionElement[]> {
+  if (payload.transactionElements === undefined) {
+    return []
+  }
+  // for BTC we return item.digest (which is the hashed payload) as message
+  // but for ETH/NEO we want the actual payload itself as the message
+  const result: SignedTransactionElement[] = []
+  let sig
+  for (const item of payload.transactionElements) {
+    switch (item.blockchain) {
+      case Blockchain.BTC:
+        sig = await preSignBTC(apiKey, config, item.payloadHash)
+        result.push({
+          blockchain: item.blockchain,
+          payloadHash: item.payloadHash,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
+      case Blockchain.ETH:
+        sig = await presignETHBlockchainData(apiKey, config, item.payloadHash, false)
+        result.push({
+          blockchain: item.blockchain,
+          payloadHash: item.payloadHash,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
+      case Blockchain.NEO:
+        sig = await presignNEOBlockchainData(apiKey, config, item.payload, item.payloadHashFunction)
+        result.push({
+          blockchain: item.blockchain,
+          payloadHash: item.payloadHash,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
+      default:
+        throw new Error(`Blockchain: ${item.blockchain} not supported`)
+    }
+  }
+  delete payload.transactionElements
   return result
 }
 
@@ -754,7 +812,7 @@ export async function presignStateList(
         result.push(item)
         break
       case 'neo':
-        const ethSig = await presignNEOBlockchainData(apiKey, config, item.message)
+        const ethSig = await presignNEOBlockchainData(apiKey, config, item.message, HASH_DOUBLESHA256)
         item.signature = ethSig.signature
         item.r = ethSig.r
         result.push(item)
