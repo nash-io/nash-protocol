@@ -6,8 +6,6 @@ import * as Bitcoin from 'bitcoinjs-lib'
 import bchaddr from 'bchaddrjs'
 import * as tiny from 'tiny-secp256k1'
 import * as coininfo from 'coininfo'
-import Keyring from '@polkadot/keyring'
-import { account as erdAccount } from '@elrondnetwork/elrond-core-js'
 
 import base58 from 'bs58'
 import hexEncoding from 'crypto-js/enc-hex'
@@ -34,10 +32,10 @@ export enum CoinType {
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
 
-interface DotKeyPair {
-  publicKey: Uint8Array
-  address: string
-}
+// interface DotKeyPair {
+//   publicKey: Uint8Array
+//   address: string
+// }
 /**
  * Creates a wallet for a given token via the
  * [BIP-44 protocol]((https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki).
@@ -199,23 +197,23 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         privateKey: key.privateKey.toString('hex'),
         publicKey: key.publicKey.toString('hex')
       }
-    case CoinType.DOT:
-      const keypair = dotKeypairFromSeed(key.privateKey)
-      return {
-        address: keypair.address,
-        index,
-        privateKey: key.privateKey.toString('hex'),
-        publicKey: new Buffer(keypair.publicKey).toString('hex')
-      }
-    case CoinType.ERD:
-      const account = new erdAccount()
-      account.loadFromSeed(key.privateKey)
-      return {
-        address: account.address(),
-        index,
-        privateKey: key.privateKey.toString('hex'),
-        publicKey: account.publicKeyAsString()
-      }
+    // case CoinType.DOT:
+    //   const keypair = dotKeypairFromSeed(key.privateKey)
+    //   return {
+    //     address: keypair.address,
+    //     index,
+    //     privateKey: key.privateKey.toString('hex'),
+    //     publicKey: new Buffer(keypair.publicKey).toString('hex')
+    //   }
+    // case CoinType.ERD:
+    //   const account = new erdAccount()
+    //   account.loadFromSeed(key.privateKey)
+    //   return {
+    //     address: account.address(),
+    //     index,
+    //     privateKey: key.privateKey.toString('hex'),
+    //     publicKey: account.publicKeyAsString()
+    //   }
     default:
       throw new Error(`invalid coin type ${coinType} for generating a wallet`)
   }
@@ -279,11 +277,11 @@ const bitcoinNetworkFromString = (type: CoinType, net: string | undefined): Bitc
   }
 }
 
-const dotKeypairFromSeed = (key: Buffer): DotKeyPair => {
-  const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 })
-  keyring.addFromSeed(key)
-  return keyring.getPairs().shift() as DotKeyPair
-}
+// const dotKeypairFromSeed = (key: Buffer): DotKeyPair => {
+//   const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 })
+//   keyring.addFromSeed(key)
+//   return keyring.getPairs().shift() as DotKeyPair
+// }
 
 function derivePath(
   masterSeed: Buffer,
