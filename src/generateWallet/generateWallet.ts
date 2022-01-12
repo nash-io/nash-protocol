@@ -103,8 +103,8 @@ export const coinTypeFromString = (s: string): CoinType => {
     etc: CoinType.ETC,
     eth: CoinType.ETH,
     ltc: CoinType.LTC,
-    polygon: CoinType.POLYGON,
-    neo: CoinType.NEO
+    neo: CoinType.NEO,
+    polygon: CoinType.POLYGON
   }
 
   if (!(s in m)) {
