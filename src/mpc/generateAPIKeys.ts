@@ -15,13 +15,18 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const ethWallet = generateWallet(masterSeed, coinTypeFromString('eth'), params.walletIndices.eth, params.net)
   const neoWallet = generateWallet(masterSeed, coinTypeFromString('neo'), params.walletIndices.neo, params.net)
   const avaxcWallet = generateWallet(masterSeed, coinTypeFromString('avaxc'), params.walletIndices.avaxc, params.net)
-  const maticWallet = generateWallet(masterSeed, coinTypeFromString('matic'), params.walletIndices.matic, params.net)
+  const polygonWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('polygon'),
+    params.walletIndices.polygon,
+    params.net
+  )
 
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
   const neoSecret = neoWallet.privateKey
   const avaxcSecret = avaxcWallet.privateKey
-  const maticSecret = maticWallet.privateKey
+  const polygonSecret = polygonWallet.privateKey
 
   const btc = await createAPIKey({
     ...params,
@@ -43,10 +48,10 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     curve: 'Secp256k1',
     secret: avaxcSecret
   })
-  const matic = await createAPIKey({
+  const polygon = await createAPIKey({
     ...params,
     curve: 'Secp256k1',
-    secret: maticSecret
+    secret: polygonSecret
   })
   return {
     child_keys: {
@@ -74,11 +79,11 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         public_key: avaxcWallet.publicKey,
         server_secret_share_encrypted: avaxc.server_secret_share_encrypted
       },
-      [BIP44.MATIC]: {
-        address: maticWallet.address,
-        client_secret_share: matic.client_secret_share,
-        public_key: maticWallet.publicKey,
-        server_secret_share_encrypted: matic.server_secret_share_encrypted
+      [BIP44.POLYGON]: {
+        address: polygonWallet.address,
+        client_secret_share: polygon.client_secret_share,
+        public_key: polygonWallet.publicKey,
+        server_secret_share_encrypted: polygon.server_secret_share_encrypted
       }
     },
     paillier_pk: btc.paillier_pk,

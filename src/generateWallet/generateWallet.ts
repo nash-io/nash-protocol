@@ -30,7 +30,7 @@ export enum CoinType {
   ERD = 508,
   NEO = 888,
   AVAXC = 9000,
-  MATIC = 9001
+  POLYGON = 9001
 }
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
@@ -103,7 +103,7 @@ export const coinTypeFromString = (s: string): CoinType => {
     etc: CoinType.ETC,
     eth: CoinType.ETH,
     ltc: CoinType.LTC,
-    matic: CoinType.MATIC,
+    polygon: CoinType.POLYGON,
     neo: CoinType.NEO
   }
 
@@ -182,7 +182,7 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
     case CoinType.ETH:
     case CoinType.ETC:
     case CoinType.AVAXC:
-    case CoinType.MATIC:
+    case CoinType.POLYGON:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)
