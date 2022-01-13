@@ -2,7 +2,8 @@ export enum Blockchain {
   BTC = 'BTC',
   ETH = 'ETH',
   NEO = 'NEO',
-  AVAXC = 'AVAXC'
+  AVAXC = 'AVAXC',
+  POLYGON = 'POLYGON'
 }
 
 /**
@@ -15,7 +16,8 @@ export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.BTC]: 'Secp256k1',
   [Blockchain.ETH]: 'Secp256k1',
   [Blockchain.NEO]: 'Secp256r1',
-  [Blockchain.AVAXC]: 'Secp256k1'
+  [Blockchain.AVAXC]: 'Secp256k1',
+  [Blockchain.POLYGON]: 'Secp256k1'
 }
 
 export interface PallierPK {
@@ -83,6 +85,7 @@ export enum BIP44 {
   BTC = "m/44'/0'/0'/0/0",
   ETH = "m/44'/60'/0'/0/0",
   NEO = "m/44'/888'/0'/0/0",
+  POLYGON = "m/44'/966'/0'/0/0",
   AVAXC = "m/44'/9000'/0'/0/0"
 }
 
@@ -105,6 +108,7 @@ export interface APIKey {
      * in to new wallets
      */
     [BIP44.AVAXC]?: ChildKey
+    [BIP44.POLYGON]?: ChildKey
   }
   payload_signing_key: string
   payload_public_key: string

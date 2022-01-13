@@ -15,11 +15,18 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const ethWallet = generateWallet(masterSeed, coinTypeFromString('eth'), params.walletIndices.eth, params.net)
   const neoWallet = generateWallet(masterSeed, coinTypeFromString('neo'), params.walletIndices.neo, params.net)
   const avaxcWallet = generateWallet(masterSeed, coinTypeFromString('avaxc'), params.walletIndices.avaxc, params.net)
+  const polygonWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('polygon'),
+    params.walletIndices.polygon,
+    params.net
+  )
 
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
   const neoSecret = neoWallet.privateKey
   const avaxcSecret = avaxcWallet.privateKey
+  const polygonSecret = polygonWallet.privateKey
 
   const btc = await createAPIKey({
     ...params,
@@ -40,6 +47,11 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     ...params,
     curve: 'Secp256k1',
     secret: avaxcSecret
+  })
+  const polygon = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: polygonSecret
   })
   return {
     child_keys: {
@@ -66,6 +78,12 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         client_secret_share: avaxc.client_secret_share,
         public_key: avaxcWallet.publicKey,
         server_secret_share_encrypted: avaxc.server_secret_share_encrypted
+      },
+      [BIP44.POLYGON]: {
+        address: polygonWallet.address,
+        client_secret_share: polygon.client_secret_share,
+        public_key: polygonWallet.publicKey,
+        server_secret_share_encrypted: polygon.server_secret_share_encrypted
       }
     },
     paillier_pk: btc.paillier_pk,
