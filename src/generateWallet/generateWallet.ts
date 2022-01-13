@@ -29,8 +29,8 @@ export enum CoinType {
   DOT = 354,
   ERD = 508,
   NEO = 888,
-  AVAXC = 9000,
-  POLYGON = 9001
+  POLYGON = 966,
+  AVAXC = 9000
 }
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
