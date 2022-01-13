@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.7.0](https://github.com/nash-io/nash-protocol/compare/v4.5.12...v4.7.0) (2022-01-13)
+
+
+### Features
+
+* support polygon (matic) ([e1096cf](https://github.com/nash-io/nash-protocol/commit/e1096cf6b106331123f8f666261652b007b3ad72))
+
+
+### Bug Fixes
+
+* set cointype as 966 ([641da4e](https://github.com/nash-io/nash-protocol/commit/641da4eb101fd00677452b02360582d9051db7e4))
+
 ## [4.6.0](https://github.com/nash-io/nash-protocol/compare/v4.5.12...v4.6.0) (2022-01-13)
 
 
