@@ -27,6 +27,7 @@ export enum CoinType {
   DOT = 354,
   ERD = 508,
   NEO = 888,
+  NEO3 = 888,
   POLYGON = 966,
   AVAXC = 9000
 }
@@ -99,6 +100,7 @@ export const coinTypeFromString = (s: string): CoinType => {
     eth: CoinType.ETH,
     ltc: CoinType.LTC,
     neo: CoinType.NEO,
+    neo3: CoinType.NEO3,
     polygon: CoinType.POLYGON
   }
 
@@ -180,6 +182,16 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         privateKey: neoPrivKey,
         publicKey
       }
+    case CoinType.NEO3: {
+      const neoPrivKey = key.privateKey.toString('hex')
+      // TODO: figure out private key -> public key -> address
+      return {
+        address: '',
+        index,
+        privateKey: neoPrivKey,
+        publicKey: ''
+      }
+    }
     case CoinType.ETH:
     case CoinType.ETC:
     case CoinType.AVAXC:

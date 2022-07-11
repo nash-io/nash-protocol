@@ -21,12 +21,14 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     params.walletIndices.polygon,
     params.net
   )
+  const neo3Wallet = generateWallet(masterSeed, coinTypeFromString('neo3'), params.walletIndices.neo3, params.net)
 
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
   const neoSecret = neoWallet.privateKey
   const avaxcSecret = avaxcWallet.privateKey
   const polygonSecret = polygonWallet.privateKey
+  const neo3Secret = neo3Wallet.privateKey
 
   const btc = await createAPIKey({
     ...params,
@@ -52,6 +54,11 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     ...params,
     curve: 'Secp256k1',
     secret: polygonSecret
+  })
+  const neo3 = await createAPIKey({
+    ...params,
+    curve: 'Secp256r1',
+    secret: neo3Secret
   })
   return {
     child_keys: {
@@ -85,6 +92,12 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         public_key: polygonWallet.publicKey,
         server_secret_share_encrypted: polygon.server_secret_share_encrypted
       },
+      [BIP44.NEO3]: {
+        address: neo3Wallet.address,
+        client_secret_share: neo3.client_secret_share,
+        public_key: neo3Wallet.publicKey,
+        server_secret_share_encrypted: neo3.server_secret_share_encrypted
+      }
     },
     paillier_pk: btc.paillier_pk,
     payload_public_key: payloadSigningKey.publicKey,
