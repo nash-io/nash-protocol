@@ -1,5 +1,5 @@
 import * as bip32 from 'bip32'
-import { Wallet } from '../types'
+import { Blockchain, Wallet } from '../types'
 import { reverseHex } from '../utils/getNEOScriptHash/getNEOScripthash'
 import * as EthUtil from 'ethereumjs-util'
 import * as Bitcoin from 'bitcoinjs-lib'
@@ -33,21 +33,18 @@ export enum CoinType {
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
 
-// interface DotKeyPair {
-//   publicKey: Uint8Array
-//   address: string
-// }
+
 /**
  * Creates a wallet for a given token via the
  * [BIP-44 protocol]((https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki).
  *
  * Requires the user's master seed.
  */
-export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number, net?: string): Wallet {
+export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number, net?: string, blockchain?: Blockchain): Wallet {
   const key = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
   const derivedChainKey = deriveIndex(key, index)
 
-  return generateWalletForCoinType(derivedChainKey, coinType, index, net)
+  return generateWalletForCoinType(derivedChainKey, coinType, index, net, blockchain)
 }
 
 /**
@@ -128,7 +125,10 @@ export function neoGetPublicKeyFromPrivateKey(privateKey: string, encode: boolea
   }
 }
 
-const getVerificationScriptFromPublicKey = (publicKey: string): string => {
+const getVerificationScriptFromPublicKey = (publicKey: string, blockchain?: Blockchain): string => {
+  if (blockchain && blockchain === Blockchain.NEO3) {
+    return '0c21' + publicKey + '4156e7b327'
+  }
   return '21' + publicKey + 'ac'
 }
 
@@ -153,15 +153,17 @@ export function hash256(hex: string): string {
 }
 
 const ADDR_VERSION = '17'
+const NEO3_ADDR_VERSION = '35'
 
-export const getAddressFromScriptHash = (scriptHash: string): string => {
+export const getAddressFromScriptHash = (scriptHash: string, addressVersion: string): string => {
   const scriptHashReversed = reverseHex(scriptHash)
-  const shaChecksum = hash256(ADDR_VERSION + scriptHashReversed).substr(0, 8)
-  return base58.encode(Buffer.from(ADDR_VERSION + scriptHashReversed + shaChecksum, 'hex'))
+  const shaChecksum = hash256(addressVersion + scriptHashReversed).substr(0, 8)
+  return base58.encode(Buffer.from(addressVersion + scriptHashReversed + shaChecksum, 'hex'))
 }
 
+
 // NOTE: We can split this out later when there are more wallets needs to be derived.
-function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType, index: number, net?: string): Wallet {
+function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType, index: number, net?: string, blockchain?: Blockchain): Wallet {
   if (key.privateKey === undefined) {
     throw new Error('private key not properly derived')
   }
@@ -169,10 +171,11 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
     case CoinType.NEO:
       const neoPrivKey = key.privateKey.toString('hex')
       const publicKey = neoGetPublicKeyFromPrivateKey(neoPrivKey)
-      const verifiedScript = getVerificationScriptFromPublicKey(publicKey)
+      const verifiedScript = getVerificationScriptFromPublicKey(publicKey, blockchain)
       const scriptHash = reverseHex(hash160(verifiedScript))
+      const addressVersion = (blockchain && blockchain === Blockchain.NEO3) ? NEO3_ADDR_VERSION : ADDR_VERSION
       return {
-        address: getAddressFromScriptHash(scriptHash),
+        address: getAddressFromScriptHash(scriptHash, addressVersion),
         index,
         privateKey: neoPrivKey,
         publicKey
@@ -200,23 +203,6 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         privateKey: key.privateKey.toString('hex'),
         publicKey: key.publicKey.toString('hex')
       }
-    // case CoinType.DOT:
-    //   const keypair = dotKeypairFromSeed(key.privateKey)
-    //   return {
-    //     address: keypair.address,
-    //     index,
-    //     privateKey: key.privateKey.toString('hex'),
-    //     publicKey: new Buffer(keypair.publicKey).toString('hex')
-    //   }
-    // case CoinType.ERD:
-    //   const account = new erdAccount()
-    //   account.loadFromSeed(key.privateKey)
-    //   return {
-    //     address: account.address(),
-    //     index,
-    //     privateKey: key.privateKey.toString('hex'),
-    //     publicKey: account.publicKeyAsString()
-    //   }
     default:
       throw new Error(`invalid coin type ${coinType} for generating a wallet`)
   }

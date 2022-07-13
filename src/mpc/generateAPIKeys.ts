@@ -84,7 +84,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         client_secret_share: polygon.client_secret_share,
         public_key: polygonWallet.publicKey,
         server_secret_share_encrypted: polygon.server_secret_share_encrypted
-      }
+      },
     },
     paillier_pk: btc.paillier_pk,
     payload_public_key: payloadSigningKey.publicKey,
