@@ -1,6 +1,7 @@
 import { generateNashPayloadSigningKey, generateWallet, CoinType } from './generateWallet'
 import _ from 'lodash'
 import testVectors from '../__tests__/testVectors.json'
+import { Blockchain } from '../types'
 // import { cryptoWaitReady } from '@polkadot/util-crypto'
 
 test('generates deterministic BIP44 ETH keys', async () => {
@@ -30,6 +31,24 @@ test('generates deterministic BIP44 NEO keys', async () => {
     }
   }
 })
+
+
+test('generates deterministic BIP44 NEO3 keys', async () => {
+
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+
+    for (const wallet of vector.wallets.neo3) {
+      const genWallet = generateWallet(masterSeed, CoinType.NEO, wallet.index, '', Blockchain.NEO3)
+      expect(genWallet.address).toBe(wallet.address)
+      expect(genWallet.publicKey).toBe(wallet.publicKey)
+      expect(genWallet.privateKey).toBe(wallet.privateKey)
+      expect(genWallet.index).toBe(wallet.index)
+    }
+  }
+
+})
+
 
 test('generates deterministic BIP44 BTC keys', async () => {
   for (const vector of testVectors) {
@@ -105,34 +124,7 @@ test('generates deterministic BIP44 bitcoincash keys', async () => {
   }
 })
 
-// test('generates deterministic BIP44 dot keys', async () => {
-//   await cryptoWaitReady()
 
-//   for (const vector of testVectors) {
-//     const masterSeed = Buffer.from(vector.masterSeed, 'hex')
-//     const wallet = vector.wallets.dot.MainNet
-
-//     const genWallet = generateWallet(masterSeed, CoinType.DOT, wallet.index, 'MainNet')
-//     expect(genWallet.address).toBe(wallet.address)
-//     expect(genWallet.publicKey).toBe(wallet.publicKey)
-//     expect(genWallet.privateKey).toBe(wallet.privateKey)
-//     expect(genWallet.index).toBe(wallet.index)
-//   }
-// })
-
-// test('generates deterministic BIP44 erd keys', async () => {
-//   await cryptoWaitReady()
-
-//   for (const vector of testVectors) {
-//     const masterSeed = Buffer.from(vector.masterSeed, 'hex')
-//     const wallet = vector.wallets.erd.MainNet
-//     const genWallet = generateWallet(masterSeed, CoinType.ERD, wallet.index, 'MainNet')
-//     expect(genWallet.address).toBe(wallet.address)
-//     expect(genWallet.publicKey).toBe(wallet.publicKey)
-//     expect(genWallet.privateKey).toBe(wallet.privateKey)
-//     expect(genWallet.index).toBe(wallet.index)
-//   }
-// })
 
 test('generates deterministic payload signing key', async () => {
   for (const vector of testVectors) {
