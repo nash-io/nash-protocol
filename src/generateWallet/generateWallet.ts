@@ -182,15 +182,6 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
         privateKey: neoPrivKey,
         publicKey
       }
-    case CoinType.NEO3:
-      const neo3PrivKey = key.privateKey.toString('hex')
-      // TODO: figure out private key -> public key -> address
-      return {
-        address: '',
-        index,
-        privateKey: neo3PrivKey,
-        publicKey: ''
-      }
     case CoinType.ETH:
     case CoinType.ETC:
     case CoinType.AVAXC:
