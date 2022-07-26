@@ -2,7 +2,12 @@ import { Wallet, Config, InitParams } from '../types'
 import decryptSecretKey from '../decryptSecretKey'
 import secretKeyToMnemonic from '../secretKeyToMnemonic'
 import mnemonicToMasterSeed from '../mnemonicToMasterSeed'
-import { generateNashPayloadSigningKey, generateWallet, coinTypeFromString } from '../generateWallet'
+import {
+  generateNashPayloadSigningKey,
+  generateWallet,
+  coinTypeFromString,
+  blockchainFromString
+} from '../generateWallet'
 // import { cryptoWaitReady } from '@polkadot/util-crypto'
 
 // initialize takes in the init parameters and returns a Config object with all the
@@ -17,7 +22,7 @@ export default async function initialize(params: InitParams): Promise<Config> {
     // if (name.toLowerCase() === 'dot') {
     //   await cryptoWaitReady()
     // }
-    wallets[name] = generateWallet(masterSeed, coinTypeFromString(name), index, params.net)
+    wallets[name] = generateWallet(masterSeed, coinTypeFromString(name), index, params.net, blockchainFromString(name))
   }
 
   const payloadSigningKey = generateNashPayloadSigningKey(masterSeed, 1)

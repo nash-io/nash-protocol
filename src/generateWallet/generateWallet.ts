@@ -111,6 +111,25 @@ export const coinTypeFromString = (s: string): CoinType => {
   return m[s]
 }
 
+export const blockchainFromString = (name: string): Blockchain => {
+  switch (name) {
+    case 'btc':
+      return Blockchain.BTC
+    case 'eth':
+      return Blockchain.ETH
+    case 'neo':
+      return Blockchain.NEO
+    case 'avaxc':
+      return Blockchain.AVAXC
+    case 'polygon':
+      return Blockchain.POLYGON
+    case 'neo3':
+      return Blockchain.NEO3
+    default:
+      throw new Error('Unsupported name')
+  }
+}
+
 export function neoGetPublicKeyFromPrivateKey(privateKey: string, encode: boolean = true): string {
   const privateKeyBuffer = Buffer.from(privateKey, 'hex')
   const keypair = curve.keyFromPrivate(privateKeyBuffer, 'hex')

@@ -1,5 +1,5 @@
 import { createAPIKey } from './createAPIKey'
-import { GenerateApiKeysParams, BIP44, APIKey } from '../types/MPC'
+import { GenerateApiKeysParams, BIP44, APIKey, Blockchain } from '../types/MPC'
 import secretKeyToMnemonic from '../secretKeyToMnemonic'
 import bufferize from '../bufferize'
 import mnemonicToMasterSeed from '../mnemonicToMasterSeed'
@@ -11,17 +11,48 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const masterSeed = mnemonicToMasterSeed(secretKeyToMnemonic(secretBuff))
   const payloadSigningKey = generateNashPayloadSigningKey(masterSeed, 1)
 
-  const btcWallet = generateWallet(masterSeed, coinTypeFromString('btc'), params.walletIndices.btc, params.net)
-  const ethWallet = generateWallet(masterSeed, coinTypeFromString('eth'), params.walletIndices.eth, params.net)
-  const neoWallet = generateWallet(masterSeed, coinTypeFromString('neo'), params.walletIndices.neo, params.net)
-  const avaxcWallet = generateWallet(masterSeed, coinTypeFromString('avaxc'), params.walletIndices.avaxc, params.net)
+  const btcWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('btc'),
+    params.walletIndices.btc,
+    params.net,
+    Blockchain.BTC
+  )
+  const ethWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('eth'),
+    params.walletIndices.eth,
+    params.net,
+    Blockchain.ETH
+  )
+  const neoWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('neo'),
+    params.walletIndices.neo,
+    params.net,
+    Blockchain.NEO
+  )
+  const avaxcWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('avaxc'),
+    params.walletIndices.avaxc,
+    params.net,
+    Blockchain.AVAXC
+  )
   const polygonWallet = generateWallet(
     masterSeed,
     coinTypeFromString('polygon'),
     params.walletIndices.polygon,
-    params.net
+    params.net,
+    Blockchain.POLYGON
   )
-  const neo3Wallet = generateWallet(masterSeed, coinTypeFromString('neo3'), params.walletIndices.neo3, params.net)
+  const neo3Wallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('neo3'),
+    params.walletIndices.neo3,
+    params.net,
+    Blockchain.NEO3
+  )
 
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
