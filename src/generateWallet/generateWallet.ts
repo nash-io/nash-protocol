@@ -27,6 +27,7 @@ export enum CoinType {
   DOT = 354,
   ERD = 508,
   NEO = 888,
+  NEO3 = 888,
   POLYGON = 966,
   AVAXC = 9000
 }
@@ -99,6 +100,7 @@ export const coinTypeFromString = (s: string): CoinType => {
     eth: CoinType.ETH,
     ltc: CoinType.LTC,
     neo: CoinType.NEO,
+    neo3: CoinType.NEO3,
     polygon: CoinType.POLYGON
   }
 
@@ -107,6 +109,25 @@ export const coinTypeFromString = (s: string): CoinType => {
   }
 
   return m[s]
+}
+
+export const blockchainFromString = (name: string): Blockchain => {
+  switch (name) {
+    case 'btc':
+      return Blockchain.BTC
+    case 'eth':
+      return Blockchain.ETH
+    case 'neo':
+      return Blockchain.NEO
+    case 'avaxc':
+      return Blockchain.AVAXC
+    case 'polygon':
+      return Blockchain.POLYGON
+    case 'neo3':
+      return Blockchain.NEO3
+    default:
+      throw new Error('Unsupported name')
+  }
 }
 
 export function neoGetPublicKeyFromPrivateKey(privateKey: string, encode: boolean = true): string {
