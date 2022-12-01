@@ -34,14 +34,19 @@ export enum CoinType {
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
 
-
 /**
  * Creates a wallet for a given token via the
  * [BIP-44 protocol]((https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki).
  *
  * Requires the user's master seed.
  */
-export function generateWallet(masterSeed: Buffer, coinType: CoinType, index: number, net?: string, blockchain?: Blockchain): Wallet {
+export function generateWallet(
+  masterSeed: Buffer,
+  coinType: CoinType,
+  index: number,
+  net?: string,
+  blockchain?: Blockchain
+): Wallet {
   const key = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
   const derivedChainKey = deriveIndex(key, index)
 
@@ -182,9 +187,14 @@ export const getAddressFromScriptHash = (scriptHash: string, addressVersion: str
   return base58.encode(Buffer.from(addressVersion + scriptHashReversed + shaChecksum, 'hex'))
 }
 
-
 // NOTE: We can split this out later when there are more wallets needs to be derived.
-function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType, index: number, net?: string, blockchain?: Blockchain): Wallet {
+function generateWalletForCoinType(
+  key: bip32.BIP32Interface,
+  coinType: CoinType,
+  index: number,
+  net?: string,
+  blockchain?: Blockchain
+): Wallet {
   if (key.privateKey === undefined) {
     throw new Error('private key not properly derived')
   }
@@ -194,7 +204,7 @@ function generateWalletForCoinType(key: bip32.BIP32Interface, coinType: CoinType
       const publicKey = neoGetPublicKeyFromPrivateKey(neoPrivKey)
       const verifiedScript = getVerificationScriptFromPublicKey(publicKey, blockchain)
       const scriptHash = reverseHex(hash160(verifiedScript))
-      const addressVersion = (blockchain && blockchain === Blockchain.NEO3) ? NEO3_ADDR_VERSION : ADDR_VERSION
+      const addressVersion = blockchain && blockchain === Blockchain.NEO3 ? NEO3_ADDR_VERSION : ADDR_VERSION
       return {
         address: getAddressFromScriptHash(scriptHash, addressVersion),
         index,

@@ -29,6 +29,16 @@
       "blockchain": "eth",
       "hash": "abcd",
       "precision": 18
+    },
+    "matic": {
+      "blockchain": "polygon",
+      "hash": "0000000000000000000000000000000000000000",
+      "precision": 18
+    },
+    "derc20": {
+      "blockchain": "polygon",
+      "hash": "fe4f5145f6e09952a5ba9e956ed0c25e3fa4c7f1",
+      "precision": 18
     }
   },
   "marketData": {
@@ -109,6 +119,12 @@
       "minTradeSize": 5,
       "minTradeIncrement": 8,
       "minTradeIncrementB": 5
+    },
+    "matic_derc20": {
+      "minTickSize": 2,
+      "minTradeSize": 5,
+      "minTradeIncrement": 8,
+      "minTradeIncrementB": 5
     }
   },
   "payloadSigningKey": {
@@ -119,6 +135,12 @@
   },
   "wallets": {
     "eth": {
+      "privateKey": "ceb3ba316f7aa4a7745d5d16eb9ac0491601428b828f7a1c1080f985e749a419",
+      "publicKey": "04446e9cda311fa5c0916430a48a41b35cc7604f037b5f7eec036b07ec97b0ffbf2162278ec211f81a98147b08ee650e3d33748075d93fcfe58562e81b3f76efae",
+      "address": "fa39fddde46cea3060b91f80abed8672f77c5bea",
+      "index": 0
+    },
+    "polygon": {
       "privateKey": "ceb3ba316f7aa4a7745d5d16eb9ac0491601428b828f7a1c1080f985e749a419",
       "publicKey": "04446e9cda311fa5c0916430a48a41b35cc7604f037b5f7eec036b07ec97b0ffbf2162278ec211f81a98147b08ee650e3d33748075d93fcfe58562e81b3f76efae",
       "address": "fa39fddde46cea3060b91f80abed8672f77c5bea",

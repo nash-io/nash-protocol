@@ -69,6 +69,10 @@ export function getBlockchainMovement(
       publicKey: string
       address: string
     }
+    polygon: {
+      publicKey: string
+      address: string
+    }
   },
   assets: Config['assetData'],
   payloadAndKind: PayloadAndKind
@@ -100,6 +104,17 @@ export function getBlockchainMovement(
         prefix,
         r: payload.blockchainSignatures == null ? undefined : payload.blockchainSignatures[0].r,
         userPubKey: wallets.eth.address,
+        userSig: payload.blockchainSignatures == null ? undefined : payload.blockchainSignatures[0].signature
+      }
+    case 'polygon':
+      return {
+        address: wallets.polygon.address,
+        amount: bnAmount.toFixed(0),
+        asset: getPolygonAssetID(unit),
+        nonce: convertEthNonce(payload.nonce),
+        prefix,
+        r: payload.blockchainSignatures == null ? undefined : payload.blockchainSignatures[0].r,
+        userPubKey: wallets.polygon.address,
         userSig: payload.blockchainSignatures == null ? undefined : payload.blockchainSignatures[0].signature
       }
     case 'btc':
@@ -250,6 +265,17 @@ export function getNEOAssetHash(asset: Asset): string {
       return reverseHexString(asset.hash)
     default:
       return 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
+  }
+}
+
+export function getPolygonAssetID(asset: string): string {
+  switch (asset) {
+    case 'matic':
+      return '0000'
+    case 'derc20':
+      return '0001'
+    default:
+      return 'ffff'
   }
 }
 
