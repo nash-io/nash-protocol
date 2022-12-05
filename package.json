@@ -1,6 +1,6 @@
 {
   "name": "@neon-exchange/nash-protocol",
-  "version": "4.9.01",
+  "version": "4.9.3",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
