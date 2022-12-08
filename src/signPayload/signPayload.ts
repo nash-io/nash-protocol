@@ -58,6 +58,13 @@ import {
   signETHBlockchainData
 } from '../signETHBlockchainData'
 
+import {
+  presignPolygonBlockchainData,
+  buildPolygonMovementSignatureData,
+  buildPolygonOrderSignatureData,
+  signPolygonBlockchainData
+} from '../signPolygonBlockchainData'
+
 import { signBTC, preSignBTC } from '../signBTCBlockchainData'
 
 const curve = new EC('secp256k1')
@@ -183,7 +190,8 @@ export default function signPayload(
       {
         btc: config.wallets.btc,
         eth: config.wallets.eth,
-        neo: config.wallets.neo
+        neo: config.wallets.neo,
+        polygon: config.wallets.polygon
       },
       config.assetData,
       { kind, payload }
@@ -306,6 +314,9 @@ function buildMovementSignatureData(apiKey: APIKey, config: PresignConfig, paylo
     case 'eth':
       const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
       return ethData
+    case 'polygon':
+      const polygonData = buildPolygonMovementSignatureData(apiKey.child_keys[BIP44.POLYGON]!.address, payloadAndKind)
+      return polygonData
     case 'btc':
       return ''
     default:
@@ -345,6 +356,10 @@ export async function presignBlockchainData(
         const ethData = buildETHMovementSignatureData(apiKey.child_keys[BIP44.ETH].address, payloadAndKind)
         const ethSig = await presignETHBlockchainData(apiKey, config, ethData)
         return [ethSig]
+      case 'polygon':
+        const polygonData = buildPolygonMovementSignatureData(apiKey.child_keys[BIP44.POLYGON]!.address, payloadAndKind)
+        const polygonSig = await presignPolygonBlockchainData(apiKey, config, polygonData)
+        return [polygonSig]
       case 'btc':
         return []
       default:
@@ -373,7 +388,6 @@ export async function presignBlockchainData(
             nonceTo: chainNoncePair.nonceTo,
             publicKey: apiKey.child_keys[BIP44.NEO].public_key.toLowerCase()
           }
-          break
         case 'eth':
           const ethData = buildETHOrderSignatureData(
             apiKey.child_keys[BIP44.ETH].address,
@@ -388,7 +402,20 @@ export async function presignBlockchainData(
             nonceTo: chainNoncePair.nonceTo,
             publicKey: apiKey.child_keys[BIP44.ETH].public_key
           }
-          break
+        case 'polygon':
+          const polygonData = buildPolygonOrderSignatureData(
+            apiKey.child_keys[BIP44.POLYGON]!.address,
+            payloadAndKind,
+            chainNoncePair,
+            orderData
+          )
+          const polygonSignature = await presignPolygonBlockchainData(apiKey, config, polygonData)
+          return {
+            ...polygonSignature,
+            nonceFrom: chainNoncePair.nonceFrom,
+            nonceTo: chainNoncePair.nonceTo,
+            publicKey: apiKey.child_keys[BIP44.POLYGON]!.public_key
+          }
         case 'btc':
           return {
             blockchain: 'BTC',
@@ -434,6 +461,9 @@ export function signBlockchainData(config: Config, payloadAndKind: PayloadAndKin
       case 'eth':
         const ethData = buildETHMovementSignatureData(config.wallets.eth.address, payloadAndKind)
         return [signETHBlockchainData(config.wallets.eth.privateKey, ethData)]
+      case 'polygon':
+        const polygonData = buildPolygonMovementSignatureData(config.wallets.polygon.address, payloadAndKind)
+        return [signPolygonBlockchainData(config.wallets.polygon.privateKey, polygonData)]
       case 'btc':
         return []
     }
@@ -543,6 +573,11 @@ export function addRawBlockchainOrderData(config: Config, payloadAndKind: Payloa
           payload: payloadAndKind.payload,
           raw: buildETHOrderSignatureData(config.wallets.eth.address, payloadAndKind, chainNoncePair, orderData)
         }
+      case 'polygon':
+        return {
+          payload: payloadAndKind.payload,
+          raw: buildPolygonOrderSignatureData(config.wallets.polygon.address, payloadAndKind, chainNoncePair, orderData)
+        }
       case 'btc':
         return {
           payload: payloadAndKind.payload,
@@ -583,6 +618,16 @@ export function addRawPresignBlockchainOrderData(
           payload: payloadAndKind.payload,
           raw: buildETHOrderSignatureData(
             apiKey.child_keys[BIP44.ETH].address,
+            payloadAndKind,
+            chainNoncePair,
+            orderData
+          )
+        }
+      case 'polygon':
+        return {
+          payload: payloadAndKind.payload,
+          raw: buildPolygonOrderSignatureData(
+            apiKey.child_keys[BIP44.POLYGON]!.address,
             payloadAndKind,
             chainNoncePair,
             orderData
@@ -663,6 +708,12 @@ export function signTransactionDigestsForAddMovement(config: Config, payload: Ad
             message: item.payload,
             signature: signETHBlockchainData(config.wallets.eth.privateKey, item.digest).signature
           }
+        case Blockchain.POLYGON:
+          return {
+            blockchain: item.blockchain,
+            message: item.payload,
+            signature: signPolygonBlockchainData(config.wallets.polygon.privateKey, item.digest).signature
+          }
         case Blockchain.NEO:
           return {
             blockchain: item.blockchain,
@@ -703,6 +754,15 @@ export async function presignTransactionDigestsForAddMovement(
         break
       case Blockchain.ETH:
         sig = await presignETHBlockchainData(apiKey, config, item.payloadHash, false)
+        result.push({
+          blockchain: item.blockchain,
+          message: item.payload,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
+      case Blockchain.POLYGON:
+        sig = await presignPolygonBlockchainData(apiKey, config, item.payloadHash, false)
         result.push({
           blockchain: item.blockchain,
           message: item.payload,
@@ -758,6 +818,15 @@ export async function presignTransactionDigestsForIterateTransaction(
           signature: sig.signature
         })
         break
+      case Blockchain.POLYGON:
+        sig = await presignPolygonBlockchainData(apiKey, config, item.payloadHash, false)
+        result.push({
+          blockchain: item.blockchain,
+          payloadHash: item.payloadHash,
+          r: sig.r,
+          signature: sig.signature
+        })
+        break
       case Blockchain.NEO:
         sig = await presignNEOBlockchainData(apiKey, config, item.payload, item.payloadHashFunction)
         result.push({
@@ -787,6 +856,9 @@ export function signStateList(config: Config, items: ClientSignedState[]): Clien
       case 'eth':
         item.signature = signETHBlockchainData(config.wallets.eth.privateKey, item.message).signature
         return item
+      case 'polygon':
+        item.signature = signPolygonBlockchainData(config.wallets.polygon.privateKey, item.message).signature
+        return item
       case 'btc':
         item.signature = signBTC(config.wallets.btc.privateKey, item.message).signature
         return item
@@ -809,6 +881,12 @@ export async function presignStateList(
         const neoSig = await presignETHBlockchainData(apiKey, config, item.message)
         item.signature = neoSig.signature
         item.r = neoSig.r
+        result.push(item)
+        break
+      case 'polygon':
+        const polygonSig = await presignPolygonBlockchainData(apiKey, config, item.message)
+        item.signature = polygonSig.signature
+        item.r = polygonSig.r
         result.push(item)
         break
       case 'neo':
