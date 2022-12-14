@@ -273,7 +273,7 @@ export function getPolygonAssetID(asset: string): string {
     case 'matic':
       return '0000'
     case 'derc20':
-      return '0001'
+      return '0003'
     default:
       return 'ffff'
   }
