@@ -3,32 +3,6 @@ import _ from 'lodash'
 import testVectors from '../__tests__/testVectors.json'
 import { Blockchain } from '../types'
 
-// import getHKDFKeysFromPassword from '../getHKDFKeysFromPassword'
-// import initialize from '../initialize'
-// import bufferize from '../bufferize'
-// import Config from '../__tests__/config.json'
-// test('recover account', async () => {
-//   const result = await getHKDFKeysFromPassword('userpassword', '')
-//   const vector = {
-//     encryptedSecretKey: '7f149760b9a8365c79747f5b058a43c8', // replace with actual encrypted key
-//     nonce: '7a6ca46edce40a3cbf36b61f', // replace
-//     tag: 'fc1f53dc4bf1e4c182a9fd884e5acbb7' // replace
-//   }
-
-//   const wallet = await initialize({
-//     aead: {
-//       encryptedSecretKey: bufferize(vector.encryptedSecretKey),
-//       nonce: bufferize(vector.nonce),
-//       tag: bufferize(vector.tag)
-//     },
-//     assetData: Config.assetData,
-//     encryptionKey: result.encryptionKey,
-//     marketData: Config.marketData,
-//     walletIndices: { neo: 1, eth: 1, btc: 1, neo3: 1, avaxc: 1, polygon: 1 }
-//   })
-//   console.log("Wallet: ", wallet.wallets)
-// })
-
 test('generates deterministic BIP44 ETH keys', async () => {
   for (const vector of testVectors) {
     const masterSeed = Buffer.from(vector.masterSeed, 'hex')
