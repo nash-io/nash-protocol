@@ -29,7 +29,8 @@ export enum CoinType {
   NEO = 888,
   NEO3 = 888,
   POLYGON = 966,
-  AVAXC = 9000
+  AVAXC = 9000,
+  ABRITRUM = 9001
 }
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
@@ -106,7 +107,8 @@ export const coinTypeFromString = (s: string): CoinType => {
     ltc: CoinType.LTC,
     neo: CoinType.NEO,
     neo3: CoinType.NEO3,
-    polygon: CoinType.POLYGON
+    polygon: CoinType.POLYGON,
+    arbitrum: CoinType.ABRITRUM
   }
 
   if (!(s in m)) {
@@ -130,6 +132,8 @@ export const blockchainFromString = (name: string): Blockchain => {
       return Blockchain.POLYGON
     case 'neo3':
       return Blockchain.NEO3
+    case 'arbitrum':
+      return Blockchain.ARBITRUM
     default:
       throw new Error('Unsupported name')
   }
@@ -215,6 +219,7 @@ function generateWalletForCoinType(
     case CoinType.ETC:
     case CoinType.AVAXC:
     case CoinType.POLYGON:
+    case CoinType.ABRITRUM:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)

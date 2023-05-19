@@ -4,7 +4,8 @@ export enum Blockchain {
   NEO = 'NEO',
   NEO3 = 'NEO3',
   AVAXC = 'AVAXC',
-  POLYGON = 'POLYGON'
+  POLYGON = 'POLYGON',
+  ARBITRUM = 'ARBITRUM'
 }
 
 /**
@@ -19,7 +20,8 @@ export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.NEO]: 'Secp256r1',
   [Blockchain.AVAXC]: 'Secp256k1',
   [Blockchain.POLYGON]: 'Secp256k1',
-  [Blockchain.NEO3]: 'Secp256r1'
+  [Blockchain.NEO3]: 'Secp256r1',
+  [Blockchain.ARBITRUM]: 'Secp256k1'
 }
 
 export interface PallierPK {
