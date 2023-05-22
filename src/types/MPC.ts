@@ -91,7 +91,8 @@ export enum BIP44 {
   NEO = "m/44'/888'/0'/0/0",
   NEO3 = "m/44'/888'/1'/0/0",
   POLYGON = "m/44'/966'/0'/0/0",
-  AVAXC = "m/44'/9000'/0'/0/0"
+  AVAXC = "m/44'/9000'/0'/0/0",
+  ABRITRUM = "m/44'/9001'/0'/0/0"
 }
 
 export interface ChildKey {
@@ -115,6 +116,7 @@ export interface APIKey {
     [BIP44.AVAXC]?: ChildKey
     [BIP44.POLYGON]?: ChildKey
     [BIP44.NEO3]?: ChildKey
+    [BIP44.ABRITRUM]?: ChildKey
   }
   payload_signing_key: string
   payload_public_key: string

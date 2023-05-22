@@ -96,6 +96,7 @@ export function deriveIndex(extendedKey: bip32.BIP32Interface, index: number): b
 
 export const coinTypeFromString = (s: string): CoinType => {
   const m: Record<string, CoinType> = {
+    arbitrum: CoinType.ABRITRUM,
     avaxc: CoinType.AVAXC,
     bch: CoinType.BCH,
     btc: CoinType.BTC,
@@ -107,8 +108,7 @@ export const coinTypeFromString = (s: string): CoinType => {
     ltc: CoinType.LTC,
     neo: CoinType.NEO,
     neo3: CoinType.NEO3,
-    polygon: CoinType.POLYGON,
-    arbitrum: CoinType.ABRITRUM
+    polygon: CoinType.POLYGON
   }
 
   if (!(s in m)) {
