@@ -143,7 +143,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         public_key: neo3Wallet.publicKey,
         server_secret_share_encrypted: neo3.server_secret_share_encrypted
       },
-      [BIP44.ABRITRUM]: {
+      [BIP44.ARBITRUM]: {
         address: arbitrumWallet.address,
         client_secret_share: arbitrum.client_secret_share,
         public_key: arbitrumWallet.publicKey,
