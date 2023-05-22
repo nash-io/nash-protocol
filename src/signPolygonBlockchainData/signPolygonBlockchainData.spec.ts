@@ -85,7 +85,7 @@ test('sign derc20 withdraw movement', async () => {
   expect(payloadRes.blockchainMovement).toEqual({
     address: 'fa39fddde46cea3060b91f80abed8672f77c5bea',
     amount: '303200400',
-    asset: '0001',
+    asset: '0003',
     nonce: '0052e62c',
     prefix: '03',
     userPubKey: 'fa39fddde46cea3060b91f80abed8672f77c5bea',
@@ -117,6 +117,6 @@ test('sign MATIC/DERC20 market buy order', async () => {
     orderData
   )
   expect(rawData).toBe(
-    '019BAE2051097DC5DDF68D3C01D5FA5CCC7833109D000100000000001700000005FFFFFFFFFFFFFFFF0000000000000000FFFFFFFFFFFFFFFF00000000000000000000002A'
+    '019BAE2051097DC5DDF68D3C01D5FA5CCC7833109D000300000000001700000005FFFFFFFFFFFFFFFF0000000000000000FFFFFFFFFFFFFFFF00000000000000000000002A'
   )
 })

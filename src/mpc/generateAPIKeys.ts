@@ -53,6 +53,13 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     params.net,
     Blockchain.NEO3
   )
+  const arbitrumWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('arbitrum'),
+    params.walletIndices.arbitrum,
+    params.net,
+    Blockchain.ARBITRUM
+  )
 
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
@@ -60,6 +67,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const avaxcSecret = avaxcWallet.privateKey
   const polygonSecret = polygonWallet.privateKey
   const neo3Secret = neo3Wallet.privateKey
+  const arbitrumSecret = arbitrumWallet.privateKey
 
   const btc = await createAPIKey({
     ...params,
@@ -91,6 +99,12 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     curve: 'Secp256r1',
     secret: neo3Secret
   })
+  const arbitrum = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: arbitrumSecret
+  })
+
   return {
     child_keys: {
       [BIP44.BTC]: {
@@ -128,6 +142,12 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         client_secret_share: neo3.client_secret_share,
         public_key: neo3Wallet.publicKey,
         server_secret_share_encrypted: neo3.server_secret_share_encrypted
+      },
+      [BIP44.ABRITRUM]: {
+        address: arbitrumWallet.address,
+        client_secret_share: arbitrum.client_secret_share,
+        public_key: arbitrumWallet.publicKey,
+        server_secret_share_encrypted: arbitrum.server_secret_share_encrypted
       }
     },
     paillier_pk: btc.paillier_pk,
