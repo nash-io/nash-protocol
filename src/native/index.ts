@@ -1,4 +1,5 @@
 import os from 'os'
+import process from 'process'
 import wasm from '../wasm'
 interface NodeFileInterface {
   dh_init: (size: number, curve: string) => string
@@ -10,7 +11,7 @@ interface NodeFileInterface {
 
 const loadNodeFile = (): NodeFileInterface => {
   const platform = os.platform()
-
+  const arch = process.arch
   switch (platform) {
     // case 'aix':
     // case 'android':
@@ -22,6 +23,9 @@ const loadNodeFile = (): NodeFileInterface => {
     case 'win32':
       return require('./index_win.node')
     case 'linux':
+      if (arch.startsWith('arm')) {
+        return require('./index_arm.node')
+      }
       return require('./index_linux.node')
     case 'darwin':
       return require('./index_osx.node')
