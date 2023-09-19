@@ -10,7 +10,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "copy:nativewasm": "cp -r src/wasm build/main/wasm && cp src/native/index_osx.node build/main/native && cp src/native/index_linux.node build/main/native && cp src/native/index_win.node build/main/native && cp -r wasm-webpack build/module/wasm && rm -r build/module/mpc-lib && cp -r wasm-webpack build/module/mpc-lib",
+    "copy:nativewasm": "cp -r src/wasm build/main/wasm && cp src/native/index_osx.node build/main/native && cp src/native/index_arm.node build/main/native && cp src/native/index_linux.node build/main/native && cp src/native/index_win.node build/main/native && cp -r wasm-webpack build/module/wasm && rm -r build/module/mpc-lib && cp -r wasm-webpack build/module/mpc-lib",
     "copy:wasm": "cp -r src/wasm build/main/wasm && cp -r wasm-webpack build/module/wasm",
     "build": "yarn clean && yarn build:main && yarn build:module && yarn copy:nativewasm",
     "build:main": "tsc -p tsconfig.json",
