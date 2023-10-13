@@ -1,4 +1,4 @@
-import getHKDFKeysFromPassword from './getHKDFKeysFromPassword'
+import getHKDFKeysFromPassword, { syncGetHKDFKeysFromPassword } from './getHKDFKeysFromPassword'
 
 import stringify from '../stringify'
 
@@ -16,8 +16,23 @@ testVectors.forEach((vector, idx) =>
   })
 )
 
+testVectors.forEach((vector, idx) =>
+  test(`passes test vector ${idx + 1} (sync)`, () => {
+    const output = syncGetHKDFKeysFromPassword(vector.password, vector.salt)
+
+    expect(stringify(output.authKey)).toBe(vector.authKey)
+    expect(stringify(output.encryptionKey)).toBe(vector.encryptionKey)
+  })
+)
+
 test('generates symmetrical keys', async () => {
   const output = await getHKDFKeysFromPassword(password, salt)
+
+  expect(output.authKey.length).toBe(output.encryptionKey.length)
+})
+
+test('generates symmetrical keys (sync)', () => {
+  const output = syncGetHKDFKeysFromPassword(password, salt)
 
   expect(output.authKey.length).toBe(output.encryptionKey.length)
 })

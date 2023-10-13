@@ -1,6 +1,7 @@
 import hkdf from 'futoin-hkdf'
 import hashPassword from '../hashPassword'
 import HKDFKeys from '../types/HKDFKeys'
+import { syncHashPassword } from '../hashPassword/hashPassword'
 
 /*
   HKDF parameters
@@ -20,6 +21,15 @@ const hash = 'SHA-256'
  */
 export default async function getHKDFKeysFromPassword(password: string, salt: string): Promise<HKDFKeys> {
   const hashed = await hashPassword(password, salt)
+
+  return {
+    authKey: hkdf(hashed, length, { hash, info: 'auth', salt }),
+    encryptionKey: hkdf(hashed, length, { hash, info: 'encryption', salt })
+  }
+}
+
+export function syncGetHKDFKeysFromPassword(password: string, salt: string): HKDFKeys {
+  const hashed = syncHashPassword(password, salt)
 
   return {
     authKey: hkdf(hashed, length, { hash, info: 'auth', salt }),
