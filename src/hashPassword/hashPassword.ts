@@ -1,4 +1,4 @@
-import asyncScrypt from 'scrypt-async'
+import scryptAsync from 'scrypt-async'
 
 import normalizeString from '../utils/normalizeString'
 
@@ -19,7 +19,7 @@ const dkLen = 32
  */
 export default async function hashPassword(password: string, salt: string): Promise<Buffer> {
   return new Promise(res =>
-    asyncScrypt(normalizeString(password), normalizeString(salt), { N, r, p, dkLen }, (key: string) => {
+    scryptAsync(normalizeString(password), normalizeString(salt), { N, r, p, dkLen }, (key: string) => {
       // Progress tracker unhandled, we can incorporate it later if needed
       if (key) {
         return res(Buffer.from(key))
