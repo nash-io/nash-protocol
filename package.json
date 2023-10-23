@@ -1,6 +1,6 @@
 {
   "name": "@neon-exchange/nash-protocol",
-  "version": "4.11.5",
+  "version": "4.11.7",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -58,7 +58,7 @@
     "lodash": "4.17.21",
     "node-fetch": "2.6.0",
     "randombytes": "2.1.0",
-    "scrypt-js": "2.0.4",
+    "scrypt-async": "2.0.1",
     "sha3": "2.0.4",
     "smart-buffer": "4.2.0",
     "tiny-secp256k1": "1.1.3"
