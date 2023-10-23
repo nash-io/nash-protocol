@@ -1,4 +1,4 @@
-import scrypt from 'scrypt-js'
+import asyncScrypt from 'scrypt-async'
 
 import normalizeString from '../utils/normalizeString'
 
@@ -17,14 +17,9 @@ const dkLen = 32
  * Hashes a plaintext password via the
  * [scrypt key derivation function](https://en.wikipedia.org/wiki/Scrypt).
  */
-export default function hashPassword(password: string, salt: string): Promise<Buffer> {
+export default async function hashPassword(password: string, salt: string): Promise<Buffer> {
   return new Promise(res =>
-    scrypt(normalizeString(password), normalizeString(salt), N, r, p, dkLen, (error: Error, _: number, key: string) => {
-      // throw instead of reject because this will only happen on code error
-      if (error) {
-        throw error
-      }
-
+    asyncScrypt(normalizeString(password), normalizeString(salt), { N, r, p, dkLen }, (key: string) => {
       // Progress tracker unhandled, we can incorporate it later if needed
       if (key) {
         return res(Buffer.from(key))
