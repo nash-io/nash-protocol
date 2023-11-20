@@ -272,6 +272,8 @@ export function getPolygonAssetID(asset: string): string {
   switch (asset) {
     case 'matic':
       return '0000'
+    case 'wbtc':
+      return '0001'
     case 'derc20':
       return '0003'
     default:
@@ -309,6 +311,8 @@ export function getETHAssetID(asset: string): string {
       return '0015'
     case 'noia':
       return '0019'
+    case 'wbtc':
+      return '001a'
     default:
       return 'ffff'
   }
