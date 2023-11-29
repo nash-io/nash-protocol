@@ -14,6 +14,7 @@ import config from '../__tests__/blockchain_config.json'
 import signPayload, { determineSignatureNonceTuplesNeeded } from '../signPayload'
 import sigTestVectors from '../__tests__/signatureVectors.json'
 import { buildOrderSignatureData, inferBlockchainData } from '../utils/blockchain'
+import { buildETHOrderSignatureData } from '../signETHBlockchainData'
 
 test('eth polygon generation', async () => {
   const payload =
@@ -118,5 +119,44 @@ test('sign MATIC/DERC20 market buy order', async () => {
   )
   expect(rawData).toBe(
     '019BAE2051097DC5DDF68D3C01D5FA5CCC7833109D000300000000001700000005FFFFFFFFFFFFFFFF0000000000000000FFFFFFFFFFFFFFFF00000000000000000000002A'
+  )
+})
+
+test('sign USDC/WBTC market buy order', async () => {
+  const payload = {
+    amount: { amount: 10, currency: 'WBTC' },
+    buyOrSell: BuyOrSellBuy,
+    marketName: 'wbtc_usdc',
+    nonceOrder: 42,
+    noncesFrom: [1],
+    noncesTo: [5],
+    timestamp: 1234
+  }
+
+  const signingPayload = { kind: SigningPayloadID.placeMarketOrderPayload, payload }
+  const blockchainData = inferBlockchainData(signingPayload)
+  const orderData = buildOrderSignatureData(config.marketData, config.assetData, signingPayload)
+  const chainNoncePair = determineSignatureNonceTuplesNeeded(orderData, blockchainData)
+  const rawData = buildPolygonOrderSignatureData(
+    '9BAE2051097DC5DDF68D3C01D5FA5CCC7833109D',
+    signingPayload,
+    chainNoncePair[0],
+    orderData
+  )
+
+  expect(rawData).toBe(
+    '019BAE2051097DC5DDF68D3C01D5FA5CCC7833109D000300000000001700000005FFFFFFFFFFFFFFFF0000000000000000FFFFFFFFFFFFFFFF00000000000000000000002A'
+  )
+  // console.log("Raw data: ", rawData)
+
+  const rawDataEth = buildETHOrderSignatureData(
+    'AAAE2051097DC5DDF68D3C01D5FA5CCC783310AA',
+    signingPayload,
+    chainNoncePair[0],
+    orderData
+  )
+  // console.log("Raw data Eth: ", rawDataEth)
+  expect(rawDataEth).toBe(
+    '01AAAE2051097DC5DDF68D3C01D5FA5CCC783310AA0003FFFF00000001FFFFFFFFFFFFFFFFFFFFFFFF0000000000000000FFFFFFFFFFFFFFFF00000000000000000000002A'
   )
 })

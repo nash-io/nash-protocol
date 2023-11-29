@@ -311,8 +311,6 @@ export function getETHAssetID(asset: string): string {
       return '0015'
     case 'noia':
       return '0019'
-    case 'wbtc':
-      return '001a'
     default:
       return 'ffff'
   }

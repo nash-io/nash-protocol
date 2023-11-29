@@ -39,6 +39,11 @@
       "blockchain": "polygon",
       "hash": "fe4f5145f6e09952a5ba9e956ed0c25e3fa4c7f1",
       "precision": 18
+    },
+    "wbtc": {
+      "blockchain": "polygon",
+      "hash": "1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "precision": 8
     }
   },
   "marketData": {
@@ -121,6 +126,12 @@
       "minTradeIncrementB": 5
     },
     "matic_derc20": {
+      "minTickSize": 2,
+      "minTradeSize": 5,
+      "minTradeIncrement": 8,
+      "minTradeIncrementB": 5
+    },
+    "wbtc_usdc": {
       "minTickSize": 2,
       "minTradeSize": 5,
       "minTradeIncrement": 8,
