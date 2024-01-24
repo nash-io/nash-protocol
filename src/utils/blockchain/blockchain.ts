@@ -274,7 +274,7 @@ export function getPolygonAssetID(asset: string): string {
       return '0000'
     case 'wbtc':
       return '0001'
-    case 'derc20':
+    case 'usdc.e':
       return '0003'
     default:
       return 'ffff'
