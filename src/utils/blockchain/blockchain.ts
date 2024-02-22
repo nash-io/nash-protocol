@@ -276,8 +276,10 @@ export function getPolygonAssetID(asset: string): string {
       return '0001'
     case 'usdc.e':
       return '0003'
+    case 'usdcpolygon':
+      return '0004'
     default:
-      return 'ffff'
+      throw new Error(`Cannot get Polygon AssetId for ${asset}`)
   }
 }
 
@@ -312,6 +314,6 @@ export function getETHAssetID(asset: string): string {
     case 'noia':
       return '0019'
     default:
-      return 'ffff'
+      throw new Error(`Cannot get ETH AssetId for ${asset}`)
   }
 }
