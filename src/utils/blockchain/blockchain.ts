@@ -279,6 +279,8 @@ export function getPolygonAssetID(asset: string): string {
     case 'usdc.p':
     case 'usdcpolygon':
       return '0004'
+    case 'weth':
+      return '0006'
     default:
       return 'ffff'
   }
