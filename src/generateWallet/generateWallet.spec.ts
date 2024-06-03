@@ -2,7 +2,6 @@ import { generateNashPayloadSigningKey, generateWallet, CoinType } from './gener
 import _ from 'lodash'
 import testVectors from '../__tests__/testVectors.json'
 import { Blockchain } from '../types'
-// import { cryptoWaitReady } from '@polkadot/util-crypto'
 
 test('generates deterministic BIP44 ETH keys', async () => {
   for (const vector of testVectors) {
