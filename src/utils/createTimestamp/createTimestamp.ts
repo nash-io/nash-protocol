@@ -1,4 +1,4 @@
-const EPOCH_START = 167698000000
+const EPOCH_START = 172044998543
 
 /**
  * Returns the number of milliseconds since the Unix Epoch.
