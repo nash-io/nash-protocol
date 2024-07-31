@@ -28,6 +28,7 @@ export enum CoinType {
   ERD = 508,
   NEO = 888,
   NEO3 = 888,
+  NEO_X = 888,
   POLYGON = 966,
   AVAXC = 9000,
   ABRITRUM = 9001
@@ -108,6 +109,8 @@ export const coinTypeFromString = (s: string): CoinType => {
     ltc: CoinType.LTC,
     neo: CoinType.NEO,
     neo3: CoinType.NEO3,
+    neo_x: CoinType.NEO_X,
+    neox: CoinType.NEO_X,
     polygon: CoinType.POLYGON
   }
 
@@ -132,6 +135,9 @@ export const blockchainFromString = (name: string): Blockchain => {
       return Blockchain.POLYGON
     case 'neo3':
       return Blockchain.NEO3
+    case 'neox':
+    case 'neo_x':
+      return Blockchain.NEO_X
     case 'arbitrum':
       return Blockchain.ARBITRUM
     default:
@@ -220,6 +226,7 @@ function generateWalletForCoinType(
     case CoinType.AVAXC:
     case CoinType.POLYGON:
     case CoinType.ABRITRUM:
+    case CoinType.NEO_X:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)

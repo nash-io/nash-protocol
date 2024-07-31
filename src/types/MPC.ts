@@ -3,6 +3,7 @@ export enum Blockchain {
   ETH = 'ETH',
   NEO = 'NEO',
   NEO3 = 'NEO3',
+  NEO_X = 'NEO_X',
   AVAXC = 'AVAXC',
   POLYGON = 'POLYGON',
   ARBITRUM = 'ARBITRUM'
@@ -18,6 +19,7 @@ export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.BTC]: 'Secp256k1',
   [Blockchain.ETH]: 'Secp256k1',
   [Blockchain.NEO]: 'Secp256r1',
+  [Blockchain.NEO_X]: 'Secp256k1',
   [Blockchain.AVAXC]: 'Secp256k1',
   [Blockchain.POLYGON]: 'Secp256k1',
   [Blockchain.NEO3]: 'Secp256r1',
@@ -90,6 +92,7 @@ export enum BIP44 {
   ETH = "m/44'/60'/0'/0/0",
   NEO = "m/44'/888'/0'/0/0",
   NEO3 = "m/44'/888'/1'/0/0",
+  NEO_X = "m/44'/888'/2'/0/0",
   POLYGON = "m/44'/966'/0'/0/0",
   AVAXC = "m/44'/9000'/0'/0/0",
   ARBITRUM = "m/44'/9001'/0'/0/0"
@@ -116,6 +119,7 @@ export interface APIKey {
     [BIP44.AVAXC]?: ChildKey
     [BIP44.POLYGON]?: ChildKey
     [BIP44.NEO3]?: ChildKey
+    [BIP44.NEO_X]?: ChildKey
     [BIP44.ARBITRUM]?: ChildKey
   }
   payload_signing_key: string

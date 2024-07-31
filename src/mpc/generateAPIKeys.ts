@@ -61,6 +61,14 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     Blockchain.ARBITRUM
   )
 
+  const neoXWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('neo_x'),
+    params.walletIndices.neoX,
+    params.net,
+    Blockchain.NEO_X
+  )
+
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
   const neoSecret = neoWallet.privateKey
@@ -68,6 +76,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const polygonSecret = polygonWallet.privateKey
   const neo3Secret = neo3Wallet.privateKey
   const arbitrumSecret = arbitrumWallet.privateKey
+  const neoXSecret = neoXWallet.privateKey
 
   const btc = await createAPIKey({
     ...params,
@@ -103,6 +112,12 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     ...params,
     curve: 'Secp256k1',
     secret: arbitrumSecret
+  })
+
+  const neoX = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: neoXSecret
   })
 
   return {
@@ -142,6 +157,12 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         client_secret_share: neo3.client_secret_share,
         public_key: neo3Wallet.publicKey,
         server_secret_share_encrypted: neo3.server_secret_share_encrypted
+      },
+      [BIP44.NEO_X]: {
+        address: neoXWallet.address,
+        client_secret_share: neoX.client_secret_share,
+        public_key: neoXWallet.publicKey,
+        server_secret_share_encrypted: neoX.server_secret_share_encrypted
       },
       [BIP44.ARBITRUM]: {
         address: arbitrumWallet.address,
