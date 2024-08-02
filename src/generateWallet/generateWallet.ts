@@ -226,6 +226,7 @@ function generateWalletForCoinType(
     case CoinType.AVAXC:
     case CoinType.POLYGON:
     case CoinType.ABRITRUM:
+    case CoinType.NEO_X:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)
