@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.13.5](https://github.com/nash-io/nash-protocol/compare/v4.13.3...v4.13.5) (2024-08-02)
+
 ### [4.13.3](https://github.com/nash-io/nash-protocol/compare/v4.13.1...v4.13.3) (2024-08-02)
 
 ### [4.13.1](https://github.com/nash-io/nash-protocol/compare/v4.12.1...v4.13.1) (2024-07-31)
