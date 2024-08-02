@@ -28,7 +28,7 @@ export enum CoinType {
   ERD = 508,
   NEO = 888,
   NEO3 = 888,
-  NEO_X = 888,
+  NEO_X = 1668,
   POLYGON = 966,
   AVAXC = 9000,
   ABRITRUM = 9001
@@ -226,7 +226,6 @@ function generateWalletForCoinType(
     case CoinType.AVAXC:
     case CoinType.POLYGON:
     case CoinType.ABRITRUM:
-    case CoinType.NEO_X:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)
