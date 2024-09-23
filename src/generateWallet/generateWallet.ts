@@ -17,6 +17,11 @@ const curve = new EC('p256')
 const bip44Purpose = 44
 const nashPurpose = 1337
 
+// This BIP 44 coin types are used to define contsants for wallet derivation.  They are based on the
+// document here https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+// In the cases where no constant is found in that document, we utilize the constants defined
+// by trust wallet here: https://github.com/trustwallet/wallet-core/blob/master/docs/registry.md
+
 export enum CoinType {
   BTC = 0,
   LTC = 2,
@@ -31,7 +36,11 @@ export enum CoinType {
   NEO_X = 1668,
   POLYGON = 966,
   AVAXC = 9000,
-  ABRITRUM = 9001
+  ABRITRUM = 9001,
+  BNB = 714,
+  BASE = 8453,
+  MANTLE = 5000,
+  OPTIMISM = 10000070
 }
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
@@ -99,7 +108,9 @@ export const coinTypeFromString = (s: string): CoinType => {
   const m: Record<string, CoinType> = {
     arbitrum: CoinType.ABRITRUM,
     avaxc: CoinType.AVAXC,
+    base: CoinType.BASE,
     bch: CoinType.BCH,
+    bnb: CoinType.BNB,
     btc: CoinType.BTC,
     doge: CoinType.DOGE,
     dot: CoinType.DOT,
@@ -107,10 +118,12 @@ export const coinTypeFromString = (s: string): CoinType => {
     etc: CoinType.ETC,
     eth: CoinType.ETH,
     ltc: CoinType.LTC,
+    mantle: CoinType.MANTLE,
     neo: CoinType.NEO,
     neo3: CoinType.NEO3,
     neo_x: CoinType.NEO_X,
     neox: CoinType.NEO_X,
+    optimism: CoinType.OPTIMISM,
     polygon: CoinType.POLYGON
   }
 
@@ -140,6 +153,14 @@ export const blockchainFromString = (name: string): Blockchain => {
       return Blockchain.NEO_X
     case 'arbitrum':
       return Blockchain.ARBITRUM
+    case 'bnb':
+      return Blockchain.BNB
+    case 'base':
+      return Blockchain.BASE
+    case 'mantle':
+      return Blockchain.MANTLE
+    case 'optimism':
+      return Blockchain.OPTIMISM
     default:
       throw new Error('Unsupported name')
   }
@@ -227,6 +248,10 @@ function generateWalletForCoinType(
     case CoinType.POLYGON:
     case CoinType.ABRITRUM:
     case CoinType.NEO_X:
+    case CoinType.BNB:
+    case CoinType.BASE:
+    case CoinType.OPTIMISM:
+    case CoinType.MANTLE:
       // TODO: can we replace this with the elliptic package which we already
       // use to trim bundle size?
       const pubkey = tiny.pointFromScalar(key.privateKey, false)

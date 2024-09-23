@@ -6,7 +6,11 @@ export enum Blockchain {
   NEO_X = 'NEO_X',
   AVAXC = 'AVAXC',
   POLYGON = 'POLYGON',
-  ARBITRUM = 'ARBITRUM'
+  ARBITRUM = 'ARBITRUM',
+  BNB = 'BNB',
+  BASE = 'BASE',
+  MANTLE = 'MANTLE',
+  OPTIMISM = 'OPTIMISM'
 }
 
 /**
@@ -23,7 +27,11 @@ export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.AVAXC]: 'Secp256k1',
   [Blockchain.POLYGON]: 'Secp256k1',
   [Blockchain.NEO3]: 'Secp256r1',
-  [Blockchain.ARBITRUM]: 'Secp256k1'
+  [Blockchain.ARBITRUM]: 'Secp256k1',
+  [Blockchain.BNB]: 'Secp256k1',
+  [Blockchain.BASE]: 'Secp256k1',
+  [Blockchain.MANTLE]: 'Secp256k1',
+  [Blockchain.OPTIMISM]: 'Secp256k1'
 }
 
 export interface PallierPK {
@@ -95,7 +103,11 @@ export enum BIP44 {
   NEO_X = "m/44'/888'/2'/0/0",
   POLYGON = "m/44'/966'/0'/0/0",
   AVAXC = "m/44'/9000'/0'/0/0",
-  ARBITRUM = "m/44'/9001'/0'/0/0"
+  ARBITRUM = "m/44'/9001'/0'/0/0",
+  BNB = "m/44'/714'/0'/0/0",
+  BASE = "m/44'/8453'/0'/0/0",
+  MANTLE = "m/44'/5000'/0'/0/0",
+  OPTIMISM = "m/44'/10000070'/0'/0/0"
 }
 
 export interface ChildKey {
@@ -121,6 +133,10 @@ export interface APIKey {
     [BIP44.NEO3]?: ChildKey
     [BIP44.NEO_X]?: ChildKey
     [BIP44.ARBITRUM]?: ChildKey
+    [BIP44.BNB]?: ChildKey
+    [BIP44.BASE]?: ChildKey
+    [BIP44.MANTLE]?: ChildKey
+    [BIP44.OPTIMISM]?: ChildKey
   }
   payload_signing_key: string
   payload_public_key: string

@@ -69,6 +69,38 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     Blockchain.NEO_X
   )
 
+  const bnbWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('bnb'),
+    params.walletIndices.bnb,
+    params.net,
+    Blockchain.BNB
+  )
+
+  const baseWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('base'),
+    params.walletIndices.base,
+    params.net,
+    Blockchain.BASE
+  )
+
+  const mantleWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('mantle'),
+    params.walletIndices.mantle,
+    params.net,
+    Blockchain.MANTLE
+  )
+
+  const optimismWallet = generateWallet(
+    masterSeed,
+    coinTypeFromString('optimism'),
+    params.walletIndices.optimism,
+    params.net,
+    Blockchain.OPTIMISM
+  )
+
   const btcSecret = btcWallet.privateKey
   const ethSecret = ethWallet.privateKey
   const neoSecret = neoWallet.privateKey
@@ -77,6 +109,10 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const neo3Secret = neo3Wallet.privateKey
   const arbitrumSecret = arbitrumWallet.privateKey
   const neoXSecret = neoXWallet.privateKey
+  const bnbSecret = bnbWallet.privateKey
+  const baseSecret = baseWallet.privateKey
+  const mantleSecret = mantleWallet.privateKey
+  const optimismSecret = optimismWallet.privateKey
 
   const btc = await createAPIKey({
     ...params,
@@ -118,6 +154,30 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     ...params,
     curve: 'Secp256k1',
     secret: neoXSecret
+  })
+
+  const bnb = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: bnbSecret
+  })
+
+  const base = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: baseSecret
+  })
+
+  const mantle = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: mantleSecret
+  })
+
+  const optimism = await createAPIKey({
+    ...params,
+    curve: 'Secp256k1',
+    secret: optimismSecret
   })
 
   return {
@@ -169,6 +229,30 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
         client_secret_share: arbitrum.client_secret_share,
         public_key: arbitrumWallet.publicKey,
         server_secret_share_encrypted: arbitrum.server_secret_share_encrypted
+      },
+      [BIP44.BNB]: {
+        address: bnbWallet.address,
+        client_secret_share: bnb.client_secret_share,
+        public_key: bnbWallet.publicKey,
+        server_secret_share_encrypted: bnb.server_secret_share_encrypted
+      },
+      [BIP44.BASE]: {
+        address: baseWallet.address,
+        client_secret_share: base.client_secret_share,
+        public_key: baseWallet.publicKey,
+        server_secret_share_encrypted: base.server_secret_share_encrypted
+      },
+      [BIP44.MANTLE]: {
+        address: mantleWallet.address,
+        client_secret_share: mantle.client_secret_share,
+        public_key: mantleWallet.publicKey,
+        server_secret_share_encrypted: mantle.server_secret_share_encrypted
+      },
+      [BIP44.OPTIMISM]: {
+        address: optimismWallet.address,
+        client_secret_share: optimism.client_secret_share,
+        public_key: optimismWallet.publicKey,
+        server_secret_share_encrypted: optimism.server_secret_share_encrypted
       }
     },
     paillier_pk: btc.paillier_pk,
