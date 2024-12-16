@@ -58,7 +58,19 @@ export function generateWallet(
   net?: string,
   blockchain?: Blockchain
 ): Wallet {
-  const key = derivePath(masterSeed, bip44Purpose, coinType, 0, 0)
+  let coinTypeToUseForWalletPathDerivation: CoinType = coinType
+  // legacy wallets used 1 as an index, which while not incorrect is not what most BIP44 implementations do
+  // going forward we will use 0 instead.
+  // however, the value of 0 can give us an idea that we want to use the
+  // same address for all EVM wallets on non-legacy accounts
+  // So if the index is 0, we will derive the path to always be the ETH coin type wallet for EVM wallets
+  // otherwise use non eth ( MATIC, ARBITRUM, etc ) coin type
+
+  if (index === 0 && isEVM(coinType)) {
+    coinTypeToUseForWalletPathDerivation = CoinType.ETH
+  }
+
+  const key = derivePath(masterSeed, bip44Purpose, coinTypeToUseForWalletPathDerivation, 0, 0)
   const derivedChainKey = deriveIndex(key, index)
 
   return generateWalletForCoinType(derivedChainKey, coinType, index, net, blockchain)
@@ -290,6 +302,23 @@ const bitcoinAddressFromPublicKey = (publicKey: Buffer, type: CoinType, net: str
     network,
     redeem: Bitcoin.payments.p2wpkh({ pubkey: publicKey, network })
   }).address as string
+}
+
+const isEVM = (coinType: CoinType): boolean => {
+  switch (coinType) {
+    case CoinType.ETH:
+    case CoinType.ETC:
+    case CoinType.AVAXC:
+    case CoinType.POLYGON:
+    case CoinType.ABRITRUM:
+    case CoinType.NEO_X:
+    case CoinType.BNB:
+    case CoinType.BASE:
+    case CoinType.OPTIMISM:
+    case CoinType.MANTLE:
+      return true
+  }
+  return false
 }
 
 const bitcoinNetworkFromString = (type: CoinType, net: string | undefined): Bitcoin.Network => {

@@ -18,6 +18,39 @@ test('generates deterministic BIP44 ETH keys', async () => {
   }
 })
 
+test('generates deterministic BIP44 EVM keys', async () => {
+  for (const vector of testVectors) {
+    const masterSeed = Buffer.from(vector.masterSeed, 'hex')
+
+    const walletZeroIndex = vector.wallets.evm[0]
+    const walletOneIndex = vector.wallets.evm[1]
+
+    // with a legacy index, ETH should use wallet with index 1
+    let wallet = generateWallet(masterSeed, CoinType.ETH, 1)
+    expect(wallet.address).toBe(walletOneIndex.address.toLowerCase())
+
+    // with non legacy index, ETH should use wallet with index 0
+    wallet = generateWallet(masterSeed, CoinType.ETH, 0)
+    expect(wallet.address).toBe(walletZeroIndex.address.toLowerCase())
+
+    // with a legacy index, MATIC should not be the same as ETH wallet
+    wallet = generateWallet(masterSeed, CoinType.POLYGON, 1)
+    expect(wallet.address).not.toBe(walletOneIndex.address.toLowerCase())
+
+    // with non legacy index, MATIC should be the same as the eth wallet
+    wallet = generateWallet(masterSeed, CoinType.POLYGON, 0)
+    expect(wallet.address).toBe(walletZeroIndex.address.toLowerCase())
+
+    // same with Arbitrum, mantle, etc
+    wallet = generateWallet(masterSeed, CoinType.MANTLE, 0)
+    expect(wallet.address).toBe(walletZeroIndex.address.toLowerCase())
+    wallet = generateWallet(masterSeed, CoinType.ABRITRUM, 0)
+    expect(wallet.address).toBe(walletZeroIndex.address.toLowerCase())
+    wallet = generateWallet(masterSeed, CoinType.OPTIMISM, 0)
+    expect(wallet.address).toBe(walletZeroIndex.address.toLowerCase())
+  }
+})
+
 test('generates deterministic BIP44 NEO keys', async () => {
   for (const vector of testVectors) {
     const masterSeed = Buffer.from(vector.masterSeed, 'hex')
