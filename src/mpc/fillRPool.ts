@@ -24,6 +24,7 @@ export async function getDhPoolSize(fillPoolParams: FillRPoolParams): Promise<nu
 }
 
 const _FILL_JOB: Record<Curve, Promise<void> | null> = {
+  Curve25519: null,
   Secp256k1: null,
   Secp256r1: null
 }
