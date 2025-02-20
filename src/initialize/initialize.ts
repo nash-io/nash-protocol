@@ -22,7 +22,13 @@ export default async function initialize(params: InitParams): Promise<Config> {
     // if (name.toLowerCase() === 'dot') {
     //   await cryptoWaitReady()
     // }
-    wallets[name] = generateWallet(masterSeed, coinTypeFromString(name), index, params.net, blockchainFromString(name))
+    wallets[name] = await generateWallet(
+      masterSeed,
+      coinTypeFromString(name),
+      index,
+      params.net,
+      blockchainFromString(name)
+    )
   }
 
   const payloadSigningKey = generateNashPayloadSigningKey(masterSeed, 1)
