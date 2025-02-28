@@ -8,7 +8,7 @@ interface NodeFileInterface {
   get_rpool_size: (curve: string) => string
   compute_presig: (apiKeyStr: string, msgHashStr: string, curve: string) => string
   sign: (secretkey: string, hash: string) => string
-  publickey_from_secretkey: (secretkey: string, curve: string) => string
+  //  publickey_from_secretkey: (secretkey: string, curve: string) => string
 }
 
 const loadNodeFile = (): NodeFileInterface => {
@@ -63,19 +63,19 @@ export function compute_presig(apiKeyStr: string, msgHashStr: string, curve: str
   }
   return MpcWallet.compute_presig(apiKeyStr, msgHashStr, curve)
 }
-export function publickey_from_secretkey(secretkey: string, curve: string): string {
-  if (wasm === MpcWallet) {
-    return wasm.publickey_from_secretkey(secretkey, curve)
-  }
-  return MpcWallet.publickey_from_secretkey(secretkey, curve)
-}
+// export function publickey_from_secretkey(secretkey: string, curve: string): string {
+//   if (wasm === MpcWallet) {
+//     return wasm.publickey_from_secretkey(secretkey, curve)
+//   }
+//   return MpcWallet.publickey_from_secretkey(secretkey, curve)
+// }
 
 export const init_api_childkey_creator = wasm.init_api_childkey_creator
 export const init_api_childkey_creator_with_verified_paillier = wasm.init_api_childkey_creator_with_verified_paillier
 export const verify_paillier = wasm.verify_paillier
 export const create_api_childkey = wasm.create_api_childkey
 export const verify = wasm.verify
-// export const publickey_from_secretkey = wasm.publickey_from_secretkey
+export const publickey_from_secretkey = wasm.publickey_from_secretkey
 export const sign = wasm.sign
 // export function sign(secret: string, hash: string): string {
 //   if (wasm === MpcWallet) {
