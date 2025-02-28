@@ -11,49 +11,49 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
   const masterSeed = mnemonicToMasterSeed(secretKeyToMnemonic(secretBuff))
   const payloadSigningKey = generateNashPayloadSigningKey(masterSeed, 1)
 
-  const btcWallet = generateWallet(
+  const btcWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('btc'),
     params.walletIndices.btc,
     params.net,
     Blockchain.BTC
   )
-  const ethWallet = generateWallet(
+  const ethWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('eth'),
     params.walletIndices.eth,
     params.net,
     Blockchain.ETH
   )
-  const neoWallet = generateWallet(
+  const neoWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('neo'),
     params.walletIndices.neo,
     params.net,
     Blockchain.NEO
   )
-  const avaxcWallet = generateWallet(
+  const avaxcWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('avaxc'),
     params.walletIndices.avaxc,
     params.net,
     Blockchain.AVAXC
   )
-  const polygonWallet = generateWallet(
+  const polygonWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('polygon'),
     params.walletIndices.polygon,
     params.net,
     Blockchain.POLYGON
   )
-  const neo3Wallet = generateWallet(
+  const neo3Wallet = await generateWallet(
     masterSeed,
     coinTypeFromString('neo3'),
     params.walletIndices.neo3,
     params.net,
     Blockchain.NEO3
   )
-  const arbitrumWallet = generateWallet(
+  const arbitrumWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('arbitrum'),
     params.walletIndices.arbitrum,
@@ -61,7 +61,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     Blockchain.ARBITRUM
   )
 
-  const neoXWallet = generateWallet(
+  const neoXWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('neo_x'),
     params.walletIndices.neoX,
@@ -69,7 +69,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     Blockchain.NEO_X
   )
 
-  const bnbWallet = generateWallet(
+  const bnbWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('bnb'),
     params.walletIndices.bnb,
@@ -77,7 +77,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     Blockchain.BNB
   )
 
-  const baseWallet = generateWallet(
+  const baseWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('base'),
     params.walletIndices.base,
@@ -85,7 +85,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     Blockchain.BASE
   )
 
-  const mantleWallet = generateWallet(
+  const mantleWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('mantle'),
     params.walletIndices.mantle,
@@ -93,7 +93,7 @@ export async function generateAPIKeys(params: GenerateApiKeysParams): Promise<AP
     Blockchain.MANTLE
   )
 
-  const optimismWallet = generateWallet(
+  const optimismWallet = await generateWallet(
     masterSeed,
     coinTypeFromString('optimism'),
     params.walletIndices.optimism,

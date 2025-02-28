@@ -10,14 +10,15 @@ export enum Blockchain {
   BNB = 'BNB',
   BASE = 'BASE',
   MANTLE = 'MANTLE',
-  OPTIMISM = 'OPTIMISM'
+  OPTIMISM = 'OPTIMISM',
+  SOLANA = 'SOLANA'
 }
 
 /**
  * Secp256k1 for BTC, ETH
  * Secp256r1 for NEO
  */
-export type Curve = 'Secp256k1' | 'Secp256r1'
+export type Curve = 'Secp256k1' | 'Secp256r1' | 'Curve25519'
 
 export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.BTC]: 'Secp256k1',
@@ -31,7 +32,8 @@ export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.BNB]: 'Secp256k1',
   [Blockchain.BASE]: 'Secp256k1',
   [Blockchain.MANTLE]: 'Secp256k1',
-  [Blockchain.OPTIMISM]: 'Secp256k1'
+  [Blockchain.OPTIMISM]: 'Secp256k1',
+  [Blockchain.SOLANA]: 'Curve25519'
 }
 
 export interface PallierPK {
