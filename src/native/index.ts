@@ -31,6 +31,9 @@ const loadNodeFile = (): NodeFileInterface => {
       }
       return require('./index_linux.node')
     case 'darwin':
+      if (arch.startsWith('arm')) {
+        return require('./index_osx_arm64.node')
+      }
       return require('./index_osx.node')
     default:
       console.log('Using .wasm shim')
