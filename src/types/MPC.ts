@@ -140,6 +140,7 @@ export interface APIKey {
     [BIP44.BASE]?: ChildKey
     [BIP44.MANTLE]?: ChildKey
     [BIP44.OPTIMISM]?: ChildKey
+    [BIP44.SOLANA]?: ChildKey
   }
   payload_signing_key: string
   payload_public_key: string
