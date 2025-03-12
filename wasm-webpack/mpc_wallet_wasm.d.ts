@@ -68,3 +68,49 @@ export function publickey_from_secretkey(secret_key_str: string, curve_str: stri
  * Output: (r, s): ECDSA signature
  */
 export function sign(secret_key_str: string, msg_hash_str: string): string;
+
+export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
+
+export interface InitOutput {
+  readonly memory: WebAssembly.Memory;
+  readonly dh_init: (a: number, b: number, c: number, d: number) => void;
+  readonly init_api_childkey_creator: (a: number, b: number, c: number) => void;
+  readonly init_api_childkey_creator_with_verified_paillier: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly verify_paillier: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+  readonly create_api_childkey: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly fill_rpool: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
+  readonly get_rpool_size: (a: number, b: number, c: number) => void;
+  readonly compute_presig: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+  readonly verify: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => void;
+  readonly publickey_from_secretkey: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly sign: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly rustsecp256k1_v0_2_0_default_illegal_callback_fn: (a: number, b: number) => void;
+  readonly rustsecp256k1_v0_2_0_default_error_callback_fn: (a: number, b: number) => void;
+  readonly rustsecp256k1_v0_2_0_context_create: (a: number) => number;
+  readonly rustsecp256k1_v0_2_0_context_destroy: (a: number) => void;
+  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
+  readonly __wbindgen_export_0: (a: number, b: number) => number;
+  readonly __wbindgen_export_1: (a: number, b: number, c: number, d: number) => number;
+  readonly __wbindgen_export_2: (a: number, b: number, c: number) => void;
+}
+
+export type SyncInitInput = BufferSource | WebAssembly.Module;
+/**
+* Instantiates the given `module`, which can either be bytes or
+* a precompiled `WebAssembly.Module`.
+*
+* @param {{ module: SyncInitInput }} module - Passing `SyncInitInput` directly is deprecated.
+*
+* @returns {InitOutput}
+*/
+export function initSync(module: { module: SyncInitInput } | SyncInitInput): InitOutput;
+
+/**
+* If `module_or_path` is {RequestInfo} or {URL}, makes a request and
+* for everything else, calls `WebAssembly.instantiate` directly.
+*
+* @param {{ module_or_path: InitInput | Promise<InitInput> }} module_or_path - Passing `InitInput` directly is deprecated.
+*
+* @returns {Promise<InitOutput>}
+*/
+export default function __wbg_init (module_or_path: { module_or_path: InitInput | Promise<InitInput> } | InitInput | Promise<InitInput>): Promise<InitOutput>;
