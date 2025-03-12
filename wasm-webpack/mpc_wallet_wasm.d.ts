@@ -73,25 +73,26 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly dh_init: (a: number, b: number, c: number, d: number) => void;
-  readonly init_api_childkey_creator: (a: number, b: number, c: number) => void;
-  readonly init_api_childkey_creator_with_verified_paillier: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly verify_paillier: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
-  readonly create_api_childkey: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly fill_rpool: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
-  readonly get_rpool_size: (a: number, b: number, c: number) => void;
-  readonly compute_presig: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
-  readonly verify: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => void;
-  readonly publickey_from_secretkey: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly sign: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly dh_init: (a: number, b: number, c: number) => [number, number];
+  readonly init_api_childkey_creator: (a: number, b: number) => [number, number];
+  readonly init_api_childkey_creator_with_verified_paillier: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly verify_paillier: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number];
+  readonly create_api_childkey: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly fill_rpool: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => [number, number];
+  readonly get_rpool_size: (a: number, b: number) => [number, number];
+  readonly compute_presig: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number];
+  readonly verify: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => [number, number];
+  readonly publickey_from_secretkey: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly sign: (a: number, b: number, c: number, d: number) => [number, number];
   readonly rustsecp256k1_v0_2_0_default_illegal_callback_fn: (a: number, b: number) => void;
   readonly rustsecp256k1_v0_2_0_default_error_callback_fn: (a: number, b: number) => void;
   readonly rustsecp256k1_v0_2_0_context_create: (a: number) => number;
   readonly rustsecp256k1_v0_2_0_context_destroy: (a: number) => void;
-  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
-  readonly __wbindgen_export_0: (a: number, b: number) => number;
-  readonly __wbindgen_export_1: (a: number, b: number, c: number, d: number) => number;
-  readonly __wbindgen_export_2: (a: number, b: number, c: number) => void;
+  readonly __wbindgen_export_0: WebAssembly.Table;
+  readonly __wbindgen_malloc: (a: number, b: number) => number;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+  readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+  readonly __wbindgen_start: () => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;
@@ -113,4 +114,4 @@ export function initSync(module: { module: SyncInitInput } | SyncInitInput): Ini
 *
 * @returns {Promise<InitOutput>}
 */
-export default function __wbg_init (module_or_path: { module_or_path: InitInput | Promise<InitInput> } | InitInput | Promise<InitInput>): Promise<InitOutput>;
+export default function __wbg_init (module_or_path?: { module_or_path: InitInput | Promise<InitInput> } | InitInput | Promise<InitInput>): Promise<InitOutput>;

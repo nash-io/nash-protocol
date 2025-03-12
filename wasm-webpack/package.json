@@ -1,12 +1,15 @@
 {
   "name": "mpc-wallet-wasm",
-  "version": "2.0.0",
+  "type": "module",
+  "version": "2.0.1",
   "files": [
     "mpc_wallet_wasm_bg.wasm",
     "mpc_wallet_wasm.js",
     "mpc_wallet_wasm.d.ts"
   ],
-  "module": "mpc_wallet_wasm.js",
+  "main": "mpc_wallet_wasm.js",
   "types": "mpc_wallet_wasm.d.ts",
-  "sideEffects": "false"
+  "sideEffects": [
+    "./snippets/*"
+  ]
 }
