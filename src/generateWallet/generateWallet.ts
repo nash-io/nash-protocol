@@ -279,7 +279,7 @@ async function generateWalletForCoinType(
       }
     case CoinType.SOLANA:
       const params: PublicKeyFromSecretKeyParams = {
-        curve: 'Curve25519',
+        curve: JSON.stringify('Curve25519'),
         secret: key.privateKey.toString('hex')
       }
       const solanaPubkey = await publicKeyFromSecretKey(params)

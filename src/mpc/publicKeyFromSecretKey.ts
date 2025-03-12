@@ -4,7 +4,7 @@ export async function publicKeyFromSecretKey({ secret, curve }: PublicKeyFromSec
   const MPCWallet = await import('../mpc-lib')
   const [publicKeyFromSecretKeySuccess, publicKeyResult] =
     JSON.parse(
-      MPCWallet.publickey_from_secretkey(secret, JSON.stringify(curve))
+      MPCWallet.publickey_from_secretkey(secret, curve)
     ) as [boolean, string]
   if (publicKeyFromSecretKeySuccess === false) {
     throw new Error('Error deriving public key from secret key.')

@@ -76,7 +76,7 @@ export interface SignKey {
 
 export interface PublicKeyFromSecretKeyParams {
   secret: string
-  curve: Curve
+  curve: string
 }
 
 export interface CreateApiKeyParams {
