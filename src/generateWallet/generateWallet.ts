@@ -1,5 +1,5 @@
 import * as bip32 from 'bip32'
-import { Blockchain, PublicKeyFromSecretKeyParams, Wallet } from '../types'
+import { Blockchain, Wallet } from '../types'
 import { reverseHex } from '../utils/getNEOScriptHash/getNEOScripthash'
 import * as EthUtil from 'ethereumjs-util'
 import * as Bitcoin from 'bitcoinjs-lib'
@@ -12,7 +12,7 @@ import hexEncoding from 'crypto-js/enc-hex'
 import RIPEMD160 from 'crypto-js/ripemd160'
 import SHA256 from 'crypto-js/sha256'
 import { ec as EC } from 'elliptic'
-import { publicKeyFromSecretKey } from '../mpc/publicKeyFromSecretKey'
+import nacl from 'tweetnacl'
 
 const curve = new EC('p256')
 const bip44Purpose = 44
@@ -291,13 +291,9 @@ async function generateWalletForCoinType(
         publicKey: key.publicKey.toString('hex')
       }
     case CoinType.SOLANA:
-      const params: PublicKeyFromSecretKeyParams = {
-        curve: 'Curve25519',
-        secret: key.privateKey.toString('hex')
-      }
-      const solanaPubkey = await publicKeyFromSecretKey(params)
-      const pubkeyBuffer = Buffer.from(solanaPubkey, 'hex')
-      const solanaAddress = base58.encode(pubkeyBuffer)
+      const solanaKeypair = nacl.sign.keyPair.fromSeed(new Uint8Array(key.privateKey))
+      const solanaPubkey = Buffer.from(solanaKeypair.publicKey).toString('hex')
+      const solanaAddress = base58.encode(solanaKeypair.publicKey)
       return {
         address: solanaAddress,
         index,
