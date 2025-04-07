@@ -1,6 +1,6 @@
 {
   "name": "@neon-exchange/nash-protocol",
-  "version": "5.0.18",
+  "version": "5.0.20",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -55,7 +55,7 @@
     "int64-buffer": "0.99.1007",
     "keccak": "2.0.0",
     "lodash": "4.17.21",
-    "mpc-wallet-wasm-node": "2.0.13",
+    "mpc-wallet-wasm": "^2.0.12",
     "node-fetch": "2.6.0",
     "randombytes": "2.1.0",
     "scrypt-async": "2.0.1",
@@ -65,6 +65,7 @@
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
     "@types/crypto-js": "3.1.43",
     "@types/elliptic": "6.4.5",
     "@types/jest": "23.3.9",
