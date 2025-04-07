@@ -1,6 +1,6 @@
 {
   "name": "@neon-exchange/nash-protocol",
-  "version": "5.0.17",
+  "version": "5.0.18",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -55,7 +55,7 @@
     "int64-buffer": "0.99.1007",
     "keccak": "2.0.0",
     "lodash": "4.17.21",
-    "mpc-wallet-wasm-node": "2.0.12",
+    "mpc-wallet-wasm-node": "2.0.13",
     "node-fetch": "2.6.0",
     "randombytes": "2.1.0",
     "scrypt-async": "2.0.1",
