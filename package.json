@@ -1,6 +1,6 @@
 {
   "name": "@neon-exchange/nash-protocol",
-  "version": "4.14.1",
+  "version": "5.0.22",
   "description": "TypeScript implementation of Nash crypto routines",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -10,9 +10,8 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "copy:nativewasm": "cp -r src/wasm build/main/wasm && cp src/native/index_osx.node build/main/native && cp src/native/index_arm.node build/main/native && cp src/native/index_linux.node build/main/native && cp src/native/index_win.node build/main/native && cp -r wasm-webpack build/module/wasm && rm -r build/module/mpc-lib && cp -r wasm-webpack build/module/mpc-lib",
-    "copy:wasm": "cp -r src/wasm build/main/wasm && cp -r wasm-webpack build/module/wasm",
-    "build": "yarn clean && yarn build:main && yarn build:module && yarn copy:nativewasm",
+    "copy:native": "cp src/native/index_osx.node build/main/native && cp src/native/index_osx_arm64.node build/main/native && cp src/native/index_arm.node build/main/native && cp src/native/index_linux.node build/main/native && cp src/native/index_win.node build/main/native",
+    "build": "yarn clean && yarn build:main && yarn build:module && yarn copy:native",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
     "fix": "yarn fix:prettier && yarn fix:tslint",
@@ -37,7 +36,7 @@
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('nash-protocol must be installed with Yarn: https://yarnpkg.com/')\""
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=21"
   },
   "dependencies": {
     "bchaddrjs": "^0.5.2",
@@ -56,12 +55,14 @@
     "int64-buffer": "0.99.1007",
     "keccak": "2.0.0",
     "lodash": "4.17.21",
+    "mpc-wallet-wasm": "^2.0.12",
     "node-fetch": "2.6.0",
     "randombytes": "2.1.0",
     "scrypt-async": "2.0.1",
     "sha3": "2.0.4",
     "smart-buffer": "4.2.0",
-    "tiny-secp256k1": "1.1.3"
+    "tiny-secp256k1": "1.1.3",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@types/crypto-js": "3.1.43",
