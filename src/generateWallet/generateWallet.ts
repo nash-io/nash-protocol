@@ -78,7 +78,6 @@ export function generateWallet(
   return generateWalletForCoinType(derivedChainKey, coinType, index, net, blockchain)
 }
 
-
 /**
  * Creates the keypair used for signing payloads. Used during Nash Protocol
  * initialization.

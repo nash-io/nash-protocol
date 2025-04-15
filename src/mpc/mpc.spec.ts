@@ -1,4 +1,3 @@
-
 // import { TextEncoder, TextDecoder } from 'util'
 // global.TextEncoder = TextEncoder
 // // @ts-expect-error
@@ -6,10 +5,9 @@
 
 // import * as mpc from '../mpc-lib'
 
-
 test('mpc wasm dh init', async () => {
-    const j = true
-    expect(j).toBe(true)
+  const j = true
+  expect(j).toBe(true)
 })
 //     mpc.forceWasm()
 
@@ -45,7 +43,6 @@ test('mpc wasm dh init', async () => {
 //     expect(val).toEqual('error deserializing secret_key')
 // })
 
-
 // test('mpc init api childkey creator with verified pallier', async () => {
 
 //     mpc.forceWasm()
@@ -81,7 +78,6 @@ test('mpc wasm dh init', async () => {
 //     expect(val).toEqual('error deserializing paillier_pk')
 
 // })
-
 
 // test('mpc create api childkey', async () => {
 
@@ -121,9 +117,7 @@ test('mpc wasm dh init', async () => {
 //     expect(success).toBe(false)
 //     expect(result).toEqual("error deserializing curve")
 
-
 // })
-
 
 // test('mpc fill r pool', async () => {
 
@@ -148,7 +142,6 @@ test('mpc wasm dh init', async () => {
 
 //     expect(success).toBe(true)
 //     expect(result).toEqual("rpool filled successfully")
-
 
 //     {
 //         [success, result] = JSON.parse(mpc.fill_rpool(

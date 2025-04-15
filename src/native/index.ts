@@ -16,7 +16,6 @@ import {
 
 let usingWasm = false
 
-
 export function forceWasm(): void {
   usingWasm = true
 }
