@@ -110,7 +110,7 @@ export enum BIP44 {
   BASE = "m/44'/8453'/0'/0/0",
   MANTLE = "m/44'/5000'/0'/0/0",
   OPTIMISM = "m/44'/10000070'/0'/0/0",
-  SOLANA = "m/44'/501'/0'/0/0",
+  SOLANA = "m/44'/501'/0'/0/0"
 }
 
 export interface ChildKey {

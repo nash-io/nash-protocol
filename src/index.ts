@@ -11,6 +11,7 @@ export { fillRPool, configurePoolSettings, getDhPoolSize } from './mpc/fillRPool
 export { fillRPoolIfNeeded } from './mpc/fillRPool'
 export { generateAPIKeys } from './mpc/generateAPIKeys'
 export { createAPIKey } from './mpc/createAPIKey'
+export { forceWasm } from './mpc-lib'
 export { publicKeyFromSecretKey } from './mpc/publicKeyFromSecretKey'
 export { default as regenerateMnemonic } from './regenerateMnemonic'
 export { default as secretKeyToMnemonic } from './secretKeyToMnemonic'
