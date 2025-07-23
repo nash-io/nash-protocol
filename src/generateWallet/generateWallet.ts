@@ -12,6 +12,7 @@ import hexEncoding from 'crypto-js/enc-hex'
 import RIPEMD160 from 'crypto-js/ripemd160'
 import SHA256 from 'crypto-js/sha256'
 import { ec as EC } from 'elliptic'
+import nacl from 'tweetnacl'
 
 const curve = new EC('p256')
 const bip44Purpose = 44
@@ -40,7 +41,8 @@ export enum CoinType {
   BNB = 714,
   BASE = 8453,
   MANTLE = 5000,
-  OPTIMISM = 10000070
+  OPTIMISM = 10000070,
+  SOLANA = 501
 }
 
 const NON_SEGWIT = [CoinType.BCH, CoinType.DOGE]
@@ -57,7 +59,7 @@ export function generateWallet(
   index: number,
   net?: string,
   blockchain?: Blockchain
-): Wallet {
+): Promise<Wallet> {
   let coinTypeToUseForWalletPathDerivation: CoinType = coinType
   // legacy wallets used 1 as an index, which while not incorrect is not what most BIP44 implementations do
   // going forward we will use 0 instead.
@@ -136,7 +138,8 @@ export const coinTypeFromString = (s: string): CoinType => {
     neo_x: CoinType.NEO_X,
     neox: CoinType.NEO_X,
     optimism: CoinType.OPTIMISM,
-    polygon: CoinType.POLYGON
+    polygon: CoinType.POLYGON,
+    solana: CoinType.SOLANA
   }
 
   if (!(s in m)) {
@@ -173,6 +176,8 @@ export const blockchainFromString = (name: string): Blockchain => {
       return Blockchain.MANTLE
     case 'optimism':
       return Blockchain.OPTIMISM
+    case 'solana':
+      return Blockchain.SOLANA
     default:
       throw new Error('Unsupported name')
   }
@@ -206,6 +211,7 @@ function hash(hex: string, hashingFunction: (i: any) => CryptoJS.WordArray): str
   const result = hashingFunction(hexEncoded)
   return result.toString(hexEncoding)
 }
+
 export function sha256(hex: string): string {
   return hash(hex, SHA256)
 }
@@ -231,13 +237,13 @@ export const getAddressFromScriptHash = (scriptHash: string, addressVersion: str
 }
 
 // NOTE: We can split this out later when there are more wallets needs to be derived.
-function generateWalletForCoinType(
+async function generateWalletForCoinType(
   key: bip32.BIP32Interface,
   coinType: CoinType,
   index: number,
   net?: string,
   blockchain?: Blockchain
-): Wallet {
+): Promise<Wallet> {
   if (key.privateKey === undefined) {
     throw new Error('private key not properly derived')
   }
@@ -282,6 +288,16 @@ function generateWalletForCoinType(
         index,
         privateKey: key.privateKey.toString('hex'),
         publicKey: key.publicKey.toString('hex')
+      }
+    case CoinType.SOLANA:
+      const solanaKeypair = nacl.sign.keyPair.fromSeed(new Uint8Array(key.privateKey))
+      const solanaPubkey = Buffer.from(solanaKeypair.publicKey).toString('hex')
+      const solanaAddress = base58.encode(solanaKeypair.publicKey)
+      return {
+        address: solanaAddress,
+        index,
+        privateKey: key.privateKey.toString('hex'),
+        publicKey: solanaPubkey
       }
     default:
       throw new Error(`invalid coin type ${coinType} for generating a wallet`)

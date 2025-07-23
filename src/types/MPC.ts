@@ -10,14 +10,15 @@ export enum Blockchain {
   BNB = 'BNB',
   BASE = 'BASE',
   MANTLE = 'MANTLE',
-  OPTIMISM = 'OPTIMISM'
+  OPTIMISM = 'OPTIMISM',
+  SOLANA = 'SOLANA'
 }
 
 /**
  * Secp256k1 for BTC, ETH
  * Secp256r1 for NEO
  */
-export type Curve = 'Secp256k1' | 'Secp256r1'
+export type Curve = 'Secp256k1' | 'Secp256r1' | 'Curve25519'
 
 export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.BTC]: 'Secp256k1',
@@ -31,7 +32,8 @@ export const BlockchainCurve: Record<Blockchain, Curve> = {
   [Blockchain.BNB]: 'Secp256k1',
   [Blockchain.BASE]: 'Secp256k1',
   [Blockchain.MANTLE]: 'Secp256k1',
-  [Blockchain.OPTIMISM]: 'Secp256k1'
+  [Blockchain.OPTIMISM]: 'Secp256k1',
+  [Blockchain.SOLANA]: 'Curve25519'
 }
 
 export interface PallierPK {
@@ -107,7 +109,8 @@ export enum BIP44 {
   BNB = "m/44'/714'/0'/0/0",
   BASE = "m/44'/8453'/0'/0/0",
   MANTLE = "m/44'/5000'/0'/0/0",
-  OPTIMISM = "m/44'/10000070'/0'/0/0"
+  OPTIMISM = "m/44'/10000070'/0'/0/0",
+  SOLANA = "m/44'/501'/0'/0/0"
 }
 
 export interface ChildKey {
@@ -137,6 +140,7 @@ export interface APIKey {
     [BIP44.BASE]?: ChildKey
     [BIP44.MANTLE]?: ChildKey
     [BIP44.OPTIMISM]?: ChildKey
+    [BIP44.SOLANA]?: ChildKey
   }
   payload_signing_key: string
   payload_public_key: string
