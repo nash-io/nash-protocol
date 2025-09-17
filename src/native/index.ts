@@ -13,12 +13,8 @@ import {
   sign as wasm_sign,
   publickey_from_secretkey as wasm_publickey_from_secretkey
 } from 'mpc-wallet-wasm'
+import { getUsingWasm, forceWasm } from './forceWasm'
 
-let usingWasm = false
-
-export function forceWasm(): void {
-  usingWasm = true
-}
 
 interface NodeFileInterface {
   dh_init: (size: number, curve: string) => string
@@ -30,7 +26,7 @@ interface NodeFileInterface {
 }
 
 const loadNodeFile = (): NodeFileInterface | null => {
-  if (usingWasm) {
+  if (getUsingWasm()) {
     return null
   }
 
@@ -58,33 +54,33 @@ const loadNodeFile = (): NodeFileInterface | null => {
       return require(/* webpackIgnore: true */ './index_osx.node')
     default:
       console.log('Using .wasm shim')
-      usingWasm = true
+      forceWasm()
       return null
   }
 }
 
 const MpcWallet = loadNodeFile() as NodeFileInterface
 export function dh_init(size: number, curve: string): string {
-  if (usingWasm) {
+  if (getUsingWasm()) {
     return wasm_dh_init(size, curve)
   }
   return MpcWallet.dh_init(size, curve)
 }
 
 export function fill_rpool(clientDHSecrets: string, serverDHPublics: string, curve: string, pkstr: string): string {
-  if (usingWasm) {
+  if (getUsingWasm()) {
     return wasm_fill_rpool(clientDHSecrets, serverDHPublics, curve, pkstr)
   }
   return MpcWallet.fill_rpool(clientDHSecrets, serverDHPublics, pkstr, curve)
 }
 export function get_rpool_size(curve: string): string {
-  if (usingWasm) {
+  if (getUsingWasm()) {
     return wasm_get_rpool_size(curve)
   }
   return MpcWallet.get_rpool_size(curve)
 }
 export function compute_presig(apiKeyStr: string, msgHashStr: string, curve: string): string {
-  if (usingWasm) {
+  if (getUsingWasm()) {
     return wasm_compute_presig(apiKeyStr, msgHashStr, curve)
   }
   return MpcWallet.compute_presig(apiKeyStr, msgHashStr, curve)
