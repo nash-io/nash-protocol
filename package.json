@@ -10,8 +10,9 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "copy:native": "cp src/native/index_osx.node build/main/native && cp src/native/index_osx_arm64.node build/main/native && cp src/native/index_arm.node build/main/native && cp src/native/index_linux.node build/main/native && cp src/native/index_win.node build/main/native",
-    "build": "yarn clean && yarn build:main && yarn build:module && yarn copy:native",
+    "copy:native-to-main": "cp src/native/index_osx.node build/main/native && cp src/native/index_osx_arm64.node build/main/native && cp src/native/index_arm.node build/main/native && cp src/native/index_linux.node build/main/native && cp src/native/index_win.node build/main/native",
+    "copy:native-to-module": "cp src/native/index_osx.node build/module/native && cp src/native/index_osx_arm64.node build/module/native && cp src/native/index_arm.node build/module/native && cp src/native/index_linux.node build/module/native && cp src/native/index_win.node build/module/native",
+    "build": "yarn clean && yarn build:main && yarn copy:native-to-main && yarn build:module && yarn copy:native-to-module",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
     "fix": "yarn fix:prettier && yarn fix:tslint",
@@ -86,5 +87,6 @@
     "exclude": [
       "**/*.spec.js"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
