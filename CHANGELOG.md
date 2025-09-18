@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.24](https://github.com/nash-io/nash-protocol/compare/v5.0.22...v5.0.24) (2025-09-17)
+
+
+### Bug Fixes
+
+* Copying of native modules to ./build/module ([8d78546](https://github.com/nash-io/nash-protocol/commit/8d78546e5de14f550acab4d60c4c2eb92816e15f))
+* Update forceWasm implementation to dont import mpc-wallet-wasm in the re-export file ([4c11fd5](https://github.com/nash-io/nash-protocol/commit/4c11fd5ca7fbedee9b414943b1284818c9d8b87b))
+
 ### [5.0.23](https://github.com/nash-io/nash-protocol/compare/v4.13.8...v5.0.23) (2025-07-23)
 
 ### [4.14.1](https://github.com/nash-io/nash-protocol/compare/v4.13.7...v4.14.1) (2024-12-16)
