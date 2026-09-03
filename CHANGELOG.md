@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.26](https://github.com/nash-io/nash-protocol/compare/v5.0.25...v5.0.26) (2026-09-03)
+
+
+### Version Correction
+
+* Bump the package version to 5.0.26 because 5.0.25 had already been published to npm.
+
 ### [5.0.25](https://github.com/nash-io/nash-protocol/compare/v5.0.24...v5.0.25) (2026-09-03)
 
 
